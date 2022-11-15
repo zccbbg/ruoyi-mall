@@ -65,6 +65,11 @@
         </dependency>
 
         <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-mall</artifactId>
+            <version>${ruoyi.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
             <scope>test</scope>
