@@ -27,29 +27,29 @@ gen:
   # 作者
   author: zcc
   # 默认生成包路径 system 需改成自己的模块名称 如 system monitor tool
-  packageName: com.cyl.wms
+  packageName: com.cyl.mall
   # 自动去除表前缀，默认是false
   autoRemovePre: true
   # 表前缀（生成类名不会包含表前缀，多个用逗号分隔）
-  tablePrefix: wms_
+  tablePrefix: mall_
   # 一级权限名
-  rootPermission: wms
+  rootPermission: mall
   # 模板根路径
   templateRootPath: vm2
   # 路径
   path:
     # 后端根目录
-    backPath: C:\Users\zccbbg\ichengle\ruoyi-vue-fork\
+    backPath: C:\Users\zccbbg\ichengle\ruoyi-mall\
     # 后端 service 模块名
-    serviceModule: wms
+    serviceModule: ruoyi-mall
     # 后端 api 模块名, 默认与 service 一致
-    apiModule: wms
+    apiModule: ruoyi-mall
     # 前端根目录
-    frontPath: C:\Users\zccbbg\ichengle\ruoyi-ui\
+    frontPath: C:\Users\zccbbg\ichengle\ruoyi-mall-vue\
     # 前端 api 目录
-    frontApiPath: src/api/wms
+    frontApiPath: src/api/mall
     # 前端 view 目录
-    frontViewPath: src/views/wms
+    frontViewPath: src/views/mall
     # sql 目录
     sql: sql
   # 环境变量

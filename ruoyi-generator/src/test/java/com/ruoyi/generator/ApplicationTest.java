@@ -25,24 +25,10 @@ public class ApplicationTest {
     @Test
     public void test2() {
         List<String> tableNames = Arrays.asList(
-// 以下表前端改动交大
-//                "wms_item",
-//                "wms_area" ,
-//                "wms_carrier",
-//                "wms_supplier",
-//                "wms_rack" ,
-// 以下表，前端改动不大
-//                "wms_warehouse" ,
-//                "wms_customer" ,
-//                "wms_inventory",
-//                "wms_inventory_history",
-                "wms_receipt_order",
-                "wms_receipt_order_detail"
-//                "wms_shipment_order",
-//                "wms_shipment_order_detail",
-//                "wms_inventory_movement",
-//                "wms_inventory_movement_detail",
-//                "wms_delivery"
+                "mall_pms_brand",
+                "mall_pms_product_category" ,
+                "mall_pms_product",
+                "mall_pms_sku"
         );
         // 查询表信息
         List<GenTable> tableList = genTableService.selectGenTableByName(tableNames);
