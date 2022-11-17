@@ -143,7 +143,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
     </el-row>
 
-    <WmsTable v-loading="loading" :data="${businessName}List" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="${businessName}List" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
 #set($count0 = 0)
 #foreach($column in $columns)
@@ -199,7 +199,7 @@
           >删除</el-button>
         </template>
       </el-table-column>
-    </WmsTable>
+    </el-table>
     
     <pagination
       v-show="total>0"
@@ -354,7 +354,7 @@
 </template>
 
 <script>
-import { list${BusinessName}, get${BusinessName}, del${BusinessName}, add${BusinessName}, update${BusinessName}, export${BusinessName} } from "@/api/${moduleName}/${className}";
+import { list${BusinessName}, get${BusinessName}, del${BusinessName}, add${BusinessName}, update${BusinessName}, export${BusinessName} } from "@/api/${env.projectName}/${moduleName}/${className}";
 
 export default {
   name: "${BusinessName}",

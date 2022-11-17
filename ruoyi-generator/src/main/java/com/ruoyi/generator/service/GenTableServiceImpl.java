@@ -239,6 +239,7 @@ public class GenTableServiceImpl implements IGenTableService {
         genContext.prop2path.put("ClassName", table.getClassName());
         genContext.prop2path.put("className", StrUtil.lowerFirst(table.getClassName()));
         genContext.prop2path.put("tableName", table.getTableName());
+        genContext.prop2path.put("moduleName", table.getModuleName());
 
         // 初始化模板
         VelocityInitializer.initVelocity();

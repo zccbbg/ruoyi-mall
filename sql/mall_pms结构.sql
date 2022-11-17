@@ -80,6 +80,7 @@ CREATE TABLE `mall_pms_sku`
     `price`           decimal(10, 2) NULL DEFAULT NULL,
     `pic`             varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '展示图片',
     `sp_data`         varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '商品销售属性，json格式',
+    `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识',
     `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
     `create_time` datetime(3) DEFAULT NULL COMMENT '创建时间',
     `update_by` bigint(20) DEFAULT NULL COMMENT '修改人',
