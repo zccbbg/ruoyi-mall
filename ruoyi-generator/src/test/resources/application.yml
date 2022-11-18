@@ -67,7 +67,6 @@ gen:
     "convert.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/convert/${ClassName}Convert.java"
     "example.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/pojo/example/${ClassName}Example.java"
     "query.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/pojo/query/${ClassName}Query.java"
-    "dto.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/pojo/dto/${ClassName}DTO.java"
     "vo.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/pojo/vo/${ClassName}VO.java"
     "domain.java.vm": "${backPath}/${apiModule}/${MAIN_JAVA}/${packageName}/domain/${ClassName}.java"
     "mapper.xml.vm": "${backPath}/${serviceModule}/${MAIN_RESOURCES}/mapper/${moduleName}/${ClassName}Mapper.xml"
@@ -84,7 +83,6 @@ gen:
     - vm2/java/mapper.java.vm
     - vm2/java/convert.java.vm
     - vm2/java/query.java.vm
-    - vm2/java/dto.java.vm
     - vm2/java/vo.java.vm
     - vm2/java/domain.java.vm
     - vm2/xml/mapper.xml.vm
