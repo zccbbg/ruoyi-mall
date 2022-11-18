@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.pms.mapper.ProductMapper">
+    
+    <resultMap type="Product" id="ProductResult">
+        <result property="id" column="id"/>
+        <result property="brandId" column="brand_id"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="outProductId" column="out_product_id"/>
+        <result property="name" column="name"/>
+        <result property="pic" column="pic"/>
+        <result property="albumPics" column="album_pics"/>
+        <result property="publishStatus" column="publish_status"/>
+        <result property="sort" column="sort"/>
+        <result property="price" column="price"/>
+        <result property="unit" column="unit"/>
+        <result property="weight" column="weight"/>
+        <result property="detailHtml" column="detail_html"/>
+        <result property="detailMobileHtml" column="detail_mobile_html"/>
+        <result property="brandName" column="brand_name"/>
+        <result property="productCategoryName" column="product_category_name"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="selectProductVo">
+        select id, brand_id, category_id, out_product_id, name, pic, album_pics, publish_status, sort, price, unit, weight, detail_html, detail_mobile_html, brand_name, product_category_name, del_flag, create_by, create_time, update_by, update_time   from pms_product
+    </sql>
+
+    <select id="selectByEntity" parameterType="Product" resultMap="ProductResult">
+        <include refid="selectProductVo"/>
+        <where>  
+            <if test="brandId != null "> and brand_id = #{brandId}</if>
+            <if test="categoryId != null "> and category_id = #{categoryId}</if>
+            <if test="outProductId != null  and outProductId != ''"> and out_product_id = #{outProductId}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="pic != null  and pic != ''"> and pic = #{pic}</if>
+            <if test="albumPics != null  and albumPics != ''"> and album_pics = #{albumPics}</if>
+            <if test="publishStatus != null "> and publish_status = #{publishStatus}</if>
+            <if test="sort != null "> and sort = #{sort}</if>
+            <if test="price != null "> and price = #{price}</if>
+            <if test="unit != null  and unit != ''"> and unit = #{unit}</if>
+            <if test="weight != null "> and weight = #{weight}</if>
+            <if test="detailHtml != null  and detailHtml != ''"> and detail_html = #{detailHtml}</if>
+            <if test="detailMobileHtml != null  and detailMobileHtml != ''"> and detail_mobile_html = #{detailMobileHtml}</if>
+            <if test="brandName != null  and brandName != ''"> and brand_name like concat('%', #{brandName}, '%')</if>
+            <if test="productCategoryName != null  and productCategoryName != ''"> and product_category_name like concat('%', #{productCategoryName}, '%')</if>
+        </where>
+    </select>
+
+    <update id="updateDelFlagByIds">
+        update pms_product set del_flag=1
+        <where>
+            id in <foreach collection="ids" open="(" item="it" close=")" separator=",">#{it}</foreach>
+        </where>
+    </update>
+</mapper>
