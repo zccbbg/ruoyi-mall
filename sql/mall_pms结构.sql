@@ -1,8 +1,8 @@
 -- ----------------------------
--- Table structure for mall_pms_brand
+-- Table structure for pms_brand
 -- ----------------------------
-DROP TABLE IF EXISTS `mall_pms_brand`;
-CREATE TABLE `mall_pms_brand`
+DROP TABLE IF EXISTS `pms_brand`;
+CREATE TABLE `pms_brand`
 (
     `id`             bigint(20) NOT NULL AUTO_INCREMENT,
     `name`           varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
@@ -15,13 +15,13 @@ CREATE TABLE `mall_pms_brand`
     `update_by` bigint(20) DEFAULT NULL COMMENT '修改人',
     `update_time` datetime(3) DEFAULT NULL COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 59 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '品牌表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 59 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '品牌管理' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for mall_pms_product
+-- Table structure for pms_product
 -- ----------------------------
-DROP TABLE IF EXISTS `mall_pms_product`;
-CREATE TABLE `mall_pms_product`
+DROP TABLE IF EXISTS `pms_product`;
+CREATE TABLE `pms_product`
 (
     `id`                            bigint(20) NOT NULL AUTO_INCREMENT,
     `brand_id`                      bigint(20) NULL DEFAULT NULL,
@@ -48,10 +48,10 @@ CREATE TABLE `mall_pms_product`
 ) ENGINE = InnoDB AUTO_INCREMENT = 37 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品信息' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for mall_pms_product_category
+-- Table structure for pms_product_category
 -- ----------------------------
-DROP TABLE IF EXISTS `mall_pms_product_category`;
-CREATE TABLE `mall_pms_product_category`
+DROP TABLE IF EXISTS `pms_product_category`;
+CREATE TABLE `pms_product_category`
 (
     `id`            bigint(20) NOT NULL AUTO_INCREMENT,
     `parent_id`     bigint(20) NULL DEFAULT NULL COMMENT '上机分类的编号：0表示一级分类',
@@ -66,13 +66,13 @@ CREATE TABLE `mall_pms_product_category`
     `update_by` bigint(20) DEFAULT NULL COMMENT '修改人',
     `update_time` datetime(3) DEFAULT NULL COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 53 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '产品分类' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 53 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品分类' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for mall_pms_sku
+-- Table structure for pms_sku
 -- ----------------------------
-DROP TABLE IF EXISTS `mall_pms_sku`;
-CREATE TABLE `mall_pms_sku`
+DROP TABLE IF EXISTS `pms_sku`;
+CREATE TABLE `pms_sku`
 (
     `id`              bigint(20) NOT NULL AUTO_INCREMENT,
     `product_id`      bigint(20) NULL DEFAULT NULL,
@@ -86,4 +86,4 @@ CREATE TABLE `mall_pms_sku`
     `update_by` bigint(20) DEFAULT NULL COMMENT '修改人',
     `update_time` datetime(3) DEFAULT NULL COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 179 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'sku的库存' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 179 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'sku信息' ROW_FORMAT = Dynamic;

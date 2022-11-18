@@ -27,11 +27,11 @@ gen:
   # 作者
   author: zcc
   # 默认生成包路径 system 需改成自己的模块名称 如 system monitor tool
-  packageName: com.cyl.mall
+  packageName: com.cyl.pms
   # 自动去除表前缀，默认是false
   autoRemovePre: true
   # 表前缀（生成类名不会包含表前缀，多个用逗号分隔）
-  tablePrefix: mall_
+  tablePrefix: pms_
   # 一级权限名
   rootPermission: mall
   # 模板根路径
@@ -47,9 +47,9 @@ gen:
     # 前端根目录
     frontPath: C:\Users\zccbbg\ichengle\ruoyi-mall-vue\
     # 前端 api 目录
-    frontApiPath: src/api/mall
+    frontApiPath: src/api/pms
     # 前端 view 目录
-    frontViewPath: src/views/mall
+    frontViewPath: src/views/pms
     # sql 目录
     sql: sql
   # 环境变量
@@ -70,8 +70,8 @@ gen:
     "dto.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/pojo/dto/${ClassName}DTO.java"
     "vo.java.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/${packageName}/pojo/vo/${ClassName}VO.java"
     "domain.java.vm": "${backPath}/${apiModule}/${MAIN_JAVA}/${packageName}/domain/${ClassName}.java"
-    "mapper.xml.vm": "${backPath}/${serviceModule}/${MAIN_RESOURCES}/mapper/${ClassName}Mapper.xml"
-    "sql.vm": "${backPath}/sql/${className}.sql"
+    "mapper.xml.vm": "${backPath}/${serviceModule}/${MAIN_RESOURCES}/mapper/${moduleName}/${ClassName}Mapper.xml"
+    "sql.vm": "${backPath}/sql/${moduleName}/${className}.sql"
     "h2.sql.vm": "${backPath}/${serviceModule}/${MAIN_JAVA}/db/${tableName}-h2.sql"
     "add.vue.vm": "${frontPath}/${frontViewPath}/Add${ClassName}.vue"
     "index.vue.vm": "${frontPath}/${frontViewPath}/${className}/index.vue"
@@ -88,11 +88,10 @@ gen:
     - vm2/java/vo.java.vm
     - vm2/java/domain.java.vm
     - vm2/xml/mapper.xml.vm
-  #    - vm2/sql/sql.vm
+    - vm2/sql/sql.vm
   testTemplates:
   #    - vm2/sql/h2.sql.vm
   crudTemplates:
-    #    - vm2/vue/add.vue.vm
     - vm2/vue/index.vue.vm
   treeTemplates:
   #    - vm2/vue/index-tree.vue.vm

@@ -25,10 +25,10 @@ public class ApplicationTest {
     @Test
     public void test2() {
         List<String> tableNames = Arrays.asList(
-                "mall_pms_brand",
-                "mall_pms_product_category" ,
-                "mall_pms_product",
-                "mall_pms_sku"
+                "pms_brand",
+                "pms_product_category" ,
+                "pms_product",
+                "pms_sku"
         );
         // 查询表信息
         List<GenTable> tableList = genTableService.selectGenTableByName(tableNames);
