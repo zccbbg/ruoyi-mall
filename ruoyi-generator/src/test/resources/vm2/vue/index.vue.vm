@@ -107,40 +107,7 @@
           v-hasPermi="['${moduleName}:${className}:add']"
         >新增</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['${moduleName}:${className}:edit']"
-        >修改</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['${moduleName}:${className}:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['${moduleName}:${className}:export']"
-        >导出</el-button>
-      </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="${businessName}List" @selection-change="handleSelectionChange">
@@ -164,19 +131,19 @@
 #elseif($column.htmlType == "time")
 #set($valueFormat = '{h}:{i}:{s}')
 #end
-      <el-table-column label="${comment}" align="center" prop="${javaField}" width="180" v-if="columns[$count0].visible">
+      <el-table-column label="${comment}" align="center" prop="${javaField}" width="180" >
         <template slot-scope="scope">
             <span>{{ parseTime(scope.row.${javaField}, '$valueFormat')}}</span>
         </template>
       </el-table-column>
 #elseif("" != $column.dictType)
-      <el-table-column label="${comment}" align="center" prop="${javaField}" v-if="columns[$count0].visible">
+      <el-table-column label="${comment}" align="center" prop="${javaField}" >
         <template slot-scope="scope">
             <dict-tag :options="dict.type.${column.dictType}" :value="scope.row.${javaField}"/>
         </template>
       </el-table-column>
 #elseif("" != $javaField)
-      <el-table-column label="${comment}" align="center" prop="${javaField}" v-if="columns[$count0].visible"/>
+      <el-table-column label="${comment}" align="center" prop="${javaField}" />
 #end
 #set($count0 = $count0 + 1)
 #end
@@ -428,15 +395,6 @@ export default {
 #end
 #end
       },
-      columns: [
-#set($count1 = 0)
-#foreach ($column in $columns)
-    #if($column.list)
-    { key: $count1, label: "$column.columnComment", visible: #{if}($column.htmlType == 'imageUpload' || $column.htmlType == 'fileUpload' || $foreach.count > 10) false #else true #end },
-    #end
-    #set($count1 = $count1 + 1)
-#end
-     ],
 #if($queryLength >= 8)
       showMoreCondition: false
 #end
