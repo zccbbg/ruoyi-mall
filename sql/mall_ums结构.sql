@@ -8,7 +8,6 @@ CREATE TABLE `ums_member` (
     `password` varchar(64) DEFAULT NULL COMMENT '密码',
     `phone` varchar(64) DEFAULT NULL COMMENT '手机号码',
     `mark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '' COMMENT '用户备注',
-    `wx_profile` json DEFAULT NULL COMMENT '微信用户json信息',
     `status` int(1) DEFAULT NULL COMMENT '帐号启用状态:0->禁用；1->启用',
     `avatar` varchar(256) DEFAULT NULL COMMENT '头像',
     `gender` int(1) DEFAULT NULL COMMENT '性别：0->未知；1->男；2->女',
