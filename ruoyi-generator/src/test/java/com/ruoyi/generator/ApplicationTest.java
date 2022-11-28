@@ -26,7 +26,8 @@ public class ApplicationTest {
     public void test2() {
         List<String> tableNames = Arrays.asList(
                 "ums_member",
-                "ums_member_address"
+                "ums_member_address",
+                "ums_member_wechat"
         );
         // 查询表信息
         List<GenTable> tableList = genTableService.selectGenTableByName(tableNames);

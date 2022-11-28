@@ -36,6 +36,15 @@ public class MemberQuery {
     @ApiModelProperty("性别：0->未知；1->男；2->女 精确匹配")
     private Integer gender;
 
+    @ApiModelProperty("用户所在城市 精确匹配")
+    private String city;
+
+    @ApiModelProperty("用户所在省份 精确匹配")
+    private String province;
+
+    @ApiModelProperty("用户所在国家 精确匹配")
+    private String country;
+
     @ApiModelProperty("生日 精确匹配")
     private LocalDate birthday;
 

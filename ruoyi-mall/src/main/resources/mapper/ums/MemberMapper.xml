@@ -13,6 +13,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="status" column="status"/>
         <result property="avatar" column="avatar"/>
         <result property="gender" column="gender"/>
+        <result property="city" column="city"/>
+        <result property="province" column="province"/>
+        <result property="country" column="country"/>
+        <result property="remark" column="remark"/>
         <result property="birthday" column="birthday"/>
         <result property="spreadUid" column="spread_uid"/>
         <result property="spreadTime" column="spread_time"/>
@@ -23,7 +27,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectMemberVo">
-        select id, nickname, password, phone, mark, status, avatar, gender, birthday, spread_uid, spread_time, level, integral, create_time, update_time  from ums_member
+        select id, nickname, password, phone, mark, status, avatar, gender, city, province, country, remark, birthday, spread_uid, spread_time, level, integral, create_time, update_time  from ums_member
     </sql>
 
     <select id="selectByEntity" parameterType="Member" resultMap="MemberResult">
@@ -36,6 +40,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null "> and status = #{status}</if>
             <if test="avatar != null  and avatar != ''"> and avatar = #{avatar}</if>
             <if test="gender != null "> and gender = #{gender}</if>
+            <if test="city != null  and city != ''"> and city = #{city}</if>
+            <if test="province != null  and province != ''"> and province = #{province}</if>
+            <if test="country != null  and country != ''"> and country = #{country}</if>
             <if test="birthday != null "> and birthday = #{birthday}</if>
             <if test="spreadUid != null "> and spread_uid = #{spreadUid}</if>
             <if test="spreadTime != null "> and spread_time = #{spreadTime}</if>

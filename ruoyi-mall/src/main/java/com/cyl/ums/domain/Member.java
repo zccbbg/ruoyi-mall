@@ -50,6 +50,22 @@ public class Member {
     @Excel(name = "性别：0->未知；1->男；2->女")
     private Integer gender;
 
+    @ApiModelProperty("用户所在城市")
+    @Excel(name = "用户所在城市")
+    private String city;
+
+    @ApiModelProperty("用户所在省份")
+    @Excel(name = "用户所在省份")
+    private String province;
+
+    @ApiModelProperty("用户所在国家")
+    @Excel(name = "用户所在国家")
+    private String country;
+
+    @ApiModelProperty("公众号运营者对粉丝的备注，公众号运营者可在微信公众平台用户管理界面对粉丝添加备注")
+    @Excel(name = "公众号运营者对粉丝的备注，公众号运营者可在微信公众平台用户管理界面对粉丝添加备注")
+    private String remark;
+
     @ApiModelProperty("生日")
     @Excel(name = "生日", width = 30, dateFormat = "yyyy-MM-dd")
     private LocalDate birthday;

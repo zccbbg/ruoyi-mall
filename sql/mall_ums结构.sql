@@ -45,8 +45,8 @@ CREATE TABLE `ums_member_address` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='会员收货地址';
 
-DROP TABLE IF EXISTS `ums_wechat`;
-CREATE TABLE `ums_wechat` (
+DROP TABLE IF EXISTS `ums_member_wechat`;
+CREATE TABLE `ums_member_wechat` (
     `id` bigint(20) NOT NULL AUTO_INCREMENT,
     `member_id` bigint(20) DEFAULT NULL,
     `unionid` varchar(30) NULL COMMENT '只有在用户将公众号绑定到微信开放平台帐号后，才会出现该字段',

@@ -79,6 +79,18 @@ public class MemberService {
         if (gender != null) {
             qw.eq("gender", gender);
         }
+        String city = query.getCity();
+        if (!StringUtils.isEmpty(city)) {
+            qw.eq("city", city);
+        }
+        String province = query.getProvince();
+        if (!StringUtils.isEmpty(province)) {
+            qw.eq("province", province);
+        }
+        String country = query.getCountry();
+        if (!StringUtils.isEmpty(country)) {
+            qw.eq("country", country);
+        }
         LocalDate birthday = query.getBirthday();
         if (birthday != null) {
             qw.eq("birthday", birthday);
