@@ -1,9 +1,9 @@
 package com.cyl.ums.domain;
 
-import java.time.LocalDateTime;
 import com.ruoyi.common.annotation.Excel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import com.ruoyi.common.core.domain.BaseAudit;
 import lombok.Data;
 import com.baomidou.mybatisplus.annotation.TableName;
 /**
@@ -14,7 +14,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 @ApiModel(description="会员收货地址对象")
 @Data
 @TableName("ums_member_address")
-public class MemberAddress {
+public class MemberAddress extends BaseAudit {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("ID")
@@ -59,11 +59,5 @@ public class MemberAddress {
     @ApiModelProperty("是否默认")
     @Excel(name = "是否默认")
     private Integer isDefault;
-
-    @ApiModelProperty("创建时间")
-    private LocalDateTime createTime;
-
-    @ApiModelProperty("修改时间")
-    private LocalDateTime updateTime;
 
 }

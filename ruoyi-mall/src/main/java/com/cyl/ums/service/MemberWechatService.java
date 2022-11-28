@@ -47,7 +47,6 @@ public class MemberWechatService {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
         QueryWrapper<MemberWechat> qw = new QueryWrapper<>();
-        qw.eq("del_flag",0);
         Long memberId = query.getMemberId();
         if (memberId != null) {
             qw.eq("member_id", memberId);
@@ -110,7 +109,6 @@ public class MemberWechatService {
      * @return 结果
      */
     public int insert(MemberWechat memberWechat) {
-        memberWechat.setDelFlag(0);
         memberWechat.setCreateTime(LocalDateTime.now());
         return memberWechatMapper.insert(memberWechat);
     }
@@ -126,23 +124,12 @@ public class MemberWechatService {
     }
 
     /**
-     * 批量删除用户微信信息
-     *
-     * @param ids 需要删除的用户微信信息主键
-     * @return 结果
-     */
-    public int deleteByIds(Long[] ids) {
-        return memberWechatMapper.updateDelFlagByIds(ids);
-    }
-
-    /**
      * 删除用户微信信息信息
      *
      * @param id 用户微信信息主键
      * @return 结果
      */
     public int deleteById(Long id) {
-        Long[] ids = {id};
-        return memberWechatMapper.updateDelFlagByIds(ids);
+        return memberWechatMapper.deleteById(id);
     }
 }

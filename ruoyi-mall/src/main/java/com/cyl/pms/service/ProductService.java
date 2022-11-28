@@ -47,7 +47,6 @@ public class ProductService {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
         QueryWrapper<Product> qw = new QueryWrapper<>();
-        qw.eq("del_flag",0);
         Long brandId = query.getBrandId();
         if (brandId != null) {
             qw.eq("brand_id", brandId);
@@ -118,7 +117,6 @@ public class ProductService {
      * @return 结果
      */
     public int insert(Product product) {
-        product.setDelFlag(0);
         product.setCreateTime(LocalDateTime.now());
         return productMapper.insert(product);
     }
@@ -134,23 +132,12 @@ public class ProductService {
     }
 
     /**
-     * 批量删除商品信息
-     *
-     * @param ids 需要删除的商品信息主键
-     * @return 结果
-     */
-    public int deleteByIds(Long[] ids) {
-        return productMapper.updateDelFlagByIds(ids);
-    }
-
-    /**
      * 删除商品信息信息
      *
      * @param id 商品信息主键
      * @return 结果
      */
     public int deleteById(Long id) {
-        Long[] ids = {id};
-        return productMapper.updateDelFlagByIds(ids);
+        return productMapper.deleteById(id);
     }
 }

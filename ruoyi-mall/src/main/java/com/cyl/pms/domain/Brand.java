@@ -36,7 +36,4 @@ public class Brand extends BaseAudit {
     @Excel(name = "品牌logo")
     private String logo;
 
-    @ApiModelProperty("删除标识")
-    private Integer delFlag;
-
 }

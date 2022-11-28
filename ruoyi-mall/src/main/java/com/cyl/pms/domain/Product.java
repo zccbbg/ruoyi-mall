@@ -81,7 +81,4 @@ public class Product extends BaseAudit {
     @Excel(name = "商品分类名称")
     private String productCategoryName;
 
-    @ApiModelProperty("删除标识")
-    private Integer delFlag;
-
 }

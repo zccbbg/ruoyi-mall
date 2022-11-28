@@ -18,11 +18,4 @@ public interface SkuMapper extends BaseMapper<Sku> {
      * @return sku信息集合
      */
     List<Sku> selectByEntity(Sku sku);
-
-    /**
-     * 批量软删除
-     * @param ids
-     * @return
-    */
-    int updateDelFlagByIds(@Param("ids") Long[] ids);
 }

@@ -16,12 +16,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="district" column="district"/>
         <result property="detailAddress" column="detail_address"/>
         <result property="isDefault" column="is_default"/>
+        <result property="createBy" column="create_by"/>
         <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
         <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time" />
     </resultMap>
 
     <sql id="selectMemberAddressVo">
-        select id, member_id, name, phone, default_status, post_code, province, city, district, detail_address, is_default, create_time, update_time  from ums_member_address
+        select id, member_id, name, phone, default_status, post_code, province, city, district, detail_address, is_default, create_by, create_time, update_by, update_time   from ums_member_address
     </sql>
 
     <select id="selectByEntity" parameterType="MemberAddress" resultMap="MemberAddressResult">
@@ -39,11 +45,4 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isDefault != null "> and is_default = #{isDefault}</if>
         </where>
     </select>
-
-    <update id="updateDelFlagByIds">
-        update ums_member_address set del_flag=1
-        <where>
-            id in <foreach collection="ids" open="(" item="it" close=")" separator=",">#{it}</foreach>
-        </where>
-    </update>
 </mapper>

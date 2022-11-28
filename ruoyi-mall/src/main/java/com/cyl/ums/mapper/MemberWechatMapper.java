@@ -18,11 +18,4 @@ public interface MemberWechatMapper extends BaseMapper<MemberWechat> {
      * @return 用户微信信息集合
      */
     List<MemberWechat> selectByEntity(MemberWechat memberWechat);
-
-    /**
-     * 批量软删除
-     * @param ids
-     * @return
-    */
-    int updateDelFlagByIds(@Param("ids") Long[] ids);
 }

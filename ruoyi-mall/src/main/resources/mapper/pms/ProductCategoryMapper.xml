@@ -12,7 +12,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="showStatus" column="show_status"/>
         <result property="sort" column="sort"/>
         <result property="icon" column="icon"/>
-        <result property="delFlag" column="del_flag"/>
         <result property="createBy" column="create_by"/>
         <result property="createTime" column="create_time"/>
         <result property="updateBy" column="update_by"/>
@@ -24,7 +23,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectProductCategoryVo">
-        select id, parent_id, name, level, show_status, sort, icon, del_flag, create_by, create_time, update_by, update_time   from pms_product_category
+        select id, parent_id, name, level, show_status, sort, icon, create_by, create_time, update_by, update_time   from pms_product_category
     </sql>
 
     <select id="selectByEntity" parameterType="ProductCategory" resultMap="ProductCategoryResult">
@@ -38,11 +37,4 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="icon != null  and icon != ''"> and icon = #{icon}</if>
         </where>
     </select>
-
-    <update id="updateDelFlagByIds">
-        update pms_product_category set del_flag=1
-        <where>
-            id in <foreach collection="ids" open="(" item="it" close=")" separator=",">#{it}</foreach>
-        </where>
-    </update>
 </mapper>

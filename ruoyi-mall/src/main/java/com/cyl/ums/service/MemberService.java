@@ -50,7 +50,6 @@ public class MemberService {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
         QueryWrapper<Member> qw = new QueryWrapper<>();
-        qw.eq("del_flag",0);
         String nicknameLike = query.getNicknameLike();
         if (!StringUtils.isEmpty(nicknameLike)) {
             qw.like("nickname", nicknameLike);
@@ -121,7 +120,6 @@ public class MemberService {
      * @return 结果
      */
     public int insert(Member member) {
-        member.setDelFlag(0);
         member.setCreateTime(LocalDateTime.now());
         return memberMapper.insert(member);
     }
@@ -137,23 +135,12 @@ public class MemberService {
     }
 
     /**
-     * 批量删除会员信息
-     *
-     * @param ids 需要删除的会员信息主键
-     * @return 结果
-     */
-    public int deleteByIds(Long[] ids) {
-        return memberMapper.updateDelFlagByIds(ids);
-    }
-
-    /**
      * 删除会员信息信息
      *
      * @param id 会员信息主键
      * @return 结果
      */
     public int deleteById(Long id) {
-        Long[] ids = {id};
-        return memberMapper.updateDelFlagByIds(ids);
+        return memberMapper.deleteById(id);
     }
 }

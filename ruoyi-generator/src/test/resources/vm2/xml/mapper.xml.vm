@@ -51,11 +51,4 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 #end
         </where>
     </select>
-
-    <update id="updateDelFlagByIds">
-        update ${tableName} set del_flag=1
-        <where>
-            id in <foreach collection="ids" open="(" item="it" close=")" separator=",">#{it}</foreach>
-        </where>
-    </update>
 </mapper>

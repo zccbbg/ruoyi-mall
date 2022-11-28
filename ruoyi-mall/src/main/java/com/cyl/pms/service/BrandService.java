@@ -46,7 +46,6 @@ public class BrandService {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
         QueryWrapper<Brand> qw = new QueryWrapper<>();
-        qw.eq("del_flag",0);
         String nameLike = query.getNameLike();
         if (!StringUtils.isEmpty(nameLike)) {
             qw.like("name", nameLike);
@@ -73,7 +72,6 @@ public class BrandService {
      * @return 结果
      */
     public int insert(Brand brand) {
-        brand.setDelFlag(0);
         brand.setCreateTime(LocalDateTime.now());
         return brandMapper.insert(brand);
     }
@@ -89,23 +87,12 @@ public class BrandService {
     }
 
     /**
-     * 批量删除品牌管理
-     *
-     * @param ids 需要删除的品牌管理主键
-     * @return 结果
-     */
-    public int deleteByIds(Long[] ids) {
-        return brandMapper.updateDelFlagByIds(ids);
-    }
-
-    /**
      * 删除品牌管理信息
      *
      * @param id 品牌管理主键
      * @return 结果
      */
     public int deleteById(Long id) {
-        Long[] ids = {id};
-        return brandMapper.updateDelFlagByIds(ids);
+        return brandMapper.deleteById(id);
     }
 }

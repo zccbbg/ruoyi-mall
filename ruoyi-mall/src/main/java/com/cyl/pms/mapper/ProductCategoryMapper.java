@@ -18,11 +18,4 @@ public interface ProductCategoryMapper extends BaseMapper<ProductCategory> {
      * @return 商品分类集合
      */
     List<ProductCategory> selectByEntity(ProductCategory productCategory);
-
-    /**
-     * 批量软删除
-     * @param ids
-     * @return
-    */
-    int updateDelFlagByIds(@Param("ids") Long[] ids);
 }

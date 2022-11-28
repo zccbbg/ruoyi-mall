@@ -46,7 +46,6 @@ public class ProductCategoryService {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
         QueryWrapper<ProductCategory> qw = new QueryWrapper<>();
-        qw.eq("del_flag",0);
         Long parentId = query.getParentId();
         if (parentId != null) {
             qw.eq("parent_id", parentId);
@@ -81,7 +80,6 @@ public class ProductCategoryService {
      * @return 结果
      */
     public int insert(ProductCategory productCategory) {
-        productCategory.setDelFlag(0);
         productCategory.setCreateTime(LocalDateTime.now());
         return productCategoryMapper.insert(productCategory);
     }
@@ -97,23 +95,12 @@ public class ProductCategoryService {
     }
 
     /**
-     * 批量删除商品分类
-     *
-     * @param ids 需要删除的商品分类主键
-     * @return 结果
-     */
-    public int deleteByIds(Long[] ids) {
-        return productCategoryMapper.updateDelFlagByIds(ids);
-    }
-
-    /**
      * 删除商品分类信息
      *
      * @param id 商品分类主键
      * @return 结果
      */
     public int deleteById(Long id) {
-        Long[] ids = {id};
-        return productCategoryMapper.updateDelFlagByIds(ids);
+        return productCategoryMapper.deleteById(id);
     }
 }

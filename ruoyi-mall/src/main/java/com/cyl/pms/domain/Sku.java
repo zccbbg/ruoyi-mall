@@ -41,7 +41,4 @@ public class Sku extends BaseAudit {
     @Excel(name = "商品销售属性，json格式")
     private String spData;
 
-    @ApiModelProperty("删除标识")
-    private Integer delFlag;
-
 }

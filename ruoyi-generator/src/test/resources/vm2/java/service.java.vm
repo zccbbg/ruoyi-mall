@@ -53,7 +53,6 @@ public class ${ClassName}Service {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
         QueryWrapper<${_className.domain}> qw = new QueryWrapper<>();
-        qw.eq("del_flag",0);
 #foreach($column in $columns)
 #if($column.query)
 ## 根据查询类型生成 EQ等于、NE不等于、GT大于、LT小于、LIKE模糊、BETWEEN范围
@@ -91,7 +90,6 @@ public class ${ClassName}Service {
     @Transactional
 #end
     public int insert(${ClassName} ${className}) {
-        ${className}.setDelFlag(0);
 #foreach ($column in $columns)
 #if($column.javaField == 'createTime')
         ${className}.setCreateTime(#if($column.javaType == "Date")new Date()#else${column.javaType}.now()#end);
@@ -124,26 +122,12 @@ public class ${ClassName}Service {
     }
 
     /**
-     * 批量删除${functionName}
-     *
-     * @param ${pkColumn.javaField}s 需要删除的${functionName}主键
-     * @return 结果
-     */
-#if($table.sub)
-    @Transactional
-#end
-    public int deleteBy${pkColumn.capJavaField}s(${pkColumn.javaType}[] ${pkColumn.javaField}s) {
-        return ${className}Mapper.updateDelFlagByIds(${pkColumn.javaField}s);
-    }
-
-    /**
      * 删除${functionName}信息
      *
      * @param ${pkColumn.javaField} ${functionName}主键
      * @return 结果
      */
     public int deleteBy${pkColumn.capJavaField}(${pkColumn.javaType} ${pkColumn.javaField}) {
-        Long[] ${pkColumn.javaField}s = {${pkColumn.javaField}};
-        return ${className}Mapper.updateDelFlagByIds(${pkColumn.javaField}s);
+        return ${className}Mapper.deleteById(${pkColumn.javaField});
     }
 }

@@ -21,7 +21,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="detailMobileHtml" column="detail_mobile_html"/>
         <result property="brandName" column="brand_name"/>
         <result property="productCategoryName" column="product_category_name"/>
-        <result property="delFlag" column="del_flag"/>
         <result property="createBy" column="create_by"/>
         <result property="createTime" column="create_time"/>
         <result property="updateBy" column="update_by"/>
@@ -33,7 +32,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectProductVo">
-        select id, brand_id, category_id, out_product_id, name, pic, album_pics, publish_status, sort, price, unit, weight, detail_html, detail_mobile_html, brand_name, product_category_name, del_flag, create_by, create_time, update_by, update_time   from pms_product
+        select id, brand_id, category_id, out_product_id, name, pic, album_pics, publish_status, sort, price, unit, weight, detail_html, detail_mobile_html, brand_name, product_category_name, create_by, create_time, update_by, update_time   from pms_product
     </sql>
 
     <select id="selectByEntity" parameterType="Product" resultMap="ProductResult">
@@ -56,11 +55,4 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="productCategoryName != null  and productCategoryName != ''"> and product_category_name like concat('%', #{productCategoryName}, '%')</if>
         </where>
     </select>
-
-    <update id="updateDelFlagByIds">
-        update pms_product set del_flag=1
-        <where>
-            id in <foreach collection="ids" open="(" item="it" close=")" separator=",">#{it}</foreach>
-        </where>
-    </update>
 </mapper>

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import com.ruoyi.common.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ruoyi.common.core.domain.BaseAudit;
 import lombok.Data;
 /**
  * 会员信息 数据视图对象
@@ -12,7 +13,7 @@ import lombok.Data;
  * @author zcc
  */
 @Data
-public class MemberVO  {
+public class MemberVO extends BaseAudit {
    /** ID */
     private Long id;
    /** 昵称 */
@@ -65,8 +66,4 @@ public class MemberVO  {
    /** 用户剩余积分 */
     @Excel(name = "用户剩余积分")
     private BigDecimal integral;
-   /** 创建时间 */
-    private LocalDateTime createTime;
-   /** 修改时间 */
-    private LocalDateTime updateTime;
 }

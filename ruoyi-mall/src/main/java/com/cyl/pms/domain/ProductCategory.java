@@ -44,7 +44,4 @@ public class ProductCategory extends BaseAudit {
     @Excel(name = "图标")
     private String icon;
 
-    @ApiModelProperty("删除标识")
-    private Integer delFlag;
-
 }

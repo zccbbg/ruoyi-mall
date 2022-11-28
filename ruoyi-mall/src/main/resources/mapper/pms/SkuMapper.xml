@@ -11,7 +11,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="price" column="price"/>
         <result property="pic" column="pic"/>
         <result property="spData" column="sp_data"/>
-        <result property="delFlag" column="del_flag"/>
         <result property="createBy" column="create_by"/>
         <result property="createTime" column="create_time"/>
         <result property="updateBy" column="update_by"/>
@@ -23,7 +22,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSkuVo">
-        select id, product_id, out_sku_id, price, pic, sp_data, del_flag, create_by, create_time, update_by, update_time   from pms_sku
+        select id, product_id, out_sku_id, price, pic, sp_data, create_by, create_time, update_by, update_time   from pms_sku
     </sql>
 
     <select id="selectByEntity" parameterType="Sku" resultMap="SkuResult">
@@ -36,11 +35,4 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="spData != null  and spData != ''"> and sp_data = #{spData}</if>
         </where>
     </select>
-
-    <update id="updateDelFlagByIds">
-        update pms_sku set del_flag=1
-        <where>
-            id in <foreach collection="ids" open="(" item="it" close=")" separator=",">#{it}</foreach>
-        </where>
-    </update>
 </mapper>

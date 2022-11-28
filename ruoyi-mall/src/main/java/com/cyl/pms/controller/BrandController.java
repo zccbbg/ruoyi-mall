@@ -31,7 +31,7 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
  * 品牌管理Controller
  * 
  * @author zcc
- * @date 2022-11-18
+ * @date 2022-11-28
  */
 @Api(description ="品牌管理接口列表")
 @RestController
@@ -87,7 +87,7 @@ public class BrandController extends BaseController {
     @PreAuthorize("@ss.hasPermi('pms:brand:remove')")
     @Log(title = "品牌管理", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
-    public ResponseEntity<Integer> remove(@PathVariable Long[] ids) {
-        return ResponseEntity.ok(service.deleteByIds(ids));
+    public ResponseEntity<Integer> remove(@PathVariable Long id) {
+        return ResponseEntity.ok(service.deleteById(id));
     }
 }

@@ -47,7 +47,6 @@ public class SkuService {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
         QueryWrapper<Sku> qw = new QueryWrapper<>();
-        qw.eq("del_flag",0);
         Long productId = query.getProductId();
         if (productId != null) {
             qw.eq("product_id", productId);
@@ -78,7 +77,6 @@ public class SkuService {
      * @return 结果
      */
     public int insert(Sku sku) {
-        sku.setDelFlag(0);
         sku.setCreateTime(LocalDateTime.now());
         return skuMapper.insert(sku);
     }
@@ -94,23 +92,12 @@ public class SkuService {
     }
 
     /**
-     * 批量删除sku信息
-     *
-     * @param ids 需要删除的sku信息主键
-     * @return 结果
-     */
-    public int deleteByIds(Long[] ids) {
-        return skuMapper.updateDelFlagByIds(ids);
-    }
-
-    /**
      * 删除sku信息信息
      *
      * @param id sku信息主键
      * @return 结果
      */
     public int deleteById(Long id) {
-        Long[] ids = {id};
-        return skuMapper.updateDelFlagByIds(ids);
+        return skuMapper.deleteById(id);
     }
 }

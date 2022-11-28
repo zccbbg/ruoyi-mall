@@ -18,11 +18,4 @@ public interface ProductMapper extends BaseMapper<Product> {
      * @return 商品信息集合
      */
     List<Product> selectByEntity(Product product);
-
-    /**
-     * 批量软删除
-     * @param ids
-     * @return
-    */
-    int updateDelFlagByIds(@Param("ids") Long[] ids);
 }

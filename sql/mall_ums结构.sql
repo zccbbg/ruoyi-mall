@@ -20,7 +20,9 @@ CREATE TABLE `ums_member` (
     `spread_time` datetime DEFAULT NULL COMMENT '推广员关联时间',
     `level` tinyint unsigned NOT NULL DEFAULT '0' COMMENT '等级',
     `integral` decimal(8,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '用户剩余积分',
+    `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
     `create_time` datetime(3) DEFAULT NULL COMMENT '创建时间',
+    `update_by` bigint(20) DEFAULT NULL COMMENT '修改人',
     `update_time` datetime(3) DEFAULT NULL COMMENT '修改时间',
     PRIMARY KEY (`id`),
     UNIQUE KEY `idx_username` (`nickname`),
@@ -40,7 +42,9 @@ CREATE TABLE `ums_member_address` (
     `district` varchar(100) DEFAULT NULL COMMENT '区',
     `detail_address` varchar(128) DEFAULT NULL COMMENT '详细地址(街道)',
     `is_default` tinyint unsigned NOT NULL DEFAULT '0' COMMENT '是否默认',
+    `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
     `create_time` datetime(3) DEFAULT NULL COMMENT '创建时间',
+    `update_by` bigint(20) DEFAULT NULL COMMENT '修改人',
     `update_time` datetime(3) DEFAULT NULL COMMENT '修改时间',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='会员收货地址';
@@ -61,7 +65,9 @@ CREATE TABLE `ums_member_wechat` (
     expires_in    int                             null comment '过期时间',
     refresh_token varchar(500)                    null comment '刷新token',
     expire_time   datetime(3)                     null comment '过期时间',
+    `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
     `create_time` datetime(3) DEFAULT NULL COMMENT '创建时间',
+    `update_by` bigint(20) DEFAULT NULL COMMENT '修改人',
     `update_time` datetime(3) DEFAULT NULL COMMENT '修改时间',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='用户微信信息';

@@ -25,6 +25,10 @@ public class ApplicationTest {
     @Test
     public void test2() {
         List<String> tableNames = Arrays.asList(
+//                "pms_brand",
+//                "pms_product_category" ,
+//                "pms_product",
+//                "pms_sku"
                 "ums_member",
                 "ums_member_address",
                 "ums_member_wechat"

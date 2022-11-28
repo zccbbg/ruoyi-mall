@@ -18,11 +18,4 @@ public interface ${ClassName}Mapper extends BaseMapper<${ClassName}> {
      * @return ${functionName}集合
      */
     List<${ClassName}> selectByEntity(${ClassName} ${className});
-
-    /**
-     * 批量软删除
-     * @param ids
-     * @return
-    */
-    int updateDelFlagByIds(@Param("ids") Long[] ids);
 }

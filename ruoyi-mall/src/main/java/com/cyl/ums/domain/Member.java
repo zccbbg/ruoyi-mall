@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import com.ruoyi.common.annotation.Excel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import com.ruoyi.common.core.domain.BaseAudit;
 import lombok.Data;
 import com.baomidou.mybatisplus.annotation.TableName;
 /**
@@ -16,7 +17,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 @ApiModel(description="会员信息对象")
 @Data
 @TableName("ums_member")
-public class Member {
+public class Member extends BaseAudit {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("ID")
@@ -85,11 +86,5 @@ public class Member {
     @ApiModelProperty("用户剩余积分")
     @Excel(name = "用户剩余积分")
     private BigDecimal integral;
-
-    @ApiModelProperty("创建时间")
-    private LocalDateTime createTime;
-
-    @ApiModelProperty("修改时间")
-    private LocalDateTime updateTime;
 
 }

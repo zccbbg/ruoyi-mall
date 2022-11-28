@@ -3,6 +3,7 @@ package com.cyl.ums.pojo.vo;
 import java.time.LocalDateTime;
 import com.ruoyi.common.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ruoyi.common.core.domain.BaseAudit;
 import lombok.Data;
 /**
  * 用户微信信息 数据视图对象
@@ -10,7 +11,7 @@ import lombok.Data;
  * @author zcc
  */
 @Data
-public class MemberWechatVO  {
+public class MemberWechatVO extends BaseAudit {
    /** ID */
     private Long id;
    /** MEMBER_ID */
@@ -53,8 +54,4 @@ public class MemberWechatVO  {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Excel(name = "过期时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime expireTime;
-   /** 创建时间 */
-    private LocalDateTime createTime;
-   /** 修改时间 */
-    private LocalDateTime updateTime;
 }

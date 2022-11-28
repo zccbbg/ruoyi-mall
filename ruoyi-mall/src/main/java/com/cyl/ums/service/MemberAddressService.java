@@ -1,6 +1,5 @@
 package com.cyl.ums.service;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.time.LocalDateTime;
@@ -47,7 +46,6 @@ public class MemberAddressService {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
         QueryWrapper<MemberAddress> qw = new QueryWrapper<>();
-        qw.eq("del_flag",0);
         Long memberId = query.getMemberId();
         if (memberId != null) {
             qw.eq("member_id", memberId);
@@ -98,7 +96,6 @@ public class MemberAddressService {
      * @return 结果
      */
     public int insert(MemberAddress memberAddress) {
-        memberAddress.setDelFlag(0);
         memberAddress.setCreateTime(LocalDateTime.now());
         return memberAddressMapper.insert(memberAddress);
     }
@@ -114,23 +111,12 @@ public class MemberAddressService {
     }
 
     /**
-     * 批量删除会员收货地址
-     *
-     * @param ids 需要删除的会员收货地址主键
-     * @return 结果
-     */
-    public int deleteByIds(Long[] ids) {
-        return memberAddressMapper.updateDelFlagByIds(ids);
-    }
-
-    /**
      * 删除会员收货地址信息
      *
      * @param id 会员收货地址主键
      * @return 结果
      */
     public int deleteById(Long id) {
-        Long[] ids = {id};
-        return memberAddressMapper.updateDelFlagByIds(ids);
+        return memberAddressMapper.deleteById(id);
     }
 }

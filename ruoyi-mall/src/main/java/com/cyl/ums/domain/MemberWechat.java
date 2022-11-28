@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import com.ruoyi.common.annotation.Excel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import com.ruoyi.common.core.domain.BaseAudit;
 import lombok.Data;
 import com.baomidou.mybatisplus.annotation.TableName;
 /**
@@ -14,7 +15,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 @ApiModel(description="用户微信信息对象")
 @Data
 @TableName("ums_member_wechat")
-public class MemberWechat {
+public class MemberWechat extends BaseAudit {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("ID")
@@ -71,11 +72,5 @@ public class MemberWechat {
     @ApiModelProperty("过期时间")
     @Excel(name = "过期时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime expireTime;
-
-    @ApiModelProperty("创建时间")
-    private LocalDateTime createTime;
-
-    @ApiModelProperty("修改时间")
-    private LocalDateTime updateTime;
 
 }

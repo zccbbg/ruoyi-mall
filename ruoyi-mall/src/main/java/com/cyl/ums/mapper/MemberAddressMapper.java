@@ -18,11 +18,4 @@ public interface MemberAddressMapper extends BaseMapper<MemberAddress> {
      * @return 会员收货地址集合
      */
     List<MemberAddress> selectByEntity(MemberAddress memberAddress);
-
-    /**
-     * 批量软删除
-     * @param ids
-     * @return
-    */
-    int updateDelFlagByIds(@Param("ids") Long[] ids);
 }

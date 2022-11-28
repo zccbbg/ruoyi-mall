@@ -18,11 +18,4 @@ public interface BrandMapper extends BaseMapper<Brand> {
      * @return 品牌管理集合
      */
     List<Brand> selectByEntity(Brand brand);
-
-    /**
-     * 批量软删除
-     * @param ids
-     * @return
-    */
-    int updateDelFlagByIds(@Param("ids") Long[] ids);
 }

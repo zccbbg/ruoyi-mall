@@ -87,7 +87,7 @@ public class ${_className.controller} extends BaseController {
     @PreAuthorize("@ss.hasPermi('${permissionPrefix}:remove')")
     @Log(title = "${functionName}", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{${pkColumn.javaField}s}")
-    public ResponseEntity<Integer> remove(@PathVariable ${pkColumn.javaType}[] ${pkColumn.javaField}s) {
-        return ResponseEntity.ok(service.deleteBy${pkColumn.capJavaField}s(${pkColumn.javaField}s));
+    public ResponseEntity<Integer> remove(@PathVariable ${pkColumn.javaType} ${pkColumn.javaField}) {
+        return ResponseEntity.ok(service.deleteBy${pkColumn.capJavaField}(${pkColumn.javaField}));
     }
 }
