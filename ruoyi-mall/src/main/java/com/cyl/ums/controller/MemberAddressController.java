@@ -86,7 +86,7 @@ public class MemberAddressController extends BaseController {
     @ApiOperation("删除会员收货地址")
     @PreAuthorize("@ss.hasPermi('ums:memberAddress:remove')")
     @Log(title = "会员收货地址", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
+	@DeleteMapping("/{id}")
     public ResponseEntity<Integer> remove(@PathVariable Long id) {
         return ResponseEntity.ok(service.deleteById(id));
     }

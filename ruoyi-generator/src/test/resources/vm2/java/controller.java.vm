@@ -86,7 +86,7 @@ public class ${_className.controller} extends BaseController {
     @ApiOperation("删除${functionName}")
     @PreAuthorize("@ss.hasPermi('${permissionPrefix}:remove')")
     @Log(title = "${functionName}", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{${pkColumn.javaField}s}")
+	@DeleteMapping("/{${pkColumn.javaField}}")
     public ResponseEntity<Integer> remove(@PathVariable ${pkColumn.javaType} ${pkColumn.javaField}) {
         return ResponseEntity.ok(service.deleteBy${pkColumn.capJavaField}(${pkColumn.javaField}));
     }

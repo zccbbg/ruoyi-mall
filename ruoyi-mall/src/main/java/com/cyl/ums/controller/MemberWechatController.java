@@ -86,7 +86,7 @@ public class MemberWechatController extends BaseController {
     @ApiOperation("删除用户微信信息")
     @PreAuthorize("@ss.hasPermi('ums:memberWechat:remove')")
     @Log(title = "用户微信信息", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
+	@DeleteMapping("/{id}")
     public ResponseEntity<Integer> remove(@PathVariable Long id) {
         return ResponseEntity.ok(service.deleteById(id));
     }

@@ -86,7 +86,7 @@ public class ProductController extends BaseController {
     @ApiOperation("删除商品信息")
     @PreAuthorize("@ss.hasPermi('pms:product:remove')")
     @Log(title = "商品信息", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
+	@DeleteMapping("/{id}")
     public ResponseEntity<Integer> remove(@PathVariable Long id) {
         return ResponseEntity.ok(service.deleteById(id));
     }

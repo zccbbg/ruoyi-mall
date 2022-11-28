@@ -86,7 +86,7 @@ public class ProductCategoryController extends BaseController {
     @ApiOperation("删除商品分类")
     @PreAuthorize("@ss.hasPermi('pms:productCategory:remove')")
     @Log(title = "商品分类", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
+	@DeleteMapping("/{id}")
     public ResponseEntity<Integer> remove(@PathVariable Long id) {
         return ResponseEntity.ok(service.deleteById(id));
     }

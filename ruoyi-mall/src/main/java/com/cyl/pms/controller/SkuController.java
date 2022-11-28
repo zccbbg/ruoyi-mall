@@ -86,7 +86,7 @@ public class SkuController extends BaseController {
     @ApiOperation("删除sku信息")
     @PreAuthorize("@ss.hasPermi('pms:sku:remove')")
     @Log(title = "sku信息", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
+	@DeleteMapping("/{id}")
     public ResponseEntity<Integer> remove(@PathVariable Long id) {
         return ResponseEntity.ok(service.deleteById(id));
     }

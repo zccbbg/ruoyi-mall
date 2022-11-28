@@ -86,7 +86,7 @@ public class BrandController extends BaseController {
     @ApiOperation("删除品牌管理")
     @PreAuthorize("@ss.hasPermi('pms:brand:remove')")
     @Log(title = "品牌管理", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
+	@DeleteMapping("/{id}")
     public ResponseEntity<Integer> remove(@PathVariable Long id) {
         return ResponseEntity.ok(service.deleteById(id));
     }
