@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.ums.mapper.MemberMapper">
+    
+    <resultMap type="Member" id="MemberResult">
+        <result property="id" column="id"/>
+        <result property="nickname" column="nickname"/>
+        <result property="password" column="password"/>
+        <result property="phone" column="phone"/>
+        <result property="mark" column="mark"/>
+        <result property="status" column="status"/>
+        <result property="avatar" column="avatar"/>
+        <result property="gender" column="gender"/>
+        <result property="birthday" column="birthday"/>
+        <result property="spreadUid" column="spread_uid"/>
+        <result property="spreadTime" column="spread_time"/>
+        <result property="level" column="level"/>
+        <result property="integral" column="integral"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectMemberVo">
+        select id, nickname, password, phone, mark, status, avatar, gender, birthday, spread_uid, spread_time, level, integral, create_time, update_time  from ums_member
+    </sql>
+
+    <select id="selectByEntity" parameterType="Member" resultMap="MemberResult">
+        <include refid="selectMemberVo"/>
+        <where>  
+            <if test="nickname != null  and nickname != ''"> and nickname like concat('%', #{nickname}, '%')</if>
+            <if test="password != null  and password != ''"> and password = #{password}</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="mark != null  and mark != ''"> and mark = #{mark}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="avatar != null  and avatar != ''"> and avatar = #{avatar}</if>
+            <if test="gender != null "> and gender = #{gender}</if>
+            <if test="birthday != null "> and birthday = #{birthday}</if>
+            <if test="spreadUid != null "> and spread_uid = #{spreadUid}</if>
+            <if test="spreadTime != null "> and spread_time = #{spreadTime}</if>
+            <if test="level != null "> and level = #{level}</if>
+            <if test="integral != null "> and integral = #{integral}</if>
+        </where>
+    </select>
+
+    <update id="updateDelFlagByIds">
+        update ums_member set del_flag=1
+        <where>
+            id in <foreach collection="ids" open="(" item="it" close=")" separator=",">#{it}</foreach>
+        </where>
+    </update>
+</mapper>
