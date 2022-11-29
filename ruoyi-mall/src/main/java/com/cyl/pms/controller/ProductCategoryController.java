@@ -45,9 +45,9 @@ public class ProductCategoryController extends BaseController {
     @ApiOperation("查询商品分类列表")
     @PreAuthorize("@ss.hasPermi('pms:productCategory:list')")
     @PostMapping("/list")
-    public ResponseEntity<Page<ProductCategory>> list(@RequestBody ProductCategoryQuery query, Pageable page) {
-        List<ProductCategory> list = service.selectList(query, page);
-        return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
+    public ResponseEntity<List<ProductCategory>> list(@RequestBody ProductCategoryQuery query) {
+        List<ProductCategory> list = service.selectList(query, null);
+        return ResponseEntity.ok(list);
     }
 
     @ApiOperation("导出商品分类列表")

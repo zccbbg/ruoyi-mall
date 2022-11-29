@@ -37,6 +37,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="status != null and status != ''">
 				AND status = #{status}
 			</if>
+			<if test="params != null and params.dictTypes != null and params.dictTypes.size() > 0">
+				AND dict_type in
+				<foreach collection="params.dictTypes" open="(" separator="," close=")" item="it">
+					#{it}
+				</foreach>
+			</if>
 		</where>
 		order by dict_sort asc
 	</select>

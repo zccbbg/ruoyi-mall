@@ -12,7 +12,7 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(description="商品分类 查询 对象")
 @Data
 public class ProductCategoryQuery {
-    @ApiModelProperty("上机分类的编号：0表示一级分类 精确匹配")
+    @ApiModelProperty("上级分类的编号：0表示一级分类 精确匹配")
     private Long parentId;
 
     @ApiModelProperty("NAME 精确匹配")

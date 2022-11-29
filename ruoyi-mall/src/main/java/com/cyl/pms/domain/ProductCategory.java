@@ -20,8 +20,8 @@ public class ProductCategory extends BaseAudit {
     @ApiModelProperty("ID")
     private Long id;
 
-    @ApiModelProperty("上机分类的编号：0表示一级分类")
-    @Excel(name = "上机分类的编号：0表示一级分类")
+    @ApiModelProperty("上级分类的编号：0表示一级分类")
+    @Excel(name = "上级分类的编号：0表示一级分类")
     private Long parentId;
 
     @ApiModelProperty("NAME")
