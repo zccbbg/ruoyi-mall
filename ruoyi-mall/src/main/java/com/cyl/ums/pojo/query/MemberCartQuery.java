@@ -12,6 +12,9 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(description="购物车 查询 对象")
 @Data
 public class MemberCartQuery {
+    @ApiModelProperty("0->失效；1->有效 精确匹配")
+    private Integer status;
+
     @ApiModelProperty("用户ID 精确匹配")
     private Long memberId;
 

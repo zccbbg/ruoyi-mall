@@ -6,6 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="MemberCart" id="MemberCartResult">
         <result property="id" column="id"/>
+        <result property="status" column="status"/>
         <result property="memberId" column="member_id"/>
         <result property="productId" column="product_id"/>
         <result property="pic" column="pic"/>
@@ -24,12 +25,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectMemberCartVo">
-        select id, member_id, product_id, pic, sku_id, product_name, sp_data, cart_num, create_by, create_time, update_by, update_time   from ums_member_cart
+        select id, status, member_id, product_id, pic, sku_id, product_name, sp_data, cart_num, create_by, create_time, update_by, update_time   from ums_member_cart
     </sql>
 
     <select id="selectByEntity" parameterType="MemberCart" resultMap="MemberCartResult">
         <include refid="selectMemberCartVo"/>
         <where>  
+            <if test="status != null "> and status = #{status}</if>
             <if test="memberId != null "> and member_id = #{memberId}</if>
             <if test="productId != null "> and product_id = #{productId}</if>
             <if test="pic != null  and pic != ''"> and pic = #{pic}</if>

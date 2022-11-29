@@ -20,6 +20,10 @@ public class MemberCart extends BaseAudit {
     @ApiModelProperty("购物车表ID")
     private Long id;
 
+    @ApiModelProperty("0->失效；1->有效")
+    @Excel(name = "0->失效；1->有效")
+    private Integer status;
+
     @ApiModelProperty("用户ID")
     @Excel(name = "用户ID")
     private Long memberId;

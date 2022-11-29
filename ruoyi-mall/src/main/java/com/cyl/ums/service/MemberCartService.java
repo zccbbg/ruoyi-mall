@@ -46,6 +46,10 @@ public class MemberCartService {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
         QueryWrapper<MemberCart> qw = new QueryWrapper<>();
+        Integer status = query.getStatus();
+        if (status != null) {
+            qw.eq("status", status);
+        }
         Long memberId = query.getMemberId();
         if (memberId != null) {
             qw.eq("member_id", memberId);

@@ -75,6 +75,7 @@ CREATE TABLE `ums_member_wechat` (
 DROP TABLE IF EXISTS `ums_member_cart`;
 CREATE TABLE `ums_member_cart` (
      `id` bigint NOT NULL AUTO_INCREMENT COMMENT '购物车表ID',
+     `status` int(1) DEFAULT NULL COMMENT '0->失效；1->有效',
      `member_id` bigint unsigned NOT NULL COMMENT '用户ID',
      `product_id` bigint unsigned NOT NULL COMMENT '商品ID',
      `pic` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '展示图片',

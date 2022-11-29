@@ -13,6 +13,9 @@ import lombok.Data;
 public class MemberCartVO extends BaseAudit {
    /** 购物车表ID */
     private Long id;
+   /** 0->失效；1->有效 */
+    @Excel(name = "0->失效；1->有效")
+    private Integer status;
    /** 用户ID */
     @Excel(name = "用户ID")
     private Long memberId;
