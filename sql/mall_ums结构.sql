@@ -80,7 +80,7 @@ CREATE TABLE `ums_member_cart` (
      `pic` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '展示图片',
      `sku_id` bigint unsigned COMMENT 'SKU ID',
      `product_name`  varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-     `sp_data` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8_general_ci COMMENT '商品属性',
+     `sp_data` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci COMMENT '商品属性',
      `cart_num` smallint unsigned NOT NULL DEFAULT '0' COMMENT '商品数量',
      `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
      `create_time` datetime(3) DEFAULT NULL COMMENT '创建时间',
@@ -89,4 +89,4 @@ CREATE TABLE `ums_member_cart` (
      PRIMARY KEY (`id`) USING BTREE,
      KEY `member_id` (`member_id`) USING BTREE,
      KEY `product_id` (`product_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=150 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='购物车表';
+) ENGINE=InnoDB AUTO_INCREMENT=150 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='购物车';
