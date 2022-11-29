@@ -29,9 +29,10 @@ public class ApplicationTest {
 //                "pms_product_category" ,
 //                "pms_product",
 //                "pms_sku"
-                "ums_member",
-                "ums_member_address",
-                "ums_member_wechat"
+//                "ums_member",
+//                "ums_member_address",
+//                "ums_member_wechat",
+                "ums_member_cart"
         );
         // 查询表信息
         List<GenTable> tableList = genTableService.selectGenTableByName(tableNames);

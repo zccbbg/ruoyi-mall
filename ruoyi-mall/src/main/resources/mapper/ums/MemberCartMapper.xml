@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.ums.mapper.MemberCartMapper">
+    
+    <resultMap type="MemberCart" id="MemberCartResult">
+        <result property="id" column="id"/>
+        <result property="memberId" column="member_id"/>
+        <result property="productId" column="product_id"/>
+        <result property="pic" column="pic"/>
+        <result property="skuId" column="sku_id"/>
+        <result property="productName" column="product_name"/>
+        <result property="spData" column="sp_data"/>
+        <result property="cartNum" column="cart_num"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="selectMemberCartVo">
+        select id, member_id, product_id, pic, sku_id, product_name, sp_data, cart_num, create_by, create_time, update_by, update_time   from ums_member_cart
+    </sql>
+
+    <select id="selectByEntity" parameterType="MemberCart" resultMap="MemberCartResult">
+        <include refid="selectMemberCartVo"/>
+        <where>  
+            <if test="memberId != null "> and member_id = #{memberId}</if>
+            <if test="productId != null "> and product_id = #{productId}</if>
+            <if test="pic != null  and pic != ''"> and pic = #{pic}</if>
+            <if test="skuId != null "> and sku_id = #{skuId}</if>
+            <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
+            <if test="spData != null  and spData != ''"> and sp_data = #{spData}</if>
+            <if test="cartNum != null "> and cart_num = #{cartNum}</if>
+        </where>
+    </select>
+</mapper>
