@@ -71,3 +71,22 @@ CREATE TABLE `ums_member_wechat` (
     `update_time` datetime(3) DEFAULT NULL COMMENT '修改时间',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='用户微信信息';
+
+DROP TABLE IF EXISTS `ums_member_cart`;
+CREATE TABLE `ums_member_cart` (
+     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '购物车表ID',
+     `member_id` bigint unsigned NOT NULL COMMENT '用户ID',
+     `product_id` bigint unsigned NOT NULL COMMENT '商品ID',
+     `pic` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '展示图片',
+     `sku_id` bigint unsigned COMMENT 'SKU ID',
+     `product_name`  varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+     `sp_data` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8_general_ci COMMENT '商品属性',
+     `cart_num` smallint unsigned NOT NULL DEFAULT '0' COMMENT '商品数量',
+     `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
+     `create_time` datetime(3) DEFAULT NULL COMMENT '创建时间',
+     `update_by` bigint(20) DEFAULT NULL COMMENT '修改人',
+     `update_time` datetime(3) DEFAULT NULL COMMENT '修改时间',
+     PRIMARY KEY (`id`) USING BTREE,
+     KEY `member_id` (`member_id`) USING BTREE,
+     KEY `product_id` (`product_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=150 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='购物车表';
