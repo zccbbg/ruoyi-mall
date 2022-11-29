@@ -36,5 +36,5 @@ public class MemberCartVO extends BaseAudit {
     private String spData;
    /** 商品数量 */
     @Excel(name = "商品数量")
-    private Integer cartNum;
+    private Integer quantity;
 }

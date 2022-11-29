@@ -50,6 +50,6 @@ public class MemberCart extends BaseAudit {
 
     @ApiModelProperty("商品数量")
     @Excel(name = "商品数量")
-    private Integer cartNum;
+    private Integer quantity;
 
 }

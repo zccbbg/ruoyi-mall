@@ -34,6 +34,6 @@ public class MemberCartQuery {
     private String spData;
 
     @ApiModelProperty("商品数量 精确匹配")
-    private Integer cartNum;
+    private Integer quantity;
 
 }

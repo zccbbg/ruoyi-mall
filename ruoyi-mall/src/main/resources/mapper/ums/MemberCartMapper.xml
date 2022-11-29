@@ -13,7 +13,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="skuId" column="sku_id"/>
         <result property="productName" column="product_name"/>
         <result property="spData" column="sp_data"/>
-        <result property="cartNum" column="cart_num"/>
+        <result property="quantity" column="quantity"/>
         <result property="createBy" column="create_by"/>
         <result property="createTime" column="create_time"/>
         <result property="updateBy" column="update_by"/>
@@ -25,7 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectMemberCartVo">
-        select id, status, member_id, product_id, pic, sku_id, product_name, sp_data, cart_num, create_by, create_time, update_by, update_time   from ums_member_cart
+        select id, status, member_id, product_id, pic, sku_id, product_name, sp_data, quantity, create_by, create_time, update_by, update_time   from ums_member_cart
     </sql>
 
     <select id="selectByEntity" parameterType="MemberCart" resultMap="MemberCartResult">
@@ -38,7 +38,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="skuId != null "> and sku_id = #{skuId}</if>
             <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
             <if test="spData != null  and spData != ''"> and sp_data = #{spData}</if>
-            <if test="cartNum != null "> and cart_num = #{cartNum}</if>
+            <if test="quantity != null "> and quantity = #{quantity}</if>
         </where>
     </select>
 </mapper>

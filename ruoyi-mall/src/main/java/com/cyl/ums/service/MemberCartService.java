@@ -74,9 +74,9 @@ public class MemberCartService {
         if (!StringUtils.isEmpty(spData)) {
             qw.eq("sp_data", spData);
         }
-        Integer cartNum = query.getCartNum();
-        if (cartNum != null) {
-            qw.eq("cart_num", cartNum);
+        Integer quantity = query.getQuantity();
+        if (quantity != null) {
+            qw.eq("quantity", quantity);
         }
         return memberCartMapper.selectList(qw);
     }
