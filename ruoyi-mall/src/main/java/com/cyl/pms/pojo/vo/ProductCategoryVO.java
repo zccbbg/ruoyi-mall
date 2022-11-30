@@ -13,8 +13,8 @@ import lombok.Data;
 public class ProductCategoryVO extends BaseAudit {
    /** ID */
     private Long id;
-   /** 上机分类的编号：0表示一级分类 */
-    @Excel(name = "上机分类的编号：0表示一级分类")
+   /** 上级分类的编号：0表示一级分类 */
+    @Excel(name = "上级分类的编号：0表示一级分类")
     private Long parentId;
    /** NAME */
     @Excel(name = "NAME")

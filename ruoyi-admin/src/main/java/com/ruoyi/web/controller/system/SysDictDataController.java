@@ -83,6 +83,22 @@ public class SysDictDataController extends BaseController
     }
 
     /**
+     * 根据字典类型查询字典数据信息
+     */
+    @PostMapping(value = "/all-by-types")
+    public AjaxResult allByTypes(@RequestBody List<String> dictTypes)
+    {
+        SysDictData query = new SysDictData();
+        query.getParams().put("dictTypes", dictTypes);
+        List<SysDictData> data = dictDataService.selectDictDataList(query);
+        if (StringUtils.isNull(data))
+        {
+            data = new ArrayList<>();
+        }
+        return AjaxResult.success(data);
+    }
+
+    /**
      * 新增字典类型
      */
     @PreAuthorize("@ss.hasPermi('system:dict:add')")

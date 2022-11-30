@@ -53,7 +53,7 @@ DROP TABLE IF EXISTS `pms_product_category`;
 CREATE TABLE `pms_product_category`
 (
     `id`            bigint(20) NOT NULL AUTO_INCREMENT,
-    `parent_id`     bigint(20) NULL DEFAULT NULL COMMENT '上机分类的编号：0表示一级分类',
+    `parent_id`     bigint(20) NULL DEFAULT NULL COMMENT '上级分类的编号：0表示一级分类',
     `name`          varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
     `level`         int(1) NULL DEFAULT NULL COMMENT '分类级别：0->1级；1->2级',
     `show_status`   int(1) NULL DEFAULT NULL COMMENT '显示状态：0->不显示；1->显示',
