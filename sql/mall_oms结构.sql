@@ -100,15 +100,15 @@ CREATE TABLE `oms_order_operate_history`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '订单操作历史记录' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for oms_order_return_apply
+-- Table structure for oms_refund
 -- ----------------------------
-DROP TABLE IF EXISTS `oms_order_return_apply`;
-CREATE TABLE `oms_order_return_apply`  (
+DROP TABLE IF EXISTS `oms_refund`;
+CREATE TABLE `oms_refund`  (
     `id` bigint(20) NOT NULL,
     `member_id` bigint(20) NOT NULL,
     `order_id` bigint(20) NULL DEFAULT NULL COMMENT '订单id',
-    `order_item_id` bigint(20) NULL DEFAULT NULL COMMENT '子订单id',
     `return_amount` decimal(10, 2) NULL DEFAULT NULL COMMENT '退款金额',
+    `type` int(1) NULL DEFAULT NULL COMMENT '售后类型：1：退款，2：退货退款',
     `status` int(1) NULL DEFAULT NULL COMMENT '申请状态：0->待处理；1->退货中；2->已完成；3->已拒绝',
     `handle_time` datetime(0) NULL DEFAULT NULL COMMENT '处理时间',
     `quantity` int(11) NULL DEFAULT NULL COMMENT '退货数量',
@@ -117,12 +117,24 @@ CREATE TABLE `oms_order_return_apply`  (
     `proof_pics` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '凭证图片，以逗号隔开',
     `handle_note` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '处理备注',
     `handle_man` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '处理人员',
-    `receive_man` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '收货人',
-    `receive_time` datetime(0) NULL DEFAULT NULL COMMENT '收货时间',
-    `receive_note` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '收货备注',
     `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
     `create_time` datetime(3) DEFAULT NULL COMMENT '创建时间',
     `update_by` bigint(20) DEFAULT NULL COMMENT '修改人',
     `update_time` datetime(3) DEFAULT NULL COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '订单退货申请' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '订单售后' ROW_FORMAT = Dynamic;
+
+DROP TABLE IF EXISTS `oms_refund_item`;
+CREATE TABLE `oms_refund_item`  (
+    `id` bigint(20) NOT NULL,
+    `member_id` bigint(20) NOT NULL,
+    `order_id` bigint(20) NULL DEFAULT NULL COMMENT '订单id',
+    `order_item_id` bigint(20) NULL DEFAULT NULL COMMENT '子订单id',
+    `return_amount` decimal(10, 2) NULL DEFAULT NULL COMMENT '退款金额',
+    `quantity` int(11) NULL DEFAULT NULL COMMENT '退货数量',
+    `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
+    `create_time` datetime(3) DEFAULT NULL COMMENT '创建时间',
+    `update_by` bigint(20) DEFAULT NULL COMMENT '修改人',
+    `update_time` datetime(3) DEFAULT NULL COMMENT '修改时间',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '订单售后' ROW_FORMAT = Dynamic;
