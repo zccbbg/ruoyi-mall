@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.oms.mapper.OrderOperateHistoryMapper">
+    
+    <resultMap type="OrderOperateHistory" id="OrderOperateHistoryResult">
+        <result property="id" column="id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="operateMan" column="operate_man"/>
+        <result property="orderStatus" column="order_status"/>
+        <result property="note" column="note"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="selectOrderOperateHistoryVo">
+        select id, order_id, operate_man, order_status, note, create_by, create_time, update_by, update_time   from oms_order_operate_history
+    </sql>
+
+    <select id="selectByEntity" parameterType="OrderOperateHistory" resultMap="OrderOperateHistoryResult">
+        <include refid="selectOrderOperateHistoryVo"/>
+        <where>  
+            <if test="orderId != null "> and order_id = #{orderId}</if>
+            <if test="operateMan != null  and operateMan != ''"> and operate_man = #{operateMan}</if>
+            <if test="orderStatus != null "> and order_status = #{orderStatus}</if>
+            <if test="note != null  and note != ''"> and note = #{note}</if>
+        </where>
+    </select>
+</mapper>

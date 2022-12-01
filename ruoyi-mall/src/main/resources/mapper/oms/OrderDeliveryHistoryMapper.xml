@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.oms.mapper.OrderDeliveryHistoryMapper">
+    
+    <resultMap type="OrderDeliveryHistory" id="OrderDeliveryHistoryResult">
+        <result property="id" column="id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="deliveryCompany" column="delivery_company"/>
+        <result property="deliverySn" column="delivery_sn"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="selectOrderDeliveryHistoryVo">
+        select id, order_id, delivery_company, delivery_sn, create_by, create_time, update_by, update_time   from oms_order_delivery_history
+    </sql>
+
+    <select id="selectByEntity" parameterType="OrderDeliveryHistory" resultMap="OrderDeliveryHistoryResult">
+        <include refid="selectOrderDeliveryHistoryVo"/>
+        <where>  
+            <if test="orderId != null "> and order_id = #{orderId}</if>
+            <if test="deliveryCompany != null  and deliveryCompany != ''"> and delivery_company = #{deliveryCompany}</if>
+            <if test="deliverySn != null  and deliverySn != ''"> and delivery_sn = #{deliverySn}</if>
+        </where>
+    </select>
+</mapper>

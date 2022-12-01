@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.oms.mapper.OrderItemMapper">
+    
+    <resultMap type="OrderItem" id="OrderItemResult">
+        <result property="id" column="id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="productId" column="product_id"/>
+        <result property="outProductId" column="out_product_id"/>
+        <result property="skuId" column="sku_id"/>
+        <result property="outSkuId" column="out_sku_id"/>
+        <result property="productSnapshotId" column="product_snapshot_id"/>
+        <result property="skuSnapshotId" column="sku_snapshot_id"/>
+        <result property="pic" column="pic"/>
+        <result property="productName" column="product_name"/>
+        <result property="salePrice" column="sale_price"/>
+        <result property="purchasePrice" column="purchase_price"/>
+        <result property="quantity" column="quantity"/>
+        <result property="productCategoryId" column="product_category_id"/>
+        <result property="spData" column="sp_data"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="selectOrderItemVo">
+        select id, order_id, product_id, out_product_id, sku_id, out_sku_id, product_snapshot_id, sku_snapshot_id, pic, product_name, sale_price, purchase_price, quantity, product_category_id, sp_data, create_by, create_time, update_by, update_time   from oms_order_item
+    </sql>
+
+    <select id="selectByEntity" parameterType="OrderItem" resultMap="OrderItemResult">
+        <include refid="selectOrderItemVo"/>
+        <where>  
+            <if test="orderId != null "> and order_id = #{orderId}</if>
+            <if test="productId != null "> and product_id = #{productId}</if>
+            <if test="outProductId != null  and outProductId != ''"> and out_product_id = #{outProductId}</if>
+            <if test="skuId != null "> and sku_id = #{skuId}</if>
+            <if test="outSkuId != null  and outSkuId != ''"> and out_sku_id = #{outSkuId}</if>
+            <if test="productSnapshotId != null "> and product_snapshot_id = #{productSnapshotId}</if>
+            <if test="skuSnapshotId != null "> and sku_snapshot_id = #{skuSnapshotId}</if>
+            <if test="pic != null  and pic != ''"> and pic = #{pic}</if>
+            <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
+            <if test="salePrice != null "> and sale_price = #{salePrice}</if>
+            <if test="purchasePrice != null "> and purchase_price = #{purchasePrice}</if>
+            <if test="quantity != null "> and quantity = #{quantity}</if>
+            <if test="productCategoryId != null "> and product_category_id = #{productCategoryId}</if>
+            <if test="spData != null  and spData != ''"> and sp_data = #{spData}</if>
+        </where>
+    </select>
+</mapper>
