@@ -73,8 +73,8 @@ public class OrderItem extends BaseAudit {
     @Excel(name = "商品分类id")
     private Long productCategoryId;
 
-    @ApiModelProperty("商品sku属性:[{"key":"颜色","value":"颜色"},{"key":"容量","value":"4G"}]")
-    @Excel(name = "商品sku属性:[{"key":"颜色","value":"颜色"},{"key":"容量","value":"4G"}]")
+    @ApiModelProperty("商品sku属性:[{\"key\":\"颜色\",\"value\":\"颜色\"},{\"key\":\"容量\",\"value\":\"4G\"}]")
+    @Excel(name = "商品sku属性:[{\"key\":\"颜色\",\"value\":\"颜色\"},{\"key\":\"容量\",\"value\":\"4G\"}]")
     private String spData;
 
 }

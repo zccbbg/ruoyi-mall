@@ -53,7 +53,7 @@ public class OrderItemVO extends BaseAudit {
    /** 商品分类id */
     @Excel(name = "商品分类id")
     private Long productCategoryId;
-   /** 商品sku属性:[{"key":"颜色","value":"颜色"},{"key":"容量","value":"4G"}] */
-    @Excel(name = "商品sku属性:[{"key":"颜色","value":"颜色"},{"key":"容量","value":"4G"}]")
+   /** 商品sku属性:[{\"key\":\"颜色\",\"value\":\"颜色\"},{\"key\":\"容量\",\"value\":\"4G\"}] */
+    @Excel(name = "商品sku属性:[{\"key\":\"颜色\",\"value\":\"颜色\"},{\"key\":\"容量\",\"value\":\"4G\"}]")
     private String spData;
 }

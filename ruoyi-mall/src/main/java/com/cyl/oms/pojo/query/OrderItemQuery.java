@@ -52,7 +52,7 @@ public class OrderItemQuery {
     @ApiModelProperty("商品分类id 精确匹配")
     private Long productCategoryId;
 
-    @ApiModelProperty("商品sku属性:[{"key":"颜色","value":"颜色"},{"key":"容量","value":"4G"}] 精确匹配")
+    @ApiModelProperty("商品sku属性:[{\"key\":\"颜色\",\"value\":\"颜色\"},{\"key\":\"容量\",\"value\":\"4G\"}] 精确匹配")
     private String spData;
 
 }
