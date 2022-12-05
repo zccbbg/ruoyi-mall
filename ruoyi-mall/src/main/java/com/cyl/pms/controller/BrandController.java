@@ -49,6 +49,12 @@ public class BrandController extends BaseController {
         List<Brand> list = service.selectList(query, page);
         return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
     }
+    @ApiOperation("所有品牌管理列表")
+    @PreAuthorize("@ss.hasPermi('pms:brand:list')")
+    @PostMapping("/all")
+    public ResponseEntity<List<Brand>> all(@RequestBody BrandQuery query) {
+        return ResponseEntity.ok(service.selectList(query, null));
+    }
 
     @ApiOperation("导出品牌管理列表")
     @PreAuthorize("@ss.hasPermi('pms:brand:export')")
