@@ -14,7 +14,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="freightAmount" column="freight_amount"/>
         <result property="payType" column="pay_type"/>
         <result property="status" column="status"/>
-        <result property="refundStatus" column="refund_status"/>
+        <result property="aftersaleStatus" column="aftersale_status"/>
         <result property="deliveryCompany" column="delivery_company"/>
         <result property="deliverySn" column="delivery_sn"/>
         <result property="autoConfirmDay" column="auto_confirm_day"/>
@@ -45,7 +45,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectOrderVo">
-        select id, member_id, member_username, total_amount, purchase_price, pay_amount, freight_amount, pay_type, status, refund_status, delivery_company, delivery_sn, auto_confirm_day, receiver_name, receiver_phone, receiver_post_code, receiver_province, receiver_city, receiver_district, receiver_province_id, receiver_city_id, receiver_district_id, receiver_detail_address, note, confirm_status, delete_status, payment_time, delivery_time, receive_time, create_by, create_time, update_by, update_time   from oms_order
+        select id, member_id, member_username, total_amount, purchase_price, pay_amount, freight_amount, pay_type, status, aftersale_status, delivery_company, delivery_sn, auto_confirm_day, receiver_name, receiver_phone, receiver_post_code, receiver_province, receiver_city, receiver_district, receiver_province_id, receiver_city_id, receiver_district_id, receiver_detail_address, note, confirm_status, delete_status, payment_time, delivery_time, receive_time, create_by, create_time, update_by, update_time   from oms_order
     </sql>
 
     <select id="selectByEntity" parameterType="Order" resultMap="OrderResult">
@@ -59,7 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="freightAmount != null "> and freight_amount = #{freightAmount}</if>
             <if test="payType != null "> and pay_type = #{payType}</if>
             <if test="status != null "> and status = #{status}</if>
-            <if test="refundStatus != null "> and refund_status = #{refundStatus}</if>
+            <if test="aftersaleStatus != null "> and aftersale_status = #{aftersaleStatus}</if>
             <if test="deliveryCompany != null  and deliveryCompany != ''"> and delivery_company = #{deliveryCompany}</if>
             <if test="deliverySn != null  and deliverySn != ''"> and delivery_sn = #{deliverySn}</if>
             <if test="autoConfirmDay != null "> and auto_confirm_day = #{autoConfirmDay}</if>

@@ -80,9 +80,9 @@ public class OrderService {
         if (status != null) {
             qw.eq("status", status);
         }
-        Integer refundStatus = query.getRefundStatus();
-        if (refundStatus != null) {
-            qw.eq("refund_status", refundStatus);
+        Integer aftersaleStatus = query.getAftersaleStatus();
+        if (aftersaleStatus != null) {
+            qw.eq("aftersale_status", aftersaleStatus);
         }
         String deliveryCompany = query.getDeliveryCompany();
         if (!StringUtils.isEmpty(deliveryCompany)) {

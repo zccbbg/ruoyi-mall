@@ -56,7 +56,7 @@ public class Order extends BaseAudit {
 
     @ApiModelProperty("退款状态，枚举值：1：无售后或售后关闭，2：售后处理中，3：退款中，4： 退款成功")
     @Excel(name = "退款状态，枚举值：1：无售后或售后关闭，2：售后处理中，3：退款中，4： 退款成功")
-    private Integer refundStatus;
+    private Integer aftersaleStatus;
 
     @ApiModelProperty("物流公司(配送方式)")
     @Excel(name = "物流公司(配送方式)")

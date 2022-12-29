@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.oms.mapper.AftersaleMapper">
+    
+    <resultMap type="Aftersale" id="AftersaleResult">
+        <result property="id" column="id"/>
+        <result property="memberId" column="member_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="returnAmount" column="return_amount"/>
+        <result property="type" column="type"/>
+        <result property="status" column="status"/>
+        <result property="handleTime" column="handle_time"/>
+        <result property="quantity" column="quantity"/>
+        <result property="reason" column="reason"/>
+        <result property="description" column="description"/>
+        <result property="proofPics" column="proof_pics"/>
+        <result property="handleNote" column="handle_note"/>
+        <result property="handleMan" column="handle_man"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="selectAftersaleVo">
+        select id, member_id, order_id, return_amount, type, status, handle_time, quantity, reason, description, proof_pics, handle_note, handle_man, create_by, create_time, update_by, update_time   from oms_aftersale
+    </sql>
+
+    <select id="selectByEntity" parameterType="Aftersale" resultMap="AftersaleResult">
+        <include refid="selectAftersaleVo"/>
+        <where>  
+            <if test="memberId != null "> and member_id = #{memberId}</if>
+            <if test="orderId != null "> and order_id = #{orderId}</if>
+            <if test="returnAmount != null "> and return_amount = #{returnAmount}</if>
+            <if test="type != null "> and type = #{type}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="handleTime != null "> and handle_time = #{handleTime}</if>
+            <if test="quantity != null "> and quantity = #{quantity}</if>
+            <if test="reason != null  and reason != ''"> and reason = #{reason}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="proofPics != null  and proofPics != ''"> and proof_pics = #{proofPics}</if>
+            <if test="handleNote != null  and handleNote != ''"> and handle_note = #{handleNote}</if>
+            <if test="handleMan != null  and handleMan != ''"> and handle_man = #{handleMan}</if>
+        </where>
+    </select>
+</mapper>

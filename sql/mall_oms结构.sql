@@ -12,7 +12,7 @@ CREATE TABLE `oms_order`  (
     `freight_amount` decimal(10, 2) NULL DEFAULT NULL COMMENT '运费金额',
     `pay_type` int(1) NULL DEFAULT NULL COMMENT '支付方式：0->未支付；1->支付宝；2->微信',
     `status` int(1) NULL DEFAULT NULL COMMENT '订单状态：0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单',
-    `refund_status` int(1) NULL DEFAULT NULL COMMENT '退款状态，枚举值：1：无售后或售后关闭，2：售后处理中，3：退款中，4： 退款成功',
+    `aftersale_status` int(1) NULL DEFAULT NULL COMMENT '退款状态，枚举值：1：无售后或售后关闭，2：售后处理中，3：退款中，4： 退款成功',
     `delivery_company` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '物流公司(配送方式)',
     `delivery_sn` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '物流单号',
     `auto_confirm_day` int(11) NULL DEFAULT NULL COMMENT '自动确认时间（天）',
@@ -100,10 +100,10 @@ CREATE TABLE `oms_order_operate_history`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '订单操作历史记录' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for oms_refund
+-- Table structure for oms_aftersale
 -- ----------------------------
-DROP TABLE IF EXISTS `oms_refund`;
-CREATE TABLE `oms_refund`  (
+DROP TABLE IF EXISTS `oms_aftersale`;
+CREATE TABLE `oms_aftersale`  (
     `id` bigint(20) NOT NULL,
     `member_id` bigint(20) NOT NULL,
     `order_id` bigint(20) NULL DEFAULT NULL COMMENT '订单id',
@@ -124,8 +124,8 @@ CREATE TABLE `oms_refund`  (
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '订单售后' ROW_FORMAT = Dynamic;
 
-DROP TABLE IF EXISTS `oms_refund_item`;
-CREATE TABLE `oms_refund_item`  (
+DROP TABLE IF EXISTS `oms_aftersale_item`;
+CREATE TABLE `oms_aftersale_item`  (
     `id` bigint(20) NOT NULL,
     `member_id` bigint(20) NOT NULL,
     `order_id` bigint(20) NULL DEFAULT NULL COMMENT '订单id',

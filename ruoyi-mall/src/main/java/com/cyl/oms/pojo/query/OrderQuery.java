@@ -39,7 +39,7 @@ public class OrderQuery {
     private Integer status;
 
     @ApiModelProperty("退款状态，枚举值：1：无售后或售后关闭，2：售后处理中，3：退款中，4： 退款成功 精确匹配")
-    private Integer refundStatus;
+    private Integer aftersaleStatus;
 
     @ApiModelProperty("物流公司 精确匹配")
     private String deliveryCompany;
