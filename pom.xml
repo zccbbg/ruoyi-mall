@@ -126,6 +126,12 @@
                 <version>${commons.fileupload.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.aliyun.oss</groupId>
+                <artifactId>aliyun-sdk-oss</artifactId>
+                <version>3.15.2</version>
+            </dependency>
+
             <!-- excel工具 -->
             <dependency>
                 <groupId>org.apache.poi</groupId>

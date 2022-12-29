@@ -35,3 +35,10 @@ ruoyi:
     profile: C:/ruoyi/uploadPath
 scheduling:
     enabled: false
+#操作oss需要的一些参数
+aliyun:
+    accessKeyId: 你的accessKeyId       # 阿里云的accessKeyId
+    secretAccessKey: 你的accessKey密码   # accessKey 密码
+    oss:
+        endPoint: 你的endpoint     # Endpoint:在阿里云oss控制台查看自己使用的endpoint
+        bucketName: 你的bucketName   # bucket 名称
