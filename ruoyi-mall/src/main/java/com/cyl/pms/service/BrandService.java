@@ -62,6 +62,7 @@ public class BrandService {
         if (!StringUtils.isEmpty(logo)) {
             qw.eq("logo", logo);
         }
+        qw.orderByAsc("sort");
         return brandMapper.selectList(qw);
     }
 
