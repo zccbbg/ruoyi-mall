@@ -45,19 +45,9 @@ public class ProductCategoryController extends BaseController {
     @ApiOperation("查询商品分类列表")
     @PreAuthorize("@ss.hasPermi('pms:productCategory:list')")
     @PostMapping("/list")
-    public ResponseEntity<List<ProductCategory>> list(@RequestBody ProductCategoryQuery query) {
-        List<ProductCategory> list = service.selectList(query, null);
+    public ResponseEntity<List<ProductCategoryVO>> list(@RequestBody ProductCategoryQuery query) {
+        List<ProductCategoryVO> list = service.selectList(query, null);
         return ResponseEntity.ok(list);
-    }
-
-    @ApiOperation("导出商品分类列表")
-    @PreAuthorize("@ss.hasPermi('pms:productCategory:export')")
-    @Log(title = "商品分类", businessType = BusinessType.EXPORT)
-    @GetMapping("/export")
-    public ResponseEntity<String> export(ProductCategoryQuery query) {
-        List<ProductCategory> list = service.selectList(query, null);
-        ExcelUtil<ProductCategoryVO> util = new ExcelUtil<>(ProductCategoryVO.class);
-        return ResponseEntity.ok(util.writeExcel(convert.dos2vos(list), "商品分类数据"));
     }
 
     @ApiOperation("获取商品分类详细信息")
