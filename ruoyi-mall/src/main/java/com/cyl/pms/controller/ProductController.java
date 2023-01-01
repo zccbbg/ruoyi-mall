@@ -71,7 +71,7 @@ public class ProductController extends BaseController {
     @PreAuthorize("@ss.hasPermi('pms:product:add')")
     @Log(title = "商品信息", businessType = BusinessType.INSERT)
     @PostMapping
-    public ResponseEntity<Integer> add(@RequestBody Product product) {
+    public ResponseEntity<Integer> add(@RequestBody ProductVO product) {
         return ResponseEntity.ok(service.insert(product));
     }
 

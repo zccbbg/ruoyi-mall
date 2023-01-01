@@ -5,6 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cyl.pms.convert.ProductConvert;
+import com.cyl.pms.domain.Sku;
+import com.cyl.pms.mapper.SkuMapper;
+import com.cyl.pms.pojo.vo.ProductVO;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.cyl.pms.mapper.ProductMapper;
 import com.cyl.pms.domain.Product;
 import com.cyl.pms.pojo.query.ProductQuery;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 商品信息Service业务层处理
@@ -24,6 +29,11 @@ import com.cyl.pms.pojo.query.ProductQuery;
 public class ProductService {
     @Autowired
     private ProductMapper productMapper;
+
+    @Autowired
+    private SkuMapper skuMapper;
+    @Autowired
+    private ProductConvert convert;
 
     /**
      * 查询商品信息
@@ -113,12 +123,24 @@ public class ProductService {
     /**
      * 新增商品信息
      *
-     * @param product 商品信息
+     * @param productVO 商品信息
      * @return 结果
      */
-    public int insert(Product product) {
+    @Transactional
+    public int insert(ProductVO productVO) {
+
+        Product product = convert.vo2do(productVO);
         product.setCreateTime(LocalDateTime.now());
-        return productMapper.insert(product);
+        List<Sku> skuList = productVO.getSkuList();
+        productMapper.insert(product);
+        if(skuList!=null){
+            skuList.forEach(sku -> {
+                sku.setProductId(product.getId());
+                sku.setCreateTime(LocalDateTime.now());
+                skuMapper.insert(sku);
+            });
+        }
+        return 1;
     }
 
     /**

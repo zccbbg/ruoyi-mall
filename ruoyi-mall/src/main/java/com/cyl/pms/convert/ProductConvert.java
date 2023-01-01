@@ -13,4 +13,5 @@ import java.util.List;
 public interface ProductConvert  {
 
     List<ProductVO> dos2vos(List<Product> list);
+    Product vo2do(ProductVO productVO);
 }
