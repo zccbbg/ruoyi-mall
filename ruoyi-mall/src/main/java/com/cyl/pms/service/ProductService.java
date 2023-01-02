@@ -43,8 +43,14 @@ public class ProductService {
      * @param id 商品信息主键
      * @return 商品信息
      */
-    public Product selectById(Long id) {
-        return productMapper.selectById(id);
+    public ProductVO selectById(Long id) {
+        Product product = productMapper.selectById(id);
+        ProductVO productVO = convert.do2vo(product);
+        QueryWrapper<Sku> qw = new QueryWrapper<>();
+        qw.eq("product_id", product.getId());
+        List<Sku> skus = skuMapper.selectList(qw);
+        productVO.setSkuList(skus);
+        return productVO;
     }
 
     /**

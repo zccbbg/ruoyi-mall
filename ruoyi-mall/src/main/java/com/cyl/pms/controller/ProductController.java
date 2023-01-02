@@ -63,7 +63,7 @@ public class ProductController extends BaseController {
     @ApiOperation("获取商品信息详细信息")
     @PreAuthorize("@ss.hasPermi('pms:product:query')")
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Product> getInfo(@PathVariable("id") Long id) {
+    public ResponseEntity<ProductVO> getInfo(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.selectById(id));
     }
 
