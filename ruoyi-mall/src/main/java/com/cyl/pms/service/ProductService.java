@@ -160,7 +160,6 @@ public class ProductService {
     @Transactional
     public int update(ProductVO productVO) {
         Product product = convert.vo2do(productVO);
-        product.setCreateTime(LocalDateTime.now());
         List<Sku> skuList = productVO.getSkuList();
         productMapper.updateById(product);
         Map<String,Object> map = new HashMap<>();
