@@ -1,6 +1,8 @@
 package com.cyl.pms.pojo.query;
 
 import java.math.BigDecimal;
+
+import com.ruoyi.common.annotation.Excel;
 import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -42,6 +44,9 @@ public class ProductQuery {
 
     @ApiModelProperty("单位 精确匹配")
     private String unit;
+
+    @ApiModelProperty(name = "商品销售属性，json格式")
+    private String productAttr;
 
     @ApiModelProperty("商品重量，默认为克 精确匹配")
     private BigDecimal weight;

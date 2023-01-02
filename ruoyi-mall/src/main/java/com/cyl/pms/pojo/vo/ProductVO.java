@@ -62,5 +62,7 @@ public class ProductVO extends BaseAudit {
    /** 商品分类名称 */
     @Excel(name = "商品分类名称")
     private String productCategoryName;
+    @Excel(name = "商品销售属性，json格式")
+    private String productAttr;
     private List<Sku> skuList;
 }

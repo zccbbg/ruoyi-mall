@@ -79,7 +79,7 @@ public class ProductController extends BaseController {
     @PreAuthorize("@ss.hasPermi('pms:product:edit')")
     @Log(title = "商品信息", businessType = BusinessType.UPDATE)
     @PutMapping
-    public ResponseEntity<Integer> edit(@RequestBody Product product) {
+    public ResponseEntity<Integer> edit(@RequestBody ProductVO product) {
         return ResponseEntity.ok(service.update(product));
     }
 

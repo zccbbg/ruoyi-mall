@@ -1,10 +1,12 @@
 package com.cyl.pms.service;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.time.LocalDateTime;
+
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.cyl.pms.convert.ProductConvert;
 import com.cyl.pms.domain.Sku;
 import com.cyl.pms.mapper.SkuMapper;
@@ -146,11 +148,26 @@ public class ProductService {
     /**
      * 修改商品信息
      *
-     * @param product 商品信息
+     * @param productVO 商品信息
      * @return 结果
      */
-    public int update(Product product) {
-        return productMapper.updateById(product);
+    @Transactional
+    public int update(ProductVO productVO) {
+        Product product = convert.vo2do(productVO);
+        product.setCreateTime(LocalDateTime.now());
+        List<Sku> skuList = productVO.getSkuList();
+        productMapper.updateById(product);
+        Map<String,Object> map = new HashMap<>();
+        map.put("product_id", product.getId());
+        skuMapper.deleteByMap(map);
+        if(skuList!=null){
+            skuList.forEach(sku -> {
+                sku.setProductId(product.getId());
+                sku.setCreateTime(LocalDateTime.now());
+                skuMapper.insert(sku);
+            });
+        }
+        return 1;
     }
 
     /**

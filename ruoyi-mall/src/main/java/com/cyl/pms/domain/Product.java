@@ -65,6 +65,10 @@ public class Product extends BaseAudit {
     @Excel(name = "商品重量，默认为克")
     private BigDecimal weight;
 
+    @ApiModelProperty("商品销售属性，json格式")
+    @Excel(name = "商品销售属性，json格式")
+    private String productAttr;
+
     @ApiModelProperty("产品详情网页内容")
     @Excel(name = "产品详情网页内容")
     private String detailHtml;
