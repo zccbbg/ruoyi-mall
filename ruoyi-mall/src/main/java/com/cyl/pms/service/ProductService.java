@@ -65,6 +65,8 @@ public class ProductService {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
         QueryWrapper<Product> qw = new QueryWrapper<>();
+        qw.orderByDesc("publish_status");
+        qw.orderByAsc("sort");
         Long brandId = query.getBrandId();
         if (brandId != null) {
             qw.eq("brand_id", brandId);
