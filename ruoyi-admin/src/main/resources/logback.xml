@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <!-- 日志存放路径 -->
-	<property name="log.path" value="/data/logs/wms" />
+	<property name="log.path" value="/data/logs/mall" />
     <!-- 日志输出格式 -->
 	<property name="log.pattern" value="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] [%thread] [%logger:%L] [%X{spanId}]: %msg%n" />
 
@@ -14,11 +14,11 @@
 	
 	<!-- 系统日志输出 -->
 	<appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
-	    <file>${log.path}/wms.current.log</file>
+	    <file>${log.path}/mall.current.log</file>
         <!-- 循环政策：基于时间创建日志文件 -->
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 日志文件名格式 -->
-			<fileNamePattern>${log.path}/wms.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<fileNamePattern>${log.path}/mall.%d{yyyy-MM-dd}.log</fileNamePattern>
 			<!-- 日志最大的历史 60天 -->
 			<maxHistory>60</maxHistory>
 		</rollingPolicy>
@@ -32,11 +32,11 @@
 	</appender>
 	
 	<appender name="file_error" class="ch.qos.logback.core.rolling.RollingFileAppender">
-	    <file>${log.path}/wms-error.log</file>
+	    <file>${log.path}/mall-error.log</file>
         <!-- 循环政策：基于时间创建日志文件 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 日志文件名格式 -->
-            <fileNamePattern>${log.path}/wms-error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${log.path}/mall-error.%d{yyyy-MM-dd}.log</fileNamePattern>
 			<!-- 日志最大的历史 60天 -->
 			<maxHistory>60</maxHistory>
         </rollingPolicy>
