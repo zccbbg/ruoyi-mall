@@ -1,24 +1,29 @@
 package com.cyl.pms.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.time.LocalDateTime;
-
-import cn.hutool.core.lang.tree.Tree;
-import cn.hutool.core.lang.tree.TreeNodeConfig;
-import cn.hutool.core.lang.tree.TreeUtil;
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyl.h5.pojo.dto.CategoryDTO;
 import com.cyl.pms.convert.ProductCategoryConvert;
+import com.cyl.pms.convert.ProductConvert;
+import com.cyl.pms.domain.Product;
+import com.cyl.pms.domain.ProductCategory;
+import com.cyl.pms.mapper.ProductCategoryMapper;
+import com.cyl.pms.mapper.ProductMapper;
+import com.cyl.pms.pojo.query.ProductCategoryQuery;
 import com.cyl.pms.pojo.vo.ProductCategoryVO;
 import com.github.pagehelper.PageHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import com.cyl.pms.mapper.ProductCategoryMapper;
-import com.cyl.pms.domain.ProductCategory;
-import com.cyl.pms.pojo.query.ProductCategoryQuery;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 商品分类Service业务层处理
@@ -31,7 +36,11 @@ public class ProductCategoryService {
     @Autowired
     private ProductCategoryMapper productCategoryMapper;
     @Autowired
+    private ProductMapper productMapper;
+    @Autowired
     private ProductCategoryConvert convert;
+    @Autowired
+    private ProductConvert productConvert;
 
     /**
      * 查询商品分类
@@ -151,5 +160,52 @@ public class ProductCategoryService {
      */
     public int deleteById(Long id) {
         return productCategoryMapper.deleteById(id);
+    }
+
+    public List<CategoryDTO> queryCategoryWithProductsForH5() {
+        QueryWrapper<ProductCategory> qw1 = new QueryWrapper<>();
+        qw1.eq("level", 0);
+        qw1.eq("show_status", 1);
+        Page<ProductCategory> pageReq = new Page<>();
+        pageReq.setCurrent(1L)
+                .setSize(10)
+                .setOrders(Collections.singletonList(OrderItem.desc("sort")));
+        List<ProductCategory> categories = productCategoryMapper.selectPage(pageReq, qw1).getRecords();
+        if (CollUtil.isEmpty(categories)) {
+            return Collections.emptyList();
+        };
+        return categories.stream().map(it -> {
+            CategoryDTO dto = convert.do2dto(it);
+            // 寻找该分类下的所有子类
+            List<Long> allChildCate = queryAllChildCate(Collections.singletonList(it.getId()), 0);
+            QueryWrapper<Product> qw = new QueryWrapper<>();
+            qw.select("id", "pic", "name", "price", "category_id");
+            qw.in("category_id", allChildCate);
+            qw.le("sort", 100);
+            List<Product> categoryId2List = productMapper.selectList(qw);
+            dto.setProductList(productConvert.dos2dtos(categoryId2List));
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    private List<Long> queryAllChildCate(List<Long> categoryIds, int level) {
+        List<Long> res = new ArrayList<>();
+        QueryWrapper<ProductCategory> qw = new QueryWrapper<>();
+        qw.select("id");
+        List<Long> ids = categoryIds;
+        while (true) {
+            qw.clear();
+            qw.in("parent_id", ids);
+            qw.eq("level", level + 1);
+            qw.eq("show_status", 1);
+            ids = productCategoryMapper.selectList(qw).stream().map(ProductCategory::getId).collect(Collectors.toList());
+            if (CollUtil.isEmpty(ids)) {
+                break;
+            }
+            res.addAll(ids);
+            level ++;
+        }
+        res.addAll(categoryIds);
+        return res;
     }
 }

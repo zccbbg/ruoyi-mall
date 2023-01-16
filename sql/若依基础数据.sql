@@ -198,6 +198,11 @@ INSERT INTO `sys_dict_data` VALUES (27, 1, '成功', '0', 'sys_common_status', '
 INSERT INTO `sys_dict_data` VALUES (28, 2, '失败', '1', 'sys_common_status', '', 'danger', 'N', '0', 1, '2022-06-17 17:20:29.000', NULL, NULL, '停用状态');
 
 # 新增字典
+insert into sys_dict_type(dict_name, dict_type) values ('系统展示状态', 'sys_show_status');
+insert into sys_dict_data(dict_sort, dict_label, dict_value, dict_type)
+values (1, '展示', '1', 'sys_show_status'),
+       (2, '隐藏', '0', 'sys_show_status');
+
 insert into sys_dict_type(dict_name, dict_type) values ('规格类型', 'sku_sort_list');
 insert into sys_dict_data(dict_sort, dict_label, dict_value, dict_type)
 values (1, '尺寸', 'sku_sort_list_1', 'sku_sort_list'),
