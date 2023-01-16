@@ -197,6 +197,38 @@ INSERT INTO `sys_dict_data` VALUES (26, 9, '清空数据', '9', 'sys_oper_type',
 INSERT INTO `sys_dict_data` VALUES (27, 1, '成功', '0', 'sys_common_status', '', 'primary', 'N', '0', 1, '2022-06-17 17:20:29.000', NULL, NULL, '正常状态');
 INSERT INTO `sys_dict_data` VALUES (28, 2, '失败', '1', 'sys_common_status', '', 'danger', 'N', '0', 1, '2022-06-17 17:20:29.000', NULL, NULL, '停用状态');
 
+# 新增字典
+insert into sys_dict_type(dict_name, dict_type) values ('规格类型', 'sku_sort_list');
+insert into sys_dict_data(dict_sort, dict_label, dict_value, dict_type)
+values (1, '尺寸', 'sku_sort_list_1', 'sku_sort_list'),
+       (2, '型号', 'sku_sort_list_2', 'sku_sort_list'),
+       (3, '款式', 'sku_sort_list_3', 'sku_sort_list'),
+       (4, '器型', 'sku_sort_list_4', 'sku_sort_list'),
+       (5, '材质', 'sku_sort_list_5', 'sku_sort_list'),
+       (6, '口味', 'sku_sort_list_6', 'sku_sort_list'),
+       (7, '色号', 'sku_sort_list_7', 'sku_sort_list'),
+       (8, '适用人群', 'sku_sort_list_8', 'sku_sort_list'),
+       (9, '颜色', 'sku_sort_list_9', 'sku_sort_list'),
+       (10, '容量', 'sku_sort_list_10', 'sku_sort_list'),
+       (11, '花型', 'sku_sort_list_11', 'sku_sort_list'),
+       (12, '尺码', 'sku_sort_list_12', 'sku_sort_list'),
+       (13, '地点', 'sku_sort_list_13', 'sku_sort_list'),
+       (14, '香型', 'sku_sort_list_14', 'sku_sort_list'),
+       (15, '货号', 'sku_sort_list_15', 'sku_sort_list'),
+       (16, '组合', 'sku_sort_list_16', 'sku_sort_list'),
+       (17, '成份', 'sku_sort_list_17', 'sku_sort_list'),
+       (18, '版本', 'sku_sort_list_18', 'sku_sort_list'),
+       (19, '度数', 'sku_sort_list_19', 'sku_sort_list'),
+       (20, '运营商', 'sku_sort_list_20', 'sku_sort_list'),
+       (21, '属性', 'sku_sort_list_21', 'sku_sort_list'),
+       (22, '重量', 'sku_sort_list_22', 'sku_sort_list'),
+       (23, '地区', 'sku_sort_list_23', 'sku_sort_list'),
+       (24, '套餐', 'sku_sort_list_24', 'sku_sort_list'),
+       (25, '类别', 'sku_sort_list_25', 'sku_sort_list'),
+       (26, '适用年龄', 'sku_sort_list_26', 'sku_sort_list'),
+       (27, '功效', 'sku_sort_list_27', 'sku_sort_list'),
+       (28, '品类', 'sku_sort_list_28', 'sku_sort_list'),
+       (29, '时间', 'sku_sort_list_29', 'sku_sort_list');
 -- ----------------------------
 -- Table structure for sys_dict_type
 -- ----------------------------
