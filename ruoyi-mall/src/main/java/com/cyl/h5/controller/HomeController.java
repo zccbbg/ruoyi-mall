@@ -29,4 +29,16 @@ public class HomeController {
         res.setCategoryList(categoryService.queryCategoryWithProductsForH5());
         return ResponseEntity.ok(res);
     }
+    /**
+     * 首页配置
+     *
+     * @return 首页配置
+     */
+    @GetMapping("/product-count")
+    public ResponseEntity<HomeConfigVO> productCount() {
+        HomeConfigVO res = new HomeConfigVO();
+        res.setBanners(sysConfigService.selectConfigByKey("h5.home.banner"));
+        res.setCategoryList(categoryService.queryCategoryWithProductsForH5());
+        return ResponseEntity.ok(res);
+    }
 }

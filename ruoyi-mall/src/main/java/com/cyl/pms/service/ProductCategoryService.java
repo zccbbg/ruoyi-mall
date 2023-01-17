@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 /**
  * 商品分类Service业务层处理
  *
- *
  * @author zcc
  */
 @Service
@@ -56,7 +55,7 @@ public class ProductCategoryService {
      * 查询商品分类列表
      *
      * @param query 查询条件
-     * @param page 分页条件
+     * @param page  分页条件
      * @return 商品分类
      */
     public List<ProductCategoryVO> selectList(ProductCategoryQuery query, Pageable page) {
@@ -101,7 +100,7 @@ public class ProductCategoryService {
         List<ProductCategoryVO> children = new ArrayList<>();
         // 1）先获取到所有根节点
         for (ProductCategoryVO node : nodes) {
-            if (node.getParentId() == null || node.getParentId() == 0 ) {
+            if (node.getParentId() == null || node.getParentId() == 0) {
                 tree.add(node);
             } else {
                 children.add(node);
@@ -173,7 +172,8 @@ public class ProductCategoryService {
         List<ProductCategory> categories = productCategoryMapper.selectPage(pageReq, qw1).getRecords();
         if (CollUtil.isEmpty(categories)) {
             return Collections.emptyList();
-        };
+        }
+        ;
         return categories.stream().map(it -> {
             CategoryDTO dto = convert.do2dto(it);
             // 寻找该分类下的所有子类
@@ -203,9 +203,17 @@ public class ProductCategoryService {
                 break;
             }
             res.addAll(ids);
-            level ++;
+            level++;
         }
         res.addAll(categoryIds);
         return res;
+    }
+
+    public List<ProductCategory> h5Categories() {
+        QueryWrapper<ProductCategory> qw = new QueryWrapper<>();
+        qw.select("id", "parent_id", "name", "level", "sort", "icon");
+        qw.eq("show_status", 1);
+        qw.le("level", 2);
+        return productCategoryMapper.selectList(qw);
     }
 }
