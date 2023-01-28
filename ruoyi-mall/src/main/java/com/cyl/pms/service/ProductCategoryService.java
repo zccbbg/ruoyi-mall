@@ -1,6 +1,7 @@
 package com.cyl.pms.service;
 
 import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -14,6 +15,7 @@ import com.cyl.pms.mapper.ProductMapper;
 import com.cyl.pms.pojo.query.ProductCategoryQuery;
 import com.cyl.pms.pojo.vo.ProductCategoryVO;
 import com.github.pagehelper.PageHelper;
+import com.ruoyi.common.exception.base.BaseException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -215,5 +217,30 @@ public class ProductCategoryService {
         qw.eq("show_status", 1);
         qw.le("level", 2);
         return productCategoryMapper.selectList(qw);
+    }
+
+    public List<ProductCategory> getBrotherAndChild(Long id, boolean withChild) {
+        ProductCategory category = productCategoryMapper.selectById(id);
+        if (category == null) {
+            throw new BaseException("参数错误");
+        }
+        LambdaQueryWrapper<ProductCategory> qw = new LambdaQueryWrapper<>();
+        qw.eq(ProductCategory::getParentId, category.getParentId());
+        qw.eq(ProductCategory::getLevel, category.getLevel());
+        qw.eq(ProductCategory::getShowStatus, 1);
+        qw.select(ProductCategory::getId, ProductCategory::getParentId, ProductCategory::getName, ProductCategory::getLevel, ProductCategory::getSort, ProductCategory::getIcon);
+        List<ProductCategory> res = productCategoryMapper.selectList(qw);
+        if (withChild) {
+            qw.clear();
+            qw.eq(ProductCategory::getParentId, category.getId());
+            qw.eq(ProductCategory::getLevel, category.getLevel() + 1);
+            qw.eq(ProductCategory::getShowStatus, 1);
+            List<ProductCategory> childs = productCategoryMapper.selectList(qw);
+            res.addAll(childs);
+        }
+        if (category.getParentId() != null && category.getParentId() != -1) {
+            res.add(productCategoryMapper.selectById(category.getParentId()));
+        }
+        return res;
     }
 }
