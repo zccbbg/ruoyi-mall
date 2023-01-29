@@ -3,8 +3,12 @@ package com.cyl.ums.service;
 import java.util.Arrays;
 import java.util.List;
 import java.time.LocalDateTime;
+
+import cn.hutool.crypto.SecureUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
+import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang3.StringUtils;
@@ -15,7 +19,6 @@ import com.cyl.ums.pojo.query.MemberCartQuery;
 
 /**
  * 购物车Service业务层处理
- *
  *
  * @author zcc
  */
@@ -38,7 +41,7 @@ public class MemberCartService {
      * 查询购物车列表
      *
      * @param query 查询条件
-     * @param page 分页条件
+     * @param page  分页条件
      * @return 购物车
      */
     public List<MemberCart> selectList(MemberCartQuery query, Pageable page) {
@@ -110,5 +113,18 @@ public class MemberCartService {
      */
     public int deleteById(Long id) {
         return memberCartMapper.deleteById(id);
+    }
+
+    public Integer mineCartNum() {
+        Long userId = SecurityUtils.getUserId();
+        QueryWrapper<MemberCart> qw = new QueryWrapper<>();
+        qw.eq("member_id", userId);
+        qw.eq("status", 1);
+        qw.select("sum(quantity) quantity");
+        MemberCart c = memberCartMapper.selectOne(qw);
+        if (c == null) {
+            return 0;
+        }
+        return c.getQuantity();
     }
 }

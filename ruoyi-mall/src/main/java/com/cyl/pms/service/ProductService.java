@@ -5,16 +5,21 @@ import java.util.*;
 import java.time.LocalDateTime;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.cyl.h5.pojo.vo.ProductDetail;
 import com.cyl.pms.convert.ProductConvert;
+import com.cyl.pms.domain.Brand;
 import com.cyl.pms.domain.Sku;
+import com.cyl.pms.mapper.BrandMapper;
 import com.cyl.pms.mapper.SkuMapper;
 import com.cyl.pms.pojo.vo.ProductVO;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import com.cyl.pms.mapper.ProductMapper;
 import com.cyl.pms.domain.Product;
@@ -34,6 +39,8 @@ public class ProductService {
 
     @Autowired
     private SkuMapper skuMapper;
+    @Autowired
+    private BrandMapper brandMapper;
     @Autowired
     private ProductConvert convert;
 
@@ -185,5 +192,18 @@ public class ProductService {
      */
     public int deleteById(Long id) {
         return productMapper.deleteById(id);
+    }
+
+    public ProductDetail queryDetail(Long id) {
+        ProductDetail res = new ProductDetail();
+        Product d = productMapper.selectById(id);
+        res.setProduct(d);
+        LambdaQueryWrapper<Sku> qw = new LambdaQueryWrapper<>();
+        qw.eq(Sku::getProductId, id);
+        res.setSkus(skuMapper.selectList(qw));
+        if (d.getBrandId() != null) {
+            res.setBrand(brandMapper.selectById(d.getBrandId()));
+        }
+        return res;
     }
 }
