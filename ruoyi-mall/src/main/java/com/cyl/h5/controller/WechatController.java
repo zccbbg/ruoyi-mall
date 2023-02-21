@@ -28,4 +28,13 @@ public class WechatController {
         }
         return "err";
     }
+    /**
+     * 微信公众号服务器认证
+     * @return
+     */
+    @GetMapping("/no-auth/wechat/h5-login")
+    public String h5Login(HttpServletRequest request) {
+        // TODO
+        return "err";
+    }
 }

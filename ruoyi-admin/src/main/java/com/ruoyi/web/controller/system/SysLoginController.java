@@ -59,7 +59,6 @@ public class SysLoginController {
     public AjaxResult login(@RequestBody PhoneLoginBody loginBody) {
         AjaxResult ajax = AjaxResult.success();
         SysUser user = loginService.phoneLogin(loginBody.getPhone(), loginBody.getCode(), loginBody.getUuid());
-        // lcUserService.initVipUser(user);
         ajax.put(Constants.TOKEN, loginService.createToken(user));
         return ajax;
     }
