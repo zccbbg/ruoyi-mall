@@ -8,14 +8,14 @@
 * 支持加载动态权限菜单，多方式轻松权限控制。
 * 高效率开发，使用代码生成器可以一键生成前后端代码。
 
-## 前端开源项目地址
+## 项目地址
 |                | gitee                                   | github                                   |
 |:--------------:|:----------------------------------------|:-----------------------------------------|
 | 管理端vue element | https://gitee.com/zccbbg/ruoyi-mall-vue | https://github.com/zccbbg/ruoyi-mall-vue |
-|    小程序taro     | 尚未生成                                    | 尚未编写                                     |
+| 小程序taro | https://gitee.com/zccbbg/ruo-yi-mall-taro | https://github.com/zccbbg/RuoYi-Mall-Taro |
 
 ## 在线体验
-- 演示地址：暂无
+- 演示地址：http://mall.ichengle.top/
 - 陆陆续续收到一些打赏，为了更好的体验已用于演示服务器升级。谢谢各位小伙伴。
 
 ## 若依mall功能
@@ -41,7 +41,7 @@
    ![img.png](doc/img3.png)
 2. 在父级pom.xml输入命令 mvn clean install 或者用idea工具操作
    ![img.png](doc/img4.png)
-   1. 启动程序，启动程序路径如下
+3.启动程序，启动程序路径如下
    ![img.png](doc/img5.png)
 
 ## 关于我们
