@@ -1,21 +1,22 @@
 package com.cyl.ums.service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.time.LocalDateTime;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cyl.ums.domain.MemberAddress;
+import com.cyl.ums.mapper.MemberAddressMapper;
+import com.cyl.ums.pojo.query.MemberAddressQuery;
 import com.github.pagehelper.PageHelper;
+import com.ruoyi.common.utils.SecurityUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import com.cyl.ums.mapper.MemberAddressMapper;
-import com.cyl.ums.domain.MemberAddress;
-import com.cyl.ums.pojo.query.MemberAddressQuery;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 会员收货地址Service业务层处理
- *
  *
  * @author zcc
  */
@@ -38,7 +39,7 @@ public class MemberAddressService {
      * 查询会员收货地址列表
      *
      * @param query 查询条件
-     * @param page 分页条件
+     * @param page  分页条件
      * @return 会员收货地址
      */
     public List<MemberAddress> selectList(MemberAddressQuery query, Pageable page) {
@@ -118,5 +119,23 @@ public class MemberAddressService {
      */
     public int deleteById(Long id) {
         return memberAddressMapper.deleteById(id);
+    }
+
+    public Integer deleteUserIds(List<Long> ids) {
+        LambdaQueryWrapper<MemberAddress> qw = new LambdaQueryWrapper<>();
+        qw.eq(MemberAddress::getMemberId, SecurityUtils.getUserId());
+        qw.in(MemberAddress::getId, ids);
+        return memberAddressMapper.delete(qw);
+    }
+
+    public MemberAddress selectByUserAndId(Long id) {
+        LambdaQueryWrapper<MemberAddress> qw = new LambdaQueryWrapper<>();
+        qw.eq(MemberAddress::getMemberId, SecurityUtils.getUserId());
+        qw.eq(MemberAddress::getId, id);
+        return memberAddressMapper.selectOne(qw);
+    }
+
+    public int updateSelective(MemberAddress address) {
+        return memberAddressMapper.updateByPrimaryKeySelective(address);
     }
 }

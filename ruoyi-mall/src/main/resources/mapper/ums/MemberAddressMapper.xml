@@ -45,4 +45,53 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isDefault != null "> and is_default = #{isDefault}</if>
         </where>
     </select>
+
+    <update id="updateByPrimaryKeySelective" parameterType="MemberAddress">
+        update ums_member_address
+        <set>
+            <if test="memberId != null">
+                member_id = #{memberId, jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                name = #{name, jdbcType=BIGINT},
+            </if>
+            <if test="phone != null">
+                phone = #{phone, jdbcType=BIGINT},
+            </if>
+            <if test="defaultStatus != null">
+                default_status = #{defaultStatus, jdbcType=BIGINT},
+            </if>
+            <if test="postCode != null">
+                post_code = #{postCode, jdbcType=BIGINT},
+            </if>
+            <if test="province != null">
+                province = #{province, jdbcType=BIGINT},
+            </if>
+            <if test="city != null">
+                city = #{city, jdbcType=BIGINT},
+            </if>
+            <if test="district != null">
+                district = #{district, jdbcType=BIGINT},
+            </if>
+            <if test="detailAddress != null">
+                detail_address = #{detailAddress, jdbcType=BIGINT},
+            </if>
+            <if test="isDefault != null">
+                is_default = #{isDefault, jdbcType=BIGINT},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy, jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime, jdbcType=BIGINT},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy, jdbcType=BIGINT},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime, jdbcType=BIGINT},
+            </if>
+        </set>
+        where id = #{id, jdbcType=BIGINT}
+    </update>
 </mapper>

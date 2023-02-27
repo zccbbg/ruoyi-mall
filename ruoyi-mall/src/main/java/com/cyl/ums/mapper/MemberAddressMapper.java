@@ -18,4 +18,6 @@ public interface MemberAddressMapper extends BaseMapper<MemberAddress> {
      * @return 会员收货地址集合
      */
     List<MemberAddress> selectByEntity(MemberAddress memberAddress);
+
+    int updateByPrimaryKeySelective(MemberAddress address);
 }

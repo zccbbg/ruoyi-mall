@@ -13,4 +13,6 @@ import java.util.List;
 public interface OrderConvert  {
 
     List<OrderVO> dos2vos(List<Order> list);
+
+    OrderVO do2vo(Order order);
 }

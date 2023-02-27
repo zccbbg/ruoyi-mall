@@ -2,11 +2,33 @@ package com.cyl.oms.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cyl.h5.pojo.vo.form.OrderSubmitForm;
+import com.cyl.oms.convert.OrderConvert;
+import com.cyl.oms.domain.OrderItem;
+import com.cyl.oms.mapper.OrderItemMapper;
+import com.cyl.oms.pojo.vo.OrderVO;
+import com.cyl.pms.domain.Product;
+import com.cyl.pms.domain.Sku;
+import com.cyl.pms.mapper.ProductMapper;
+import com.cyl.pms.mapper.SkuMapper;
+import com.cyl.ums.domain.MemberAddress;
+import com.cyl.ums.mapper.MemberAddressMapper;
 import com.github.pagehelper.PageHelper;
+import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.core.domain.model.LoginUser;
+import com.ruoyi.common.exception.base.BaseException;
+import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.system.mapper.SysUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +47,16 @@ import com.cyl.oms.pojo.query.OrderQuery;
 public class OrderService {
     @Autowired
     private OrderMapper orderMapper;
+    @Autowired
+    private OrderConvert orderConvert;
+    @Autowired
+    private OrderItemMapper orderItemMapper;
+    @Autowired
+    private MemberAddressMapper memberAddressMapper;
+    @Autowired
+    private SkuMapper skuMapper;
+    @Autowired
+    private ProductMapper productMapper;
 
     /**
      * 查询订单表
@@ -192,5 +224,74 @@ public class OrderService {
      */
     public int deleteById(Long id) {
         return orderMapper.deleteById(id);
+    }
+
+    public OrderVO submit(OrderSubmitForm form) {
+        MemberAddress addr = memberAddressMapper.selectById(form.getAddressId());
+        if (addr == null) {
+            throw new BaseException("参数错误");
+        }
+        List<Long> skuIds = form.getSkus().stream().map(OrderSubmitForm.SkuParam::getSkuId).distinct().collect(Collectors.toList());
+        List<Sku> skus = skuMapper.selectBatchIds(skuIds);
+        if (skuIds.size() != skus.size()) {
+            throw new BaseException("参数错误");
+        }
+        Map<Long, Sku> id2sku = skus.stream().collect(Collectors.toMap(Sku::getId, it -> it));
+
+        Map<Long, Product> id2Product = productMapper.selectBatchIds(
+                skus.stream().map(Sku::getProductId).distinct().collect(Collectors.toList())
+        ).stream().collect(Collectors.toMap(Product::getId, it -> it));
+
+        // 1. 生成订单商品快照
+        Order order = new Order();
+        order.setTotalAmount(BigDecimal.ZERO);
+        List<OrderItem> items = new ArrayList<>();
+        form.getSkus().forEach(it -> {
+            Sku s = id2sku.get(it.getSkuId());
+            Product p = id2Product.get(s.getProductId());
+
+            OrderItem item = new OrderItem();
+            item.setProductId(s.getProductId());
+            item.setOutProductId(p.getOutProductId());
+            item.setSkuId(it.getSkuId());
+            item.setOutSkuId(s.getOutSkuId());
+            item.setProductSnapshotId(p.getId());
+            item.setSkuSnapshotId(s.getId());
+            item.setPic(StrUtil.isNotEmpty(s.getPic()) ? s.getPic() : p.getPic());
+            item.setProductName(p.getName());
+            item.setSalePrice(s.getPrice());
+            item.setQuantity(it.getQuantity());
+            item.setProductCategoryId(p.getCategoryId());
+            item.setSpData(s.getSpData());
+            items.add(item);
+            order.setTotalAmount(order.getTotalAmount().add(s.getPrice().multiply(BigDecimal.valueOf(it.getQuantity()))));
+        });
+        LoginUser user = SecurityUtils.getLoginUser();
+
+        // 2. 生成订单
+        order.setMemberId(user.getUserId());
+        order.setMemberUsername(user.getUsername());
+        order.setStatus(0);
+        order.setAftersaleStatus(1);
+        order.setAutoConfirmDay(7);
+        order.setReceiverName(addr.getName());
+        order.setReceiverPhone(addr.getPhone());
+        order.setReceiverProvince(addr.getProvince());
+        order.setReceiverDistrict(addr.getDistrict());
+        order.setReceiverDetailAddress(addr.getDetailAddress());
+        order.setNote(form.getNote());
+        order.setConfirmStatus(0);
+        order.setDeleteStatus(0);
+        orderMapper.insert(order);
+        items.forEach(it -> it.setOrderId(order.getId()));
+        items.forEach(orderItemMapper::insert);
+
+        // 3. 判断是否付费，生成支付订单
+        if (BigDecimal.ZERO.compareTo(order.getTotalAmount()) > 0) {
+            // todo 生成支付订单
+        }
+        OrderVO vo = orderConvert.do2vo(order);
+        vo.setItems(items);
+        return vo;
     }
 }
