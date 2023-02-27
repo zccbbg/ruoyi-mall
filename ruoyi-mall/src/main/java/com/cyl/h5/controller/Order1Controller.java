@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/order")
-public class OrderController {
+@RequestMapping("/h5-order")
+public class Order1Controller {
     @Autowired
     private OrderService orderService;
     @PostMapping("submit")
