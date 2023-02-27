@@ -2,17 +2,18 @@ package com.cyl.oms.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.stream.Collectors;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyl.h5.pojo.vo.form.OrderSubmitForm;
+import com.cyl.h5.pojo.vo.query.OrderH5Query;
 import com.cyl.oms.convert.OrderConvert;
 import com.cyl.oms.domain.OrderItem;
 import com.cyl.oms.mapper.OrderItemMapper;
@@ -30,6 +31,8 @@ import com.ruoyi.common.exception.base.BaseException;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.mapper.SysUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -293,5 +296,49 @@ public class OrderService {
         OrderVO vo = orderConvert.do2vo(order);
         vo.setItems(items);
         return vo;
+    }
+
+    public Page<OrderVO> queryOrderPage(OrderH5Query query, Pageable pageReq) {
+        QueryWrapper<Order> qw = new QueryWrapper<>();
+        qw.eq("member_id", SecurityUtils.getUserId());
+        IPage<Order> page = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>();
+        page.setCurrent(pageReq.getPageNumber())
+                .setSize(pageReq.getPageSize());
+        if (CollUtil.isEmpty(pageReq.getSort())) {
+            pageReq.getSort().forEach(it -> {
+                qw.orderBy(true, it.getDirection().isAscending(), it.getProperty());
+            });
+        }
+        Integer tab = query.getTab();
+        if (tab != null) {
+            qw.eq("delete_status", 0);
+            if (tab == 1) {
+                qw.eq("status", 0);
+            } else if (tab == 2) {
+                qw.eq("status", 1);
+                qw.eq("aftersale_status", 1);
+            } else if (tab == 3) {
+                qw.eq("status", 2);
+                qw.eq("confirm_status", 0);
+            } else if (tab == 4) {
+                qw.eq("status", 2);
+                qw.eq("confirm_status", 1);
+            }
+        }
+        orderMapper.selectPage(page, qw);
+        List<Order> orders = page.getRecords();
+        long total = page.getPages();
+        if (CollUtil.isEmpty(orders)) {
+            return new PageImpl<>(Collections.emptyList(), pageReq, total);
+        }
+        LambdaQueryWrapper<OrderItem> qw1 = new LambdaQueryWrapper<>();
+        qw1.in(OrderItem::getOrderId, orders.stream().map(Order::getId).collect(Collectors.toList()));
+        Map<Long, List<OrderItem>> oid2items = orderItemMapper.selectList(qw1)
+                .stream().collect(Collectors.groupingBy(OrderItem::getOrderId));
+        List<OrderVO> res = orderConvert.dos2vos(orders);
+        res.forEach(it -> {
+            it.setItems(oid2items.get(it.getId()));
+        });
+        return new PageImpl<>(res, pageReq, total);
     }
 }
