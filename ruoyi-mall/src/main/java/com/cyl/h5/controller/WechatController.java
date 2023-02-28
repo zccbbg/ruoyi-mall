@@ -38,6 +38,7 @@ public class WechatController {
      */
     @PostMapping("/no-auth/wechat/h5-login")
     public ResponseEntity<String> h5Login(@RequestBody WechatLoginForm form) {
-        return ResponseEntity.ok(memberWechatService.login(form));
+        String token = memberWechatService.login(form);
+        return ResponseEntity.ok("{\"data\": \"" + token + "\"}");
     }
 }

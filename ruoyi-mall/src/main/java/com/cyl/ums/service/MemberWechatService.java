@@ -189,6 +189,7 @@ public class MemberWechatService {
                 if (StrUtil.isNotEmpty(info.getHeadimgurl())) {
                     update.setAvatar(info.getHeadimgurl());
                 }
+                update.setUserId(m.getMemberId());
                 sysUserMapper.updateUser(update);
             }
             u = sysUserMapper.selectUserById(m.getMemberId());
