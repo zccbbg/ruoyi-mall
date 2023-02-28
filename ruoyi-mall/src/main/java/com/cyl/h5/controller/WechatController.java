@@ -1,9 +1,11 @@
 package com.cyl.h5.controller;
 
 import com.cyl.external.WechatUtil;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.cyl.h5.pojo.vo.form.WechatLoginForm;
+import com.cyl.ums.service.MemberWechatService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,6 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("")
 public class WechatController {
+    @Autowired
+    private MemberWechatService memberWechatService;
     /**
      * 微信公众号服务器认证
      * @return
@@ -32,9 +36,8 @@ public class WechatController {
      * 微信公众号服务器认证
      * @return
      */
-    @GetMapping("/no-auth/wechat/h5-login")
-    public String h5Login(HttpServletRequest request) {
-        // TODO
-        return "err";
+    @PostMapping("/no-auth/wechat/h5-login")
+    public ResponseEntity<String> h5Login(@RequestBody WechatLoginForm form) {
+        return ResponseEntity.ok(memberWechatService.login(form));
     }
 }

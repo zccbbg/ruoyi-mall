@@ -31,6 +31,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -209,13 +211,13 @@ public class SysLoginService {
         userService.registerUser(user);
 
         // 赋予角色
-        SysRole vipRole = sysRoleService.selectRoleByKey("vip");
+        SysRole role = sysRoleService.selectRoleByKey("common");
         // 增加用户的权限，绑定角色
-        sysRoleService.insertAuthUsers(vipRole.getRoleId(), new Long[]{user.getUserId()});
+        sysRoleService.insertAuthUsers(role.getRoleId(), new Long[]{user.getUserId()});
 
         AsyncManager.me().execute(AsyncFactory.recordLogininfor(body.getLogin(), Constants.LOGIN_SUCCESS, MessageUtils.message("user.register.success")));
         recordLoginInfo(user);
-
+        user.setRoles(Collections.singletonList(role));
         return user;
     }
 
