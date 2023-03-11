@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/no-auth/good")
-public class GoodController {
+@RequestMapping("/no-auth/product")
+public class H5ProductController {
     @Autowired
     private ProductService productService;
     @Autowired
