@@ -42,3 +42,6 @@ aliyun:
     oss:
         endPoint: 你的endpoint     # Endpoint:在阿里云oss控制台查看自己使用的endpoint
         bucketName: 你的bucketName   # bucket 名称
+wechat:
+    appId: 你的微信服务号信息
+    secret: 你的微信服务号信息
