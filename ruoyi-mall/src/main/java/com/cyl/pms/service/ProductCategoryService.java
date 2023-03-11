@@ -165,7 +165,7 @@ public class ProductCategoryService {
 
     public List<CategoryDTO> queryCategoryWithProductsForH5() {
         QueryWrapper<ProductCategory> qw1 = new QueryWrapper<>();
-        qw1.eq("level", 0);
+//        qw1.eq("level", 0);
         qw1.eq("show_status", 1);
         Page<ProductCategory> pageReq = new Page<>();
         pageReq.setCurrent(1L)
