@@ -18,6 +18,9 @@
 - 演示地址：http://mall.ichengle.top/
 - 陆陆续续收到一些打赏，为了更好的体验已用于演示服务器升级。谢谢各位小伙伴。
 
+## 若依技术专栏
+https://blog.csdn.net/qq_27575627/category_12005108.html
+
 ## 若依mall功能
 1. 首页：
 2. PMS商品管理：
