@@ -130,6 +130,12 @@
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
 
+        <!-- aliyun sms -->
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>dysmsapi20170525</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
 </project>
