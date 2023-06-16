@@ -28,8 +28,8 @@ public class H5ProductController {
         List<Product> pageRes = productService.selectList(query, page);
         return ResponseEntity.ok(new PageImpl<>(productConvert.dos2dtos(pageRes), page, ((com.github.pagehelper.Page) pageRes).getTotal()));
     }
-    @GetMapping("/detail")
-    public ResponseEntity<ProductDetail> queryDetail(@RequestParam Long id) {
+    @GetMapping("/detail/{id}")
+    public ResponseEntity<ProductDetail> queryDetail(@PathVariable Long id) {
         ProductDetail detail = productService.queryDetail(id);
         return ResponseEntity.ok(detail);
     }

@@ -72,67 +72,27 @@ public class ProductService {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
         QueryWrapper<Product> qw = new QueryWrapper<>();
-        qw.orderByDesc("publish_status");
-        qw.orderByAsc("sort");
-        Long brandId = query.getBrandId();
-        if (brandId != null) {
-            qw.eq("brand_id", brandId);
+        if (StringUtils.isNoneEmpty(query.getOrderField())){
+            if (StringUtils.isNotEmpty(query.getOrderSort()) && "desc".equalsIgnoreCase(query.getOrderSort())) {
+                qw.orderByDesc(query.getOrderField());
+            } else {
+                qw.orderByAsc(query.getOrderField());
+            }
+        }else {
+            qw.orderByDesc("publish_status");
+            qw.orderByAsc("sort");
         }
         Long categoryId = query.getCategoryId();
         if (categoryId != null) {
             qw.eq("category_id", categoryId);
         }
-        String outProductId = query.getOutProductId();
-        if (!StringUtils.isEmpty(outProductId)) {
-            qw.eq("out_product_id", outProductId);
-        }
-        String nameLike = query.getNameLike();
-        if (!StringUtils.isEmpty(nameLike)) {
-            qw.like("name", nameLike);
-        }
-        String pic = query.getPic();
-        if (!StringUtils.isEmpty(pic)) {
-            qw.eq("pic", pic);
-        }
-        String albumPics = query.getAlbumPics();
-        if (!StringUtils.isEmpty(albumPics)) {
-            qw.eq("album_pics", albumPics);
-        }
         Integer publishStatus = query.getPublishStatus();
         if (publishStatus != null) {
             qw.eq("publish_status", publishStatus);
         }
-        Integer sort = query.getSort();
-        if (sort != null) {
-            qw.eq("sort", sort);
-        }
-        BigDecimal price = query.getPrice();
-        if (price != null) {
-            qw.eq("price", price);
-        }
-        String unit = query.getUnit();
-        if (!StringUtils.isEmpty(unit)) {
-            qw.eq("unit", unit);
-        }
-        BigDecimal weight = query.getWeight();
-        if (weight != null) {
-            qw.eq("weight", weight);
-        }
-        String detailHtml = query.getDetailHtml();
-        if (!StringUtils.isEmpty(detailHtml)) {
-            qw.eq("detail_html", detailHtml);
-        }
-        String detailMobileHtml = query.getDetailMobileHtml();
-        if (!StringUtils.isEmpty(detailMobileHtml)) {
-            qw.eq("detail_mobile_html", detailMobileHtml);
-        }
-        String brandNameLike = query.getBrandNameLike();
-        if (!StringUtils.isEmpty(brandNameLike)) {
-            qw.like("brand_name", brandNameLike);
-        }
-        String productCategoryNameLike = query.getProductCategoryNameLike();
-        if (!StringUtils.isEmpty(productCategoryNameLike)) {
-            qw.like("product_category_name", productCategoryNameLike);
+        String search = query.getSearch();
+        if (StringUtils.isNoneEmpty(search)){
+            qw.like("name", "%".concat(query.getSearch().trim()).concat("%"));
         }
         return productMapper.selectList(qw);
     }

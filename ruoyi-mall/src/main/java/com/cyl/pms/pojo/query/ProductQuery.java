@@ -63,4 +63,13 @@ public class ProductQuery {
     @ApiModelProperty("商品分类名称 精确匹配")
     private String productCategoryNameLike;
 
+    @ApiModelProperty("排序字段")
+    private String orderField = "sort";
+
+    @ApiModelProperty("排序规则")
+    private String orderSort = "desc";
+
+    @ApiModelProperty("搜索关键字")
+    private String search;
+
 }

@@ -215,7 +215,7 @@ public class ProductCategoryService {
         QueryWrapper<ProductCategory> qw = new QueryWrapper<>();
         qw.select("id", "parent_id", "name", "level", "sort", "icon");
         qw.eq("show_status", 1);
-        qw.le("level", 2);
+//        qw.le("level", 2);
         return productCategoryMapper.selectList(qw);
     }
 
