@@ -28,4 +28,8 @@ public class SmsResult {
      * 可自行转换为 SDK 对应的 SendSmsResponse
      */
     private String response;
+    /**
+     * uuid
+     */
+    private String uuid;
 }
