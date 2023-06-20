@@ -1,16 +1,11 @@
 package com.cyl.h5.pojo.response;
 
-import com.cyl.ums.domain.Member;
 import lombok.Data;
 
 @Data
-public class RegisterResponse {
-
+public class ValidatePhoneResponse {
+    /** 是否成功 */
     private boolean ifSuccess;
-
+    /** 消息 */
     private String message;
-
-    private String token;
-
-    private Member member;
 }

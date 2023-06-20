@@ -7,11 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-/**
- * @Author: czc
- * @Description: TODO
- * @DateTime: 2023/6/19 15:39
- **/
+
 @RestController
 @RequestMapping("/no-auth/sms")
 public class SmsController {

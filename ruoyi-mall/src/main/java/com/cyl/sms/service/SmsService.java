@@ -6,7 +6,6 @@ import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.core.sms.AliyunSmsTemplate;
 import com.ruoyi.common.core.sms.SmsTemplate;
 import com.ruoyi.common.utils.SmsUtils;
-import com.ruoyi.common.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +17,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @Author: czc
- * @Description: TODO
- * @DateTime: 2023/6/19 16:28
- **/
 @Service
 @Slf4j
 public class SmsService {
@@ -45,17 +39,8 @@ public class SmsService {
             );
 
         }
-        if (StringUtils.isEmpty(phones)){
-            return ResponseEntity.ok(
-                    SmsResult.builder()
-                            .isSuccess(false)
-                            .message("手机号不能为空")
-                            .build()
-            );
-        }
         byte[] decodedBytes = Base64.getDecoder().decode(phones);
         phones = new String(decodedBytes);
-        log.info("base64解码后的手机号为：{}", phones);
         String code = SmsUtils.createRandom(true, 4);
         Map<String, String> map = new HashMap<>();
         map.put("code", code);

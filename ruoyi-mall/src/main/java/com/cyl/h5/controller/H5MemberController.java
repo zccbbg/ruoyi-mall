@@ -1,31 +1,30 @@
 package com.cyl.h5.controller;
 
-import com.cyl.h5.pojo.dto.LoginDTO;
 import com.cyl.h5.pojo.request.RegisterRequest;
 import com.cyl.h5.pojo.response.RegisterResponse;
-import com.cyl.h5.pojo.vo.LoginResVO;
+import com.cyl.h5.pojo.response.ValidatePhoneResponse;
 import com.cyl.h5.service.H5MemberService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-/**
- * @Author: czc
- * @Description: TODO
- * @DateTime: 2023/6/16 14:52
- **/
 @RestController
-@RequestMapping()
+@RequestMapping("/no-auth/h5/member")
 public class H5MemberController {
 
     @Autowired
     private H5MemberService service;
 
-    @PostMapping("/no-auth/h5/member/register")
+    @ApiOperation("会员注册")
+    @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request){
         return ResponseEntity.ok(service.register(request));
+    }
+
+    @ApiOperation("注册验证码校验手机号")
+    @GetMapping("/validate/{phone}")
+    public ResponseEntity<ValidatePhoneResponse> validate(@PathVariable String phone){
+        return ResponseEntity.ok(service.validate(phone));
     }
 }

@@ -1,7 +1,9 @@
 package com.cyl.h5.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyl.h5.pojo.request.RegisterRequest;
 import com.cyl.h5.pojo.response.RegisterResponse;
+import com.cyl.h5.pojo.response.ValidatePhoneResponse;
 import com.cyl.ums.domain.Member;
 import com.cyl.ums.mapper.MemberMapper;
 import com.ruoyi.common.core.redis.RedisCache;
@@ -9,15 +11,12 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Base64;
 
-/**
- * @Author: czc
- * @Description: TODO
- * @DateTime: 2023/6/16 15:01
- **/
 @Service
 @Slf4j
 public class H5MemberService {
@@ -36,20 +35,7 @@ public class H5MemberService {
     public RegisterResponse register(RegisterRequest request){
         log.info("request:{}", request);
         RegisterResponse response = new RegisterResponse();
-        response.setResult(false);
-        if (StringUtils.isEmpty(request.getMobile())){
-            response.setMessage("手机号不能为空");
-            return response;
-        }
-        if (StringUtils.isEmpty(request.getPassword())){
-            response.setMessage("密码不能为空");
-            return response;
-        }
-        int len = request.getPassword().length();
-        if (len < 8 || len > 20){
-            response.setMessage("密码长度为8-20位");
-            return response;
-        }
+        response.setIfSuccess(false);
         //校验 验证码
         String key = request.getUuid() + "_" + request.getMobile();
         String code = redisCache.getCacheObject(key);
@@ -70,8 +56,25 @@ public class H5MemberService {
         member.setNickname("用户" + request.getMobile());
         member.setCreateTime(LocalDateTime.now());
         memberMapper.insert(member);
-        response.setResult(true);
+        response.setIfSuccess(true);
         response.setMessage("注册成功");
+        return response;
+    }
+
+    public ValidatePhoneResponse validate(String phone) {
+        ValidatePhoneResponse response = new ValidatePhoneResponse();
+        response.setIfSuccess(false);
+        byte[] decodedBytes = Base64.getDecoder().decode(phone);
+        phone = new String(decodedBytes);
+        QueryWrapper<Member> qw = new QueryWrapper<>();
+        qw.eq("phone", phone);
+        Member member = memberMapper.selectOne(qw);
+        if (member != null){
+            response.setMessage("该手机号已被占用");
+            return response;
+        }
+        response.setIfSuccess(true);
+        response.setMessage("该手机号可用");
         return response;
     }
 }
