@@ -5,12 +5,8 @@ import lombok.Data;
 
 @Data
 public class RegisterResponse {
-
-    private boolean ifSuccess;
-
-    private String message;
-
+    /** token */
     private String token;
-
+    /** 会员信息 */
     private Member member;
 }

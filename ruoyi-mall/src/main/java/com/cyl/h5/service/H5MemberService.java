@@ -33,19 +33,15 @@ public class H5MemberService {
      * @return 结果
      */
     public RegisterResponse register(RegisterRequest request){
-        log.info("request:{}", request);
         RegisterResponse response = new RegisterResponse();
-        response.setIfSuccess(false);
         //校验 验证码
         String key = request.getUuid() + "_" + request.getMobile();
         String code = redisCache.getCacheObject(key);
         log.info("code:{}", code);
         if (null == code){
-            response.setMessage("验证码已过期");
-            return response;
+            throw new RuntimeException("验证码已过期");
         }else if (!code.equals(request.getCode())){
-            response.setMessage("验证码错误");
-            return response;
+            throw new RuntimeException("验证码错误");
         }
         //删除缓存
         redisCache.deleteObject(key);
@@ -56,22 +52,19 @@ public class H5MemberService {
         member.setNickname("用户" + request.getMobile());
         member.setCreateTime(LocalDateTime.now());
         memberMapper.insert(member);
-        response.setIfSuccess(true);
-        response.setMessage("注册成功");
+        //TODO 返回封装了token和member信息的response
         return response;
     }
 
     public ValidatePhoneResponse validate(String phone) {
         ValidatePhoneResponse response = new ValidatePhoneResponse();
-        response.setIfSuccess(false);
         byte[] decodedBytes = Base64.getDecoder().decode(phone);
         phone = new String(decodedBytes);
         QueryWrapper<Member> qw = new QueryWrapper<>();
         qw.eq("phone", phone);
         Member member = memberMapper.selectOne(qw);
         if (member != null){
-            response.setMessage("该手机号已被占用");
-            return response;
+            throw new RuntimeException("该手机号已被占用");
         }
         response.setIfSuccess(true);
         response.setMessage("该手机号可用");
