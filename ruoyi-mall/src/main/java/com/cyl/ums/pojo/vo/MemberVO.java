@@ -19,9 +19,6 @@ public class MemberVO extends BaseAudit {
    /** 昵称 */
     @Excel(name = "昵称")
     private String nickname;
-   /** 密码 */
-    @Excel(name = "密码")
-    private String password;
    /** 手机号码 */
     @Excel(name = "手机号码")
     private String phone;

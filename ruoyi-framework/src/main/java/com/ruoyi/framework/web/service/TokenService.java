@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
+
+import com.ruoyi.common.core.domain.model.LoginMember;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -40,6 +42,10 @@ public class TokenService
     @Value("${token.expireTime}")
     private int expireTime;
 
+    //单位 天
+    @Value("${token.memberExpireTime}")
+    private int memberExpireTime;
+
     protected static final long MILLIS_SECOND = 1000;
 
     protected static final long MILLIS_MINUTE = 60 * MILLIS_SECOND;
@@ -71,6 +77,22 @@ public class TokenService
             }
             catch (Exception e)
             {
+            }
+        }
+        return null;
+    }
+
+    public LoginMember getLoginMember(HttpServletRequest request) {
+        // 获取请求携带的令牌
+        String token = getToken(request);
+        if (StringUtils.isNotEmpty(token)) {
+            try {
+                Claims claims = parseToken(token);
+                // 解析对应的权限以及用户信息
+                String uuid = (String) claims.get(Constants.LOGIN_MEMBER_KEY);
+                String userKey = Constants.LOGIN_MEMBER_TOKEN_KEY + uuid;
+                return redisCache.getCacheObject(userKey);
+            } catch (Exception e) {
             }
         }
         return null;
@@ -117,6 +139,15 @@ public class TokenService
         return createToken(claims);
     }
 
+    public String createMemberToken(LoginMember loginMember){
+        String token = IdUtils.fastUUID();
+        loginMember.setToken(token);
+        refreshMemberToken(loginMember);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(Constants.LOGIN_MEMBER_KEY, token);
+        return createToken(claims);
+    }
+
     /**
      * 验证令牌有效期，相差不足20分钟，自动刷新缓存
      *
@@ -133,6 +164,14 @@ public class TokenService
         }
     }
 
+    public void verifyMemberToken(LoginMember loginUser) {
+        long expireTime = loginUser.getExpireTime();
+        long currentTime = System.currentTimeMillis();
+        if (expireTime - currentTime <= MILLIS_MINUTE_TEN) {
+            refreshMemberToken(loginUser);
+        }
+    }
+
     /**
      * 刷新令牌有效期
      *
@@ -145,6 +184,14 @@ public class TokenService
         // 根据uuid将loginUser缓存
         String userKey = getTokenKey(loginUser.getToken());
         redisCache.setCacheObject(userKey, loginUser, expireTime, TimeUnit.MINUTES);
+    }
+
+    public void refreshMemberToken(LoginMember loginUser) {
+        loginUser.setLoginTime(System.currentTimeMillis());
+        loginUser.setExpireTime(loginUser.getLoginTime() + memberExpireTime * 24 * 60 * MILLIS_MINUTE);
+        // 根据uuid将loginUser缓存
+        String userKey = Constants.LOGIN_MEMBER_TOKEN_KEY + loginUser.getToken();
+        redisCache.setCacheObject(userKey, loginUser, memberExpireTime, TimeUnit.DAYS);
     }
 
     /**
