@@ -56,6 +56,7 @@ public class H5MemberService {
         member.setPassword(SecurityUtils.encryptPassword(request.getPassword()));
         member.setNickname("用户" + request.getMobile().substring(7,11));
         member.setStatus(Constants.MEMBER_ACCOUNT_STATUS.NORMAL);
+        member.setGender(0);
         member.setCreateTime(LocalDateTime.now());
         memberMapper.insert(member);
         //注册成功直接返回token了
