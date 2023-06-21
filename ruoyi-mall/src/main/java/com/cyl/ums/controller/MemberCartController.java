@@ -46,8 +46,9 @@ public class MemberCartController extends BaseController {
     @PreAuthorize("@ss.hasPermi('ums:memberCart:list')")
     @PostMapping("/list")
     public ResponseEntity<Page<MemberCart>> list(@RequestBody MemberCartQuery query, Pageable page) {
-        List<MemberCart> list = service.selectList(query, page);
-        return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
+//        List<MemberCart> list = service.selectList(query, page);
+//        return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
+        return null;
     }
 
     @ApiOperation("导出购物车列表")
@@ -55,9 +56,10 @@ public class MemberCartController extends BaseController {
     @Log(title = "购物车", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public ResponseEntity<String> export(MemberCartQuery query) {
-        List<MemberCart> list = service.selectList(query, null);
-        ExcelUtil<MemberCartVO> util = new ExcelUtil<>(MemberCartVO.class);
-        return ResponseEntity.ok(util.writeExcel(convert.dos2vos(list), "购物车数据"));
+//        List<MemberCart> list = service.selectList(query, null);
+//        ExcelUtil<MemberCartVO> util = new ExcelUtil<>(MemberCartVO.class);
+//        return ResponseEntity.ok(util.writeExcel(convert.dos2vos(list), "购物车数据"));
+        return null;
     }
 
     @ApiOperation("获取购物车详细信息")

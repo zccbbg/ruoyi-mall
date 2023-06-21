@@ -1,32 +1,38 @@
 package com.cyl.ums.service;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cyl.h5.config.SecurityUtil;
 import com.cyl.pms.domain.Product;
 import com.cyl.pms.domain.Sku;
 import com.cyl.pms.mapper.ProductMapper;
 import com.cyl.pms.mapper.SkuMapper;
 import com.cyl.pms.pojo.dto.MemberCartDTO;
 import com.cyl.ums.convert.MemberCartConvert;
+import com.cyl.ums.domain.Member;
 import com.cyl.ums.domain.MemberCart;
 import com.cyl.ums.mapper.MemberCartMapper;
 import com.cyl.ums.pojo.query.MemberCartQuery;
+import com.cyl.ums.pojo.vo.MemberCartVO;
 import com.cyl.ums.pojo.vo.form.AddMemberCartForm;
 import com.cyl.ums.pojo.vo.form.UpdateMemberCartForm;
 import com.github.pagehelper.PageHelper;
+import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.exception.base.BaseException;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.SortUtil;
+import com.ruoyi.framework.config.LocalDataUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -62,46 +68,38 @@ public class MemberCartService {
      * @param page  分页条件
      * @return 购物车
      */
-    public List<MemberCart> selectList(MemberCartQuery query, Pageable page) {
+    public List<MemberCartVO> selectList(MemberCartQuery query, Pageable page) {
         if (page != null) {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize(), SortUtil.sort2string(page.getSort(),"id desc"));
         }
         QueryWrapper<MemberCart> qw = new QueryWrapper<>();
-        Integer status = query.getStatus();
-        if (status != null) {
-            qw.eq("status", status);
+        if (query.getMemberId() != null){
+            qw.eq("member_id", query.getMemberId());
         }
-        Long memberId = query.getMemberId();
-        if (memberId != null) {
-            qw.eq("member_id", memberId);
-        } else {
-            qw.eq("member_id", SecurityUtils.getUserId());
+        List<MemberCart> memberCartList = memberCartMapper.selectList(qw);
+        if (CollectionUtil.isEmpty(memberCartList)){
+            return Collections.emptyList();
         }
-        Long productId = query.getProductId();
-        if (productId != null) {
-            qw.eq("product_id", productId);
-        }
-        String pic = query.getPic();
-        if (!StringUtils.isEmpty(pic)) {
-            qw.eq("pic", pic);
-        }
-        Long skuId = query.getSkuId();
-        if (skuId != null) {
-            qw.eq("sku_id", skuId);
-        }
-        String productNameLike = query.getProductNameLike();
-        if (!StringUtils.isEmpty(productNameLike)) {
-            qw.like("product_name", productNameLike);
-        }
-        String spData = query.getSpData();
-        if (!StringUtils.isEmpty(spData)) {
-            qw.eq("sp_data", spData);
-        }
-        Integer quantity = query.getQuantity();
-        if (quantity != null) {
-            qw.eq("quantity", quantity);
-        }
-        return memberCartMapper.selectList(qw);
+        //查sku
+        List<Long> skuIdList = memberCartList.stream().map(MemberCart::getSkuId).collect(Collectors.toList());
+        QueryWrapper<Sku> skuQw = new QueryWrapper<>();
+        skuQw.in("id", skuIdList);
+        Map<Long, Sku> skuMap = skuMapper.selectList(skuQw).stream().collect(Collectors.toMap(Sku::getId, it -> it));
+        List<MemberCartVO> resList = new ArrayList<>();
+        memberCartList.forEach(item -> {
+            MemberCartVO memberCartVO = new MemberCartVO();
+            BeanUtils.copyProperties(item, memberCartVO);
+            if (!skuMap.containsKey(item.getSkuId())){
+                memberCartVO.setStatus(0);
+                memberCartVO.setSkuIfExist(0);
+            }else {
+                Sku sku = skuMap.get(item.getSkuId());
+                memberCartVO.setPrice(sku.getPrice());
+                memberCartVO.setSkuIfExist(1);
+            }
+            resList.add(memberCartVO);
+        });
+        return resList;
     }
 
     /**
@@ -111,27 +109,24 @@ public class MemberCartService {
      * @return 结果
      */
     public int insert(MemberCart memberCart) {
-        memberCart.setCreateTime(LocalDateTime.now());
-        return memberCartMapper.insert(memberCart);
-    }
-
-    /**
-     * 新增购物车
-     *
-     * @param form 添加购物车表单
-     * @return 结果
-     */
-    public MemberCart insert(AddMemberCartForm form) {
-        // 查询规格
-        Sku sku = skuMapper.selectById(form.getSkuId());
-        MemberCart memberCart = memberCartConvert.sku2Cart(sku);
-        Product p = productMapper.selectById(sku.getProductId());
-        memberCartConvert.injectProduct(memberCart, p);
-        memberCart.setQuantity(form.getNum());
-        memberCart.setMemberId(SecurityUtils.getUserId());
-        memberCart.setStatus(1) ;
-        memberCartMapper.insert(memberCart);
-        return memberCart;
+        Member member = (Member) LocalDataUtil.getVar(Constants.MEMBER_INFO);
+        memberCart.setMemberId(member.getId());
+        //判断cart是否存在
+        QueryWrapper<MemberCart> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("member_id",member.getId());
+        queryWrapper.eq("sku_id",memberCart.getSkuId());
+        queryWrapper.eq("product_id",memberCart.getProductId());
+        List<MemberCart> memberCarts = memberCartMapper.selectList(queryWrapper);
+        if (CollectionUtils.isEmpty(memberCarts)) {
+            memberCart.setStatus(1);
+            memberCart.setCreateTime(LocalDateTime.now());
+            memberCart.setCreateBy(member.getId());
+            return memberCartMapper.insert(memberCart);
+        }
+        MemberCart dbCart = memberCarts.get(0);
+        dbCart.setUpdateTime(LocalDateTime.now());
+        dbCart.setQuantity(dbCart.getQuantity() + memberCart.getQuantity());
+        return memberCartMapper.updateById(dbCart);
     }
 
     /**
@@ -141,7 +136,14 @@ public class MemberCartService {
      * @return 结果
      */
     public int update(MemberCart memberCart) {
-        return memberCartMapper.updateById(memberCart);
+        MemberCart cart = memberCartMapper.selectById(memberCart.getId());
+        if (cart == null){
+            return 0;
+        }
+        cart.setQuantity(memberCart.getQuantity());
+        cart.setUpdateTime(LocalDateTime.now());
+        cart.setUpdateBy(SecurityUtil.getLocalMember().getId());
+        return memberCartMapper.updateById(cart);
     }
     public int update(UpdateMemberCartForm form) {
         if (form.getNum() == null || form.getId() == null) {
@@ -175,12 +177,9 @@ public class MemberCartService {
      * @param ids 购物车主键
      * @return 结果
      */
-    public int deleteByIds(List<Long> ids) {
-        Long userId = SecurityUtils.getUserId();
-        LambdaQueryWrapper<MemberCart> qw = new LambdaQueryWrapper<>();
-        qw.eq(MemberCart::getMemberId, userId);
-        qw.in(MemberCart::getId, ids);
-        return memberCartMapper.delete(qw);
+    public int deleteByIds(String ids) {
+        List<Long> idList = Arrays.stream(ids.split(",")).map(it -> Long.parseLong(it)).collect(Collectors.toList());
+        return memberCartMapper.deleteBatchIds(idList);
     }
 
     public Integer mineCartNum() {

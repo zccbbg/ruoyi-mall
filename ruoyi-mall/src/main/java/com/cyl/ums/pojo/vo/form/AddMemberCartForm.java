@@ -16,8 +16,10 @@ public class AddMemberCartForm {
     /**
      * 数量
      */
-    @NotNull(message = "数量必填！")
-    @Min(value = 1, message = "数量不小于1")
-    @Max(value = Integer.MAX_VALUE, message = "数量不大于" + Integer.MAX_VALUE)
-    private Integer num;
+    private Integer buyNum;
+    private Long productId;
+    private String pic;
+    private String productName;
+    private String spData;
+    private Integer quantity;
 }

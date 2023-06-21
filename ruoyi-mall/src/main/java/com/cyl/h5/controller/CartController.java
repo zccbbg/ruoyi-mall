@@ -2,11 +2,15 @@ package com.cyl.h5.controller;
 
 import com.cyl.pms.pojo.dto.MemberCartDTO;
 import com.cyl.ums.convert.MemberCartConvert;
+import com.cyl.ums.domain.Member;
 import com.cyl.ums.domain.MemberCart;
 import com.cyl.ums.pojo.query.MemberCartQuery;
+import com.cyl.ums.pojo.vo.MemberCartVO;
 import com.cyl.ums.pojo.vo.form.AddMemberCartForm;
 import com.cyl.ums.pojo.vo.form.UpdateMemberCartForm;
 import com.cyl.ums.service.MemberCartService;
+import com.ruoyi.common.constant.Constants;
+import com.ruoyi.framework.config.LocalDataUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -51,8 +55,8 @@ public class CartController {
      * @return 购物车商品
      */
     @PostMapping("add")
-    public ResponseEntity<MemberCart> add(@Valid @RequestBody AddMemberCartForm form) {
-        return ResponseEntity.ok(memberCartService.insert(form));
+    public ResponseEntity<Integer> add(@RequestBody MemberCart memberCart) {
+        return ResponseEntity.ok(memberCartService.insert(memberCart));
     }
 
     /**
@@ -61,8 +65,8 @@ public class CartController {
      * @return 是否修改
      */
     @PostMapping("modify")
-    public ResponseEntity<Integer> modify(@Valid @RequestBody UpdateMemberCartForm form) {
-        return ResponseEntity.ok(memberCartService.update(form));
+    public ResponseEntity<Integer> modify(@Valid @RequestBody MemberCart memberCart) {
+        return ResponseEntity.ok(memberCartService.update(memberCart));
     }
 
     /**
@@ -71,7 +75,7 @@ public class CartController {
      * @return 是否修改
      */
     @DeleteMapping("remove")
-    public ResponseEntity<Integer> remove(@RequestBody List<Long> ids) {
+    public ResponseEntity<Integer> remove(@RequestBody String ids) {
         return ResponseEntity.ok(memberCartService.deleteByIds(ids));
     }
 
@@ -80,12 +84,11 @@ public class CartController {
      *
      * @return 购物车列表
      */
-    @PostMapping("list")
-    public ResponseEntity<Page<MemberCartDTO>> remove(@RequestBody MemberCartQuery query, Pageable pageable) {
-        List<MemberCart> list = memberCartService.selectList(query, pageable);
-        com.github.pagehelper.Page<?> p = (com.github.pagehelper.Page<?>)list;
-        List<MemberCartDTO> resList = memberCartConvert.dos2Dtos(list);
-        memberCartService.injectSku(resList);
-        return ResponseEntity.ok(new PageImpl<>(resList, pageable, p.getTotal()));
+    @GetMapping("list")
+    public ResponseEntity<List<MemberCartVO>> remove() {
+        Member member = (Member) LocalDataUtil.getVar(Constants.MEMBER_INFO);
+        MemberCartQuery query = new MemberCartQuery();
+        query.setMemberId(member.getId());
+        return ResponseEntity.ok(memberCartService.selectList(query, null));
     }
 }

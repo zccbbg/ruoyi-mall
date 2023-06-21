@@ -4,6 +4,9 @@ import com.ruoyi.common.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.core.domain.BaseAudit;
 import lombok.Data;
+
+import java.math.BigDecimal;
+
 /**
  * 购物车 数据视图对象
  * 
@@ -37,4 +40,8 @@ public class MemberCartVO extends BaseAudit {
    /** 商品数量 */
     @Excel(name = "商品数量")
     private Integer quantity;
+    /** sku价格 */
+    private BigDecimal price;
+    /** sku是否存在 */
+    private Integer skuIfExist;
 }
