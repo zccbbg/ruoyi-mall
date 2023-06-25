@@ -20,4 +20,6 @@ public interface MemberAddressMapper extends BaseMapper<MemberAddress> {
     List<MemberAddress> selectByEntity(MemberAddress memberAddress);
 
     int updateByPrimaryKeySelective(MemberAddress address);
+
+    void updateDefault(int IsDefault, Long id);
 }

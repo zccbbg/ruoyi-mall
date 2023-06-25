@@ -94,4 +94,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </set>
         where id = #{id, jdbcType=BIGINT}
     </update>
+    <update id="updateDefault">
+        update ums_member_address
+        set is_default = #{param1}
+        where member_id = #{param2}
+    </update>
 </mapper>
