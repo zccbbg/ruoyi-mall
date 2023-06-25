@@ -4,6 +4,7 @@ import com.cyl.h5.service.H5MemberAddressService;
 import com.cyl.ums.domain.MemberAddress;
 import com.ruoyi.common.core.domain.AjaxResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,8 +20,8 @@ public class H5MemberAddressController {
   }
 
   @GetMapping("/default")
-  public AjaxResult getDefault(){
-    return AjaxResult.success(h5MemberAddressService.getDefault());
+  public ResponseEntity<MemberAddress> getDefault(){
+    return ResponseEntity.ok(h5MemberAddressService.getDefault());
   }
 
   @PostMapping("/create")

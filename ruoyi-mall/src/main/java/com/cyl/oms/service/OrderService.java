@@ -7,28 +7,38 @@ import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyl.h5.pojo.dto.OrderCreateDTO;
+import com.cyl.h5.pojo.dto.OrderProductListDTO;
+import com.cyl.h5.pojo.vo.OrderCalcVO;
+import com.cyl.h5.pojo.vo.SkuViewDTO;
 import com.cyl.h5.pojo.vo.form.OrderSubmitForm;
 import com.cyl.h5.pojo.vo.query.OrderH5Query;
 import com.cyl.oms.convert.OrderConvert;
 import com.cyl.oms.domain.OrderItem;
 import com.cyl.oms.mapper.OrderItemMapper;
 import com.cyl.oms.pojo.vo.OrderVO;
+import com.cyl.pms.convert.SkuConvert;
 import com.cyl.pms.domain.Product;
 import com.cyl.pms.domain.Sku;
 import com.cyl.pms.mapper.ProductMapper;
 import com.cyl.pms.mapper.SkuMapper;
+import com.cyl.pms.pojo.vo.SkuVO;
+import com.cyl.ums.domain.Member;
 import com.cyl.ums.domain.MemberAddress;
 import com.cyl.ums.mapper.MemberAddressMapper;
 import com.github.pagehelper.PageHelper;
+import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.exception.base.BaseException;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.framework.config.LocalDataUtil;
 import com.ruoyi.system.mapper.SysUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,6 +49,8 @@ import org.springframework.stereotype.Service;
 import com.cyl.oms.mapper.OrderMapper;
 import com.cyl.oms.domain.Order;
 import com.cyl.oms.pojo.query.OrderQuery;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * 订单表Service业务层处理
@@ -60,6 +72,8 @@ public class OrderService {
     private SkuMapper skuMapper;
     @Autowired
     private ProductMapper productMapper;
+    @Autowired
+    private SkuConvert skuConvert;
 
     /**
      * 查询订单表
@@ -340,5 +354,55 @@ public class OrderService {
             it.setItems(oid2items.get(it.getId()));
         });
         return new PageImpl<>(res, pageReq, total);
+    }
+
+    public OrderCalcVO addOrderCheck(OrderCreateDTO orderCreateDTO) {
+        OrderCalcVO res = new OrderCalcVO();
+        List<SkuViewDTO> skuList = new ArrayList<>();
+        List<OrderProductListDTO> list = orderCreateDTO.getSkuList();
+        if (CollectionUtil.isEmpty(list)){
+            throw new RuntimeException("商品SKU信息不能为空");
+        }
+        //将购买的sku信息转化为key：skuId value：数量
+        Map<Long, Integer> quantityMap = list.stream().
+                collect(Collectors.toMap(OrderProductListDTO::getSkuId, OrderProductListDTO::getQuantity, (v1, v2) -> v2));
+        //查询所有sku信息
+        Set<Long> collect = list.stream().map(OrderProductListDTO::getSkuId).collect(Collectors.toSet());
+        Map<Long, Sku> querySkuMap = skuMapper.selectBatchIds(collect).stream().collect(Collectors.toMap(Sku::getId, it -> it));
+        //计算商品总金额、订单总金额
+        BigDecimal productTotalAmount = BigDecimal.ZERO;
+        BigDecimal orderTotalAmount = BigDecimal.ZERO;
+        for (OrderProductListDTO dto : list){
+            if (!querySkuMap.containsKey(dto.getSkuId())){
+                throw new RuntimeException("商品SKU不存在");
+            }
+            Sku sku = querySkuMap.get(dto.getSkuId());
+            //查product
+            Product product = productMapper.selectById(sku.getProductId());
+            if (product == null){
+                throw new RuntimeException("商品不存在");
+            }
+            if (Constants.PublishStatus.UNDERCARRIAGE.equals(product.getPublishStatus())){
+                throw new RuntimeException("商品" + product.getName() + "已下架");
+            }
+            BigDecimal addAmount = sku.getPrice().multiply(BigDecimal.valueOf(dto.getQuantity()));
+            //由于目前没有运费等数据，暂时订单总金额=商品总金额了
+            productTotalAmount = productTotalAmount.add(addAmount);
+            orderTotalAmount = orderTotalAmount.add(addAmount);
+            //封装sku信息
+            SkuViewDTO skuViewDTO = new SkuViewDTO();
+            skuViewDTO.setPic(product.getPic());
+            skuViewDTO.setPrice(sku.getPrice());
+            skuViewDTO.setProductId(product.getId());
+            skuViewDTO.setProductName(product.getName());
+            skuViewDTO.setQuantity(quantityMap.get(sku.getId()));
+            skuViewDTO.setSkuId(sku.getId());
+            skuViewDTO.setSpData(sku.getSpData());
+            skuList.add(skuViewDTO);
+        }
+        res.setSkuList(skuList);
+        res.setOrderTotalAmount(orderTotalAmount);
+        res.setProductTotalAmount(productTotalAmount);
+        return res;
     }
 }
