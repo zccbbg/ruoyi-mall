@@ -16,7 +16,7 @@ import io.swagger.annotations.ApiModelProperty;
 @Data
 public class MemberQuery {
     @ApiModelProperty("昵称 精确匹配")
-    private String nicknameLike;
+    private String nickname;
 
     @ApiModelProperty("密码 精确匹配")
     private String password;
@@ -60,4 +60,7 @@ public class MemberQuery {
     @ApiModelProperty("用户剩余积分 精确匹配")
     private BigDecimal integral;
 
+    private String beginTime;
+
+    private String endTime;
 }

@@ -50,65 +50,17 @@ public class MemberService {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
         QueryWrapper<Member> qw = new QueryWrapper<>();
-        String nicknameLike = query.getNicknameLike();
+        String nicknameLike = query.getNickname();
         if (!StringUtils.isEmpty(nicknameLike)) {
             qw.like("nickname", nicknameLike);
-        }
-        String password = query.getPassword();
-        if (!StringUtils.isEmpty(password)) {
-            qw.eq("password", password);
         }
         String phone = query.getPhone();
         if (!StringUtils.isEmpty(phone)) {
             qw.eq("phone", phone);
         }
-        String mark = query.getMark();
-        if (!StringUtils.isEmpty(mark)) {
-            qw.eq("mark", mark);
-        }
-        Integer status = query.getStatus();
-        if (status != null) {
-            qw.eq("status", status);
-        }
-        String avatar = query.getAvatar();
-        if (!StringUtils.isEmpty(avatar)) {
-            qw.eq("avatar", avatar);
-        }
-        Integer gender = query.getGender();
-        if (gender != null) {
-            qw.eq("gender", gender);
-        }
-        String city = query.getCity();
-        if (!StringUtils.isEmpty(city)) {
-            qw.eq("city", city);
-        }
-        String province = query.getProvince();
-        if (!StringUtils.isEmpty(province)) {
-            qw.eq("province", province);
-        }
-        String country = query.getCountry();
-        if (!StringUtils.isEmpty(country)) {
-            qw.eq("country", country);
-        }
-        LocalDate birthday = query.getBirthday();
-        if (birthday != null) {
-            qw.eq("birthday", birthday);
-        }
-        Long spreadUid = query.getSpreadUid();
-        if (spreadUid != null) {
-            qw.eq("spread_uid", spreadUid);
-        }
-        LocalDateTime spreadTime = query.getSpreadTime();
-        if (spreadTime != null) {
-            qw.eq("spread_time", spreadTime);
-        }
-        Integer level = query.getLevel();
-        if (level != null) {
-            qw.eq("level", level);
-        }
-        BigDecimal integral = query.getIntegral();
-        if (integral != null) {
-            qw.eq("integral", integral);
+        if (!StringUtils.isEmpty(query.getBeginTime()) && !StringUtils.isEmpty(query.getEndTime())){
+            qw.ge("create_time", query.getBeginTime());
+            qw.lt("create_time", query.getEndTime());
         }
         return memberMapper.selectList(qw);
     }
