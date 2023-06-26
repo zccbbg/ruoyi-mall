@@ -12,7 +12,9 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.cyl.h5.pojo.dto.OrderCreateDTO;
 import com.cyl.h5.pojo.dto.OrderProductListDTO;
 import com.cyl.h5.pojo.vo.OrderCalcVO;
@@ -21,7 +23,9 @@ import com.cyl.h5.pojo.vo.form.OrderSubmitForm;
 import com.cyl.h5.pojo.vo.query.OrderH5Query;
 import com.cyl.oms.convert.OrderConvert;
 import com.cyl.oms.domain.OrderItem;
+import com.cyl.oms.domain.OrderOperateHistory;
 import com.cyl.oms.mapper.OrderItemMapper;
+import com.cyl.oms.mapper.OrderOperateHistoryMapper;
 import com.cyl.oms.pojo.vo.OrderVO;
 import com.cyl.pms.convert.SkuConvert;
 import com.cyl.pms.domain.Product;
@@ -31,12 +35,15 @@ import com.cyl.pms.mapper.SkuMapper;
 import com.cyl.pms.pojo.vo.SkuVO;
 import com.cyl.ums.domain.Member;
 import com.cyl.ums.domain.MemberAddress;
+import com.cyl.ums.domain.MemberCart;
 import com.cyl.ums.mapper.MemberAddressMapper;
+import com.cyl.ums.mapper.MemberCartMapper;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.exception.base.BaseException;
+import com.ruoyi.common.utils.IDGenerator;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.framework.config.LocalDataUtil;
 import com.ruoyi.system.mapper.SysUserMapper;
@@ -49,7 +56,10 @@ import org.springframework.stereotype.Service;
 import com.cyl.oms.mapper.OrderMapper;
 import com.cyl.oms.domain.Order;
 import com.cyl.oms.pojo.query.OrderQuery;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -74,6 +84,12 @@ public class OrderService {
     private ProductMapper productMapper;
     @Autowired
     private SkuConvert skuConvert;
+    @Autowired
+    private OrderItemService orderItemService;
+    @Autowired
+    private OrderOperateHistoryMapper orderOperateHistoryMapper;
+    @Autowired
+    private MemberCartMapper memberCartMapper;
 
     /**
      * 查询订单表
@@ -243,73 +259,109 @@ public class OrderService {
         return orderMapper.deleteById(id);
     }
 
-    public OrderVO submit(OrderSubmitForm form) {
-        MemberAddress addr = memberAddressMapper.selectById(form.getAddressId());
-        if (addr == null) {
-            throw new BaseException("参数错误");
+    @Transactional
+    public Long submit(OrderSubmitForm form) {
+        Member member = (Member) LocalDataUtil.getVar(Constants.MEMBER_INFO);
+        //只支持快递
+        Long addressId = form.getAddressId();
+        if (addressId == null){
+            throw new RuntimeException("收获地址不能为空");
         }
-        List<Long> skuIds = form.getSkus().stream().map(OrderSubmitForm.SkuParam::getSkuId).distinct().collect(Collectors.toList());
-        List<Sku> skus = skuMapper.selectBatchIds(skuIds);
-        if (skuIds.size() != skus.size()) {
-            throw new BaseException("参数错误");
+        MemberAddress memberAddress = memberAddressMapper.selectById(addressId);
+        if (memberAddress == null){
+            throw new RuntimeException("收货地址不能为空");
         }
-        Map<Long, Sku> id2sku = skus.stream().collect(Collectors.toMap(Sku::getId, it -> it));
+        //sku不能为空
+        List<OrderProductListDTO> skuList = form.getSkuList();
+        if (CollectionUtil.isEmpty(skuList)){
+            throw new RuntimeException("商品SKU信息不能为空");
+        }
+        //将sku信息转换为 key：skuId ，value：购买数量
+        Map<Long, Integer> skuQuantityMap = skuList.stream().collect(Collectors.toMap(OrderProductListDTO::getSkuId, OrderProductListDTO::getQuantity));
+        //查询所有sku信息
+        Map<Long, Sku> querySkuMap = skuMapper
+                .selectBatchIds(skuList.stream().map(OrderProductListDTO::getSkuId).collect(Collectors.toList()))
+                .stream().collect(Collectors.toMap(Sku::getId, it -> it));
+        //计算商品总额、订单总额（订单总金额=商品总金额，因为暂时没有运费等概念）
+        BigDecimal productTotalAmount = BigDecimal.ZERO;
+        BigDecimal orderTotalAmount = BigDecimal.ZERO;
+        for (OrderProductListDTO dto : skuList){
+            if (!querySkuMap.containsKey(dto.getSkuId())){
+                throw new RuntimeException("商品SKU不存在");
+            }
+            Sku sku = querySkuMap.get(dto.getSkuId());
+            Product product = productMapper.selectById(sku.getProductId());
+            if (product == null){
+                throw new RuntimeException("商品不存在");
+            }
+            if (Constants.PublishStatus.UNDERCARRIAGE.equals(product.getPublishStatus())){
+                throw new RuntimeException("商品" + product.getName() + "已下架");
+            }
+            productTotalAmount = productTotalAmount.add(sku.getPrice().multiply(BigDecimal.valueOf(skuQuantityMap.get(sku.getId()))));
+            orderTotalAmount = orderTotalAmount.add(sku.getPrice().multiply(BigDecimal.valueOf(skuQuantityMap.get(sku.getId()))));
+            dto.setSku(sku);
+            dto.setProduct(product);
+        }
+        LocalDateTime optTime = LocalDateTime.now();
 
-        Map<Long, Product> id2Product = productMapper.selectBatchIds(
-                skus.stream().map(Sku::getProductId).distinct().collect(Collectors.toList())
-        ).stream().collect(Collectors.toMap(Product::getId, it -> it));
-
-        // 1. 生成订单商品快照
+        //生成一个统一的订单号
+        Long orderId = IDGenerator.generateId();
+        //创建订单
         Order order = new Order();
-        order.setTotalAmount(BigDecimal.ZERO);
-        List<OrderItem> items = new ArrayList<>();
-        form.getSkus().forEach(it -> {
-            Sku s = id2sku.get(it.getSkuId());
-            Product p = id2Product.get(s.getProductId());
-
-            OrderItem item = new OrderItem();
-            item.setProductId(s.getProductId());
-            item.setOutProductId(p.getOutProductId());
-            item.setSkuId(it.getSkuId());
-            item.setOutSkuId(s.getOutSkuId());
-            item.setProductSnapshotId(p.getId());
-            item.setSkuSnapshotId(s.getId());
-            item.setPic(StrUtil.isNotEmpty(s.getPic()) ? s.getPic() : p.getPic());
-            item.setProductName(p.getName());
-            item.setSalePrice(s.getPrice());
-            item.setQuantity(it.getQuantity());
-            item.setProductCategoryId(p.getCategoryId());
-            item.setSpData(s.getSpData());
-            items.add(item);
-            order.setTotalAmount(order.getTotalAmount().add(s.getPrice().multiply(BigDecimal.valueOf(it.getQuantity()))));
-        });
-        LoginUser user = SecurityUtils.getLoginUser();
-
-        // 2. 生成订单
-        order.setMemberId(user.getUserId());
-        order.setMemberUsername(user.getUsername());
-        order.setStatus(0);
+        order.setId(orderId);
+        order.setMemberId(member.getId());
+        order.setMemberUsername(member.getNickname());
+        order.setPayType(Constants.PayType.WECHAT);
+        order.setTotalAmount(orderTotalAmount);
+        order.setPurchasePrice(BigDecimal.ZERO);
+        order.setFreightAmount(BigDecimal.ZERO);
+        order.setPayAmount(orderTotalAmount);
+        //暂时为接入支付，直接设置为待发货
+        order.setStatus(Constants.OrderStatus.SEND);
         order.setAftersaleStatus(1);
-        order.setAutoConfirmDay(7);
-        order.setReceiverName(addr.getName());
-        order.setReceiverPhone(addr.getPhone());
-        order.setReceiverProvince(addr.getProvince());
-        order.setReceiverDistrict(addr.getDistrict());
-        order.setReceiverDetailAddress(addr.getDetailAddress());
+        order.setReceiverName(memberAddress.getName());
+        order.setReceiverPhone(memberAddress.getPhone());
+        order.setReceiverPostCode(memberAddress.getPostCode());
+        order.setReceiverProvince(memberAddress.getProvince());
+        order.setReceiverCity(memberAddress.getCity());
+        order.setReceiverDistrict(memberAddress.getDistrict());
+        order.setReceiverDetailAddress(memberAddress.getDetailAddress());
         order.setNote(form.getNote());
         order.setConfirmStatus(0);
         order.setDeleteStatus(0);
-        orderMapper.insert(order);
-        items.forEach(it -> it.setOrderId(order.getId()));
-        items.forEach(orderItemMapper::insert);
-
-        // 3. 判断是否付费，生成支付订单
-        if (BigDecimal.ZERO.compareTo(order.getTotalAmount()) > 0) {
-            // todo 生成支付订单
+        order.setPaymentTime(optTime);
+        order.setCreateTime(optTime);
+        order.setCreateBy(member.getId());
+        int rows = orderMapper.insert(order);
+        if (rows < 1){
+            throw new RuntimeException("订单新增失败");
         }
-        OrderVO vo = orderConvert.do2vo(order);
-        vo.setItems(items);
-        return vo;
+        // 保存orderItem
+        orderItemService.saveOrderItem(member, optTime, orderId, skuList);
+        // 保存订单操作记录
+        OrderOperateHistory orderOperateHistory = new OrderOperateHistory();
+        orderOperateHistory.setOrderId(orderId);
+        orderOperateHistory.setOperateMan(member.getId() + "");
+        orderOperateHistory.setOrderStatus(Constants.OrderStatus.SEND);
+        orderOperateHistory.setCreateTime(optTime);
+        orderOperateHistory.setCreateBy(member.getId());
+        rows = orderOperateHistoryMapper.insert(orderOperateHistory);
+        if (rows < 1){
+            throw new RuntimeException("保存订单操作记录失败");
+        }
+        //若来源为购物车，删除购物车
+        if (Constants.OrderFrom.CART.equals(form.getFrom())){
+            List<Long> skuIdList = skuList.stream().map(OrderProductListDTO::getSkuId).collect(Collectors.toList());
+            LambdaUpdateWrapper<MemberCart> wrapper = Wrappers.lambdaUpdate();
+            wrapper.eq(MemberCart::getMemberId, member.getId());
+            wrapper.in(MemberCart::getSkuId, skuIdList);
+            rows = memberCartMapper.delete(wrapper);
+            if (rows < 1){
+                throw new RuntimeException("删除购物车失败");
+            }
+        }
+        //当前返回成功消息，接入支付后可返回payId
+        return orderId;
     }
 
     public Page<OrderVO> queryOrderPage(OrderH5Query query, Pageable pageReq) {
@@ -405,4 +457,5 @@ public class OrderService {
         res.setProductTotalAmount(productTotalAmount);
         return res;
     }
+
 }

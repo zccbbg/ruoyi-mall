@@ -6,7 +6,12 @@ import com.cyl.h5.pojo.vo.form.OrderSubmitForm;
 import com.cyl.h5.pojo.vo.query.OrderH5Query;
 import com.cyl.oms.pojo.vo.OrderVO;
 import com.cyl.oms.service.OrderService;
+import com.cyl.ums.domain.Member;
+import com.ruoyi.common.constant.Constants;
+import com.ruoyi.common.core.redis.RedisService;
+import com.ruoyi.framework.config.LocalDataUtil;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,12 +25,32 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/h5/order")
+@Slf4j
 public class H5OrderController {
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private RedisService redisService;
+
     @PostMapping("/add")
-    public ResponseEntity<OrderVO> submit(@RequestBody OrderSubmitForm form) {
-        return ResponseEntity.ok(orderService.submit(form));
+    public ResponseEntity<Long> submit(@RequestBody OrderSubmitForm form) {
+        Member member = (Member) LocalDataUtil.getVar(Constants.MEMBER_INFO);
+        Long memberId = member.getId();
+        String redisKey = "h5_order_add" + memberId;
+        String redisValue = memberId + "_" + System.currentTimeMillis();
+        try{
+            redisService.lock(redisKey, redisValue, 60);
+            return ResponseEntity.ok(orderService.submit(form));
+        }catch (Exception e){
+            log.info("创建订单方法异常", e);
+            return null;
+        }finally {
+            try {
+                redisService.unLock(redisKey, redisValue);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
     @PostMapping("orders")
     public ResponseEntity<Page<OrderVO>> queryOrderPage(@RequestBody OrderH5Query query, Pageable pageReq) {

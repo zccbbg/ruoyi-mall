@@ -1,11 +1,16 @@
 package com.cyl.oms.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyl.h5.pojo.dto.OrderProductListDTO;
+import com.cyl.ums.domain.Member;
 import com.github.pagehelper.PageHelper;
+import com.ruoyi.common.utils.IDGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +18,7 @@ import org.springframework.stereotype.Service;
 import com.cyl.oms.mapper.OrderItemMapper;
 import com.cyl.oms.domain.OrderItem;
 import com.cyl.oms.pojo.query.OrderItemQuery;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 订单中所包含的商品Service业务层处理
@@ -21,7 +27,7 @@ import com.cyl.oms.pojo.query.OrderItemQuery;
  * @author zcc
  */
 @Service
-public class OrderItemService {
+public class OrderItemService extends ServiceImpl<OrderItemMapper, OrderItem> {
     @Autowired
     private OrderItemMapper orderItemMapper;
 
@@ -135,5 +141,33 @@ public class OrderItemService {
      */
     public int deleteById(Long id) {
         return orderItemMapper.deleteById(id);
+    }
+
+    @Transactional
+    public void saveOrderItem(Member member, LocalDateTime optTime,
+                              Long orderId, List<OrderProductListDTO> list){
+        List<OrderItem> addOrderItemList = new ArrayList<>();
+        list.forEach(item -> {
+            OrderItem orderItem = new OrderItem();
+            orderItem.setId(IDGenerator.generateId());
+            orderItem.setOrderId(orderId);
+            orderItem.setProductId(item.getProduct().getId());
+            orderItem.setOutProductId(item.getProduct().getOutProductId());
+            orderItem.setSkuId(item.getSku().getId());
+            orderItem.setOutSkuId(item.getSku().getOutSkuId());
+            orderItem.setPic(item.getSku().getPic());
+            orderItem.setProductName(item.getProduct().getName());
+            orderItem.setSalePrice(item.getSku().getPrice());
+            orderItem.setQuantity(item.getQuantity());
+            orderItem.setProductCategoryId(item.getProduct().getCategoryId());
+            orderItem.setSpData(item.getSku().getSpData());
+            orderItem.setCreateBy(member.getId());
+            orderItem.setCreateTime(optTime);
+            addOrderItemList.add(orderItem);
+        });
+        boolean flag = saveBatch(addOrderItemList);
+        if (!flag){
+            throw new RuntimeException("新增订单item失败");
+        }
     }
 }

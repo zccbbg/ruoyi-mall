@@ -2,6 +2,9 @@ package com.cyl.oms.domain;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.ruoyi.common.annotation.Excel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -20,6 +23,7 @@ public class Order extends BaseAudit {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("订单id")
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     @ApiModelProperty("MEMBER_ID")
