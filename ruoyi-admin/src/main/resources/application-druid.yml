@@ -55,3 +55,6 @@ sms:
   templateId: 模板id
   # 腾讯专用
   sdkAppId:
+aes:
+  # aes的密钥
+  key: 1111111111
