@@ -15,6 +15,8 @@ import com.cyl.ums.pojo.vo.MemberVO;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.domain.model.LoginMember;
 import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.utils.AesCryptoUtils;
+import com.ruoyi.common.utils.PhoneUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.config.LocalDataUtil;
@@ -22,6 +24,7 @@ import com.ruoyi.framework.web.service.TokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
 
@@ -41,6 +44,9 @@ public class H5MemberService {
     @Autowired
     private TokenService tokenService;
 
+    @Value("${aes.key}")
+    private String aesKey;
+
     /**
      * 注册
      * @param request 注册请求体
@@ -53,6 +59,8 @@ public class H5MemberService {
         //创建会员
         Member member = new Member();
         member.setPhone(request.getMobile());
+        member.setPhoneEncrypted(AesCryptoUtils.encrypt(aesKey, request.getMobile()));
+        member.setPhoneHidden(PhoneUtils.hidePhone(request.getMobile()));
         member.setPassword(SecurityUtils.encryptPassword(request.getPassword()));
         member.setNickname("用户" + request.getMobile().substring(7,11));
         member.setStatus(Constants.MEMBER_ACCOUNT_STATUS.NORMAL);
@@ -70,7 +78,7 @@ public class H5MemberService {
         byte[] decodedBytes = Base64.getDecoder().decode(phone);
         phone = new String(decodedBytes);
         QueryWrapper<Member> qw = new QueryWrapper<>();
-        qw.eq("phone", phone);
+        qw.eq("phone_encrypted", AesCryptoUtils.encrypt(aesKey, phone));
         Member member = memberMapper.selectOne(qw);
         if (member != null){
             throw new RuntimeException("该手机号已被占用");
@@ -93,7 +101,7 @@ public class H5MemberService {
         H5AccountLoginRequest request = JSON.parseObject(new String(Base64Utils.decodeFromString(data)), H5AccountLoginRequest.class);
         log.info("account login request:{}", JSONUtil.toJsonStr(request));
         QueryWrapper<Member> qw = new QueryWrapper<>();
-        qw.eq("phone", request.getMobile());
+        qw.eq("phone_encrypted", AesCryptoUtils.encrypt(aesKey, request.getMobile()));
         Member member = memberMapper.selectOne(qw);
         if (member == null){
             throw new RuntimeException(Constants.LOGIN_INFO.WRONG);
@@ -115,7 +123,7 @@ public class H5MemberService {
         this.validateVerifyCode(request.getUuid(), request.getMobile(), request.getCode());
         //查会员
         QueryWrapper<Member> qw = new QueryWrapper<>();
-        qw.eq("phone", request.getMobile());
+        qw.eq("phone_encrypted", AesCryptoUtils.encrypt(aesKey, request.getMobile()));
         Member member = memberMapper.selectOne(qw);
         if (member == null){
             throw new RuntimeException(Constants.LOGIN_INFO.TO_REGISTER);

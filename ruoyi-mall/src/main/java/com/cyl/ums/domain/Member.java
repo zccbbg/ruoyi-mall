@@ -35,6 +35,12 @@ public class Member extends BaseAudit {
     @Excel(name = "手机号码")
     private String phone;
 
+    @ApiModelProperty("加密手机号")
+    private String phoneEncrypted;
+
+    @ApiModelProperty("隐藏前三位后四位的手机号")
+    private String phoneHidden;
+
     @ApiModelProperty("用户备注")
     @Excel(name = "用户备注")
     private String mark;
