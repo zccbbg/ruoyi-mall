@@ -2,13 +2,17 @@ package com.cyl.ums.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cyl.ums.convert.MemberAddressConvert;
 import com.cyl.ums.domain.MemberAddress;
 import com.cyl.ums.mapper.MemberAddressMapper;
 import com.cyl.ums.pojo.query.MemberAddressQuery;
+import com.cyl.ums.pojo.vo.MemberAddressVO;
 import com.github.pagehelper.PageHelper;
+import com.ruoyi.common.utils.AesCryptoUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +28,10 @@ import java.util.List;
 public class MemberAddressService {
     @Autowired
     private MemberAddressMapper memberAddressMapper;
+    @Autowired
+    private MemberAddressConvert memberAddressConvert;
+    @Value("${aes.key}")
+    private String aesKey;
 
     /**
      * 查询会员收货地址
@@ -47,21 +55,13 @@ public class MemberAddressService {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
         QueryWrapper<MemberAddress> qw = new QueryWrapper<>();
-        Long memberId = query.getMemberId();
-        if (memberId != null) {
-            qw.eq("member_id", memberId);
-        }
         String nameLike = query.getNameLike();
         if (!StringUtils.isEmpty(nameLike)) {
             qw.like("name", nameLike);
         }
         String phone = query.getPhone();
         if (!StringUtils.isEmpty(phone)) {
-            qw.eq("phone", phone);
-        }
-        Integer defaultStatus = query.getDefaultStatus();
-        if (defaultStatus != null) {
-            qw.eq("default_status", defaultStatus);
+            qw.eq("phone_encrypted", AesCryptoUtils.encrypt(aesKey, phone));
         }
         String postCode = query.getPostCode();
         if (!StringUtils.isEmpty(postCode)) {
@@ -81,11 +81,7 @@ public class MemberAddressService {
         }
         String detailAddress = query.getDetailAddress();
         if (!StringUtils.isEmpty(detailAddress)) {
-            qw.eq("detail_address", detailAddress);
-        }
-        Integer isDefault = query.getIsDefault();
-        if (isDefault != null) {
-            qw.eq("is_default", isDefault);
+            qw.like("detail_address", detailAddress);
         }
         return memberAddressMapper.selectList(qw);
     }

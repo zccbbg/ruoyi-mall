@@ -2,6 +2,7 @@ package com.cyl.ums.controller;
 
 import java.util.List;
 
+import com.cyl.ums.pojo.dto.ChangeMemberStatusDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageImpl;
@@ -89,5 +90,12 @@ public class MemberController extends BaseController {
 	@DeleteMapping("/{id}")
     public ResponseEntity<Integer> remove(@PathVariable Long id) {
         return ResponseEntity.ok(service.deleteById(id));
+    }
+
+    @ApiOperation(("修改会员账户状态"))
+    @Log(title = "会员信息", businessType = BusinessType.UPDATE)
+    @PostMapping("/status/change")
+    public ResponseEntity<Integer> changeStatus(@RequestBody ChangeMemberStatusDTO dto){
+        return ResponseEntity.ok(service.changeStatus(dto));
     }
 }

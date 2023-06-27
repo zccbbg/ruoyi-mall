@@ -45,9 +45,10 @@ public class MemberAddressController extends BaseController {
     @ApiOperation("查询会员收货地址列表")
     @PreAuthorize("@ss.hasPermi('ums:memberAddress:list')")
     @PostMapping("/list")
-    public ResponseEntity<Page<MemberAddress>> list(@RequestBody MemberAddressQuery query, Pageable page) {
+    public ResponseEntity<Page<MemberAddressVO>> list(@RequestBody MemberAddressQuery query, Pageable page) {
         List<MemberAddress> list = service.selectList(query, page);
-        return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
+        List<MemberAddressVO> resList = convert.dos2vos(list);
+        return ResponseEntity.ok(new PageImpl<>(resList, page, ((com.github.pagehelper.Page)list).getTotal()));
     }
 
     @ApiOperation("导出会员收货地址列表")
@@ -55,9 +56,10 @@ public class MemberAddressController extends BaseController {
     @Log(title = "会员收货地址", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public ResponseEntity<String> export(MemberAddressQuery query) {
-        List<MemberAddress> list = service.selectList(query, null);
-        ExcelUtil<MemberAddressVO> util = new ExcelUtil<>(MemberAddressVO.class);
-        return ResponseEntity.ok(util.writeExcel(convert.dos2vos(list), "会员收货地址数据"));
+//        List<MemberAddressV> list = service.selectList(query, null);
+//        ExcelUtil<MemberAddressVO> util = new ExcelUtil<>(MemberAddressVO.class);
+//        return ResponseEntity.ok(util.writeExcel(convert.dos2vos(list), "会员收货地址数据"));
+        return null;
     }
 
     @ApiOperation("获取会员收货地址详细信息")

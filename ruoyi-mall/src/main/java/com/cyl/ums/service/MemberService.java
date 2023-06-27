@@ -8,8 +8,12 @@ import java.util.List;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.cyl.ums.pojo.dto.ChangeMemberStatusDTO;
 import com.github.pagehelper.PageHelper;
+import com.ruoyi.common.utils.AesCryptoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -27,6 +31,8 @@ import com.cyl.ums.pojo.query.MemberQuery;
 public class MemberService {
     @Autowired
     private MemberMapper memberMapper;
+    @Value("${aes.key}")
+    private String aesKey;
 
     /**
      * 查询会员信息
@@ -56,11 +62,14 @@ public class MemberService {
         }
         String phone = query.getPhone();
         if (!StringUtils.isEmpty(phone)) {
-            qw.eq("phone", phone);
+            qw.eq("phone_encrypted", AesCryptoUtils.encrypt(aesKey, phone));
         }
         if (!StringUtils.isEmpty(query.getBeginTime()) && !StringUtils.isEmpty(query.getEndTime())){
             qw.ge("create_time", query.getBeginTime());
             qw.lt("create_time", query.getEndTime());
+        }
+        if (query.getStatus() != null){
+            qw.eq("status", query.getStatus());
         }
         return memberMapper.selectList(qw);
     }
@@ -94,5 +103,12 @@ public class MemberService {
      */
     public int deleteById(Long id) {
         return memberMapper.deleteById(id);
+    }
+
+    public Integer changeStatus(ChangeMemberStatusDTO dto) {
+        UpdateWrapper<Member> wrapper = new UpdateWrapper<>();
+        wrapper.eq("id", dto.getMemberId());
+        wrapper.set("status", dto.getStatus());
+        return memberMapper.update(null, wrapper);
     }
 }
