@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import com.ruoyi.common.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.core.domain.BaseAudit;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 /**
  * 会员信息 数据视图对象
@@ -19,9 +20,10 @@ public class MemberVO extends BaseAudit {
    /** 昵称 */
     @Excel(name = "昵称")
     private String nickname;
-   /** 手机号码 */
-    @Excel(name = "手机号码")
+    /** 手机号 */
     private String phone;
+    /** 隐藏前三位后四位的手机号 */
+    private String phoneHidden;
    /** 用户备注 */
     @Excel(name = "用户备注")
     private String mark;

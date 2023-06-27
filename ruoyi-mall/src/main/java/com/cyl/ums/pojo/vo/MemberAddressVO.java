@@ -22,6 +22,8 @@ public class MemberAddressVO extends BaseAudit {
    /** PHONE */
     @Excel(name = "PHONE")
     private String phone;
+    @Excel(name = "隐藏前三位后四位的手机号")
+    private String phoneHidden;
    /** 是否为默认 */
     @Excel(name = "是否为默认")
     private Integer defaultStatus;

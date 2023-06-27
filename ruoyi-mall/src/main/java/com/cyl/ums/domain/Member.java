@@ -31,10 +31,6 @@ public class Member extends BaseAudit {
     @Excel(name = "密码")
     private String password;
 
-    @ApiModelProperty("手机号码")
-    @Excel(name = "手机号码")
-    private String phone;
-
     @ApiModelProperty("加密手机号")
     private String phoneEncrypted;
 

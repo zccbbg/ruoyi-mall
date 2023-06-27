@@ -28,9 +28,13 @@ public class MemberAddress extends BaseAudit {
     @Excel(name = "收货人名称")
     private String name;
 
-    @ApiModelProperty("PHONE")
-    @Excel(name = "PHONE")
-    private String phone;
+    @ApiModelProperty("隐藏前三位后四位的手机号")
+    @Excel(name = "隐藏前三位后四位的手机号")
+    private String phoneHidden;
+
+    @ApiModelProperty("加密的手机号")
+    @Excel(name = "加密的手机号")
+    private String phoneEncrypted;
 
     @ApiModelProperty("是否为默认")
     @Excel(name = "是否为默认")

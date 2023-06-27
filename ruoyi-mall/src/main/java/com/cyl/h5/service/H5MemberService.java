@@ -58,7 +58,6 @@ public class H5MemberService {
         this.validateVerifyCode(request.getUuid(), request.getMobile(), request.getCode());
         //创建会员
         Member member = new Member();
-        member.setPhone(request.getMobile());
         member.setPhoneEncrypted(AesCryptoUtils.encrypt(aesKey, request.getMobile()));
         member.setPhoneHidden(PhoneUtils.hidePhone(request.getMobile()));
         member.setPassword(SecurityUtils.encryptPassword(request.getPassword()));
@@ -179,6 +178,7 @@ public class H5MemberService {
         Member member = (Member) LocalDataUtil.getVar(Constants.MEMBER_INFO);
         MemberVO memberVO = new MemberVO();
         BeanUtils.copyProperties(member, memberVO);
+        memberVO.setPhone(AesCryptoUtils.decrypt(aesKey, member.getPhoneEncrypted()));
         return memberVO;
     }
 }
