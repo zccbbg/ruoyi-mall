@@ -56,6 +56,18 @@ public class MemberAddress extends BaseAudit {
     @Excel(name = "区")
     private String district;
 
+    @ApiModelProperty("省份/直辖市id")
+    @Excel(name = "省份/直辖市id")
+    private Long provinceId;
+
+    @ApiModelProperty("城市id")
+    @Excel(name = "城市id")
+    private Long cityId;
+
+    @ApiModelProperty("区id")
+    @Excel(name = "区id")
+    private Long districtId;
+
     @ApiModelProperty("详细地址(街道)")
     @Excel(name = "详细地址(街道)")
     private String detailAddress;

@@ -3,6 +3,8 @@ package com.cyl.manager.oms.mapper;
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyl.manager.oms.domain.Order;
+import com.cyl.manager.oms.pojo.request.ManagerOrderQueryRequest;
+import com.cyl.manager.oms.pojo.vo.ManagerOrderVO;
 
 /**
  * 订单表Mapper接口
@@ -17,4 +19,6 @@ public interface OrderMapper extends BaseMapper<Order> {
      * @return 订单表集合
      */
     List<Order> selectByEntity(Order order);
+
+    List<ManagerOrderVO> selectManagerOrderPage(ManagerOrderQueryRequest request);
 }

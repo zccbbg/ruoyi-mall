@@ -81,4 +81,63 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="receiveTime != null "> and receive_time = #{receiveTime}</if>
         </where>
     </select>
+    <select id="selectManagerOrderPage" resultType="com.cyl.manager.oms.pojo.vo.ManagerOrderVO">
+        select
+        a.id,
+        a.aftersale_status aftersaleStatus,
+        a.status,
+        a.member_username  userName,
+        a.total_amount     totalAmount,
+        a.pay_amount       payAmount,
+        a.note,
+        a.create_time      createTime,
+        a.payment_time     payTime,
+        a.receive_time     receiveTime,
+        a.pay_type         payType,
+        a.receiver_name    receiverName,
+        a.receiver_phone    receiverPhone,
+        a.receiver_province    receiverProvince,
+        a.receiver_city    receiverCity,
+        a.receiver_district    receiverDistrict,
+        a.receiver_detail_address    receiverDetailAddress,
+--         b.quantity         buyNum,
+--         b.pic,
+--         b.sp_data          spData,
+--         b.product_id       productId,
+--         b.product_name     productName,
+        c.phone            userPhone,
+        c.nickname         nickName
+        from oms_order a
+--         left join oms_order_item b on a.id = b.order_id
+        left join ums_member c on a.member_id = c.id
+        where a.aftersale_status = 1
+        <if test="orderId != null">
+            and a.id = #{orderId}
+        </if>
+        <!--<if test="productName != null and productName != ''">-->
+            <!--and instr(b.product_name, #{productName}) > 0-->
+        <!--</if>-->
+        <if test="receiverProvinceId != null ">
+            and a.receiver_province_id = #{receiverProvinceId}
+        </if>
+        <if test="receiverCityId != null">
+            and a.receiver_city_id = #{receiverCityId}
+        </if>
+        <if test="receiverDistrictId != null">
+            and a.receiver_district_id = #{receiverDistrictId}
+        </if>
+        <if test="userPhone != null and userPhone != ''">
+            and c.phone_encrypted=#{userPhone} > 0
+        </if>
+        <if test="status != null">
+            and a.status = #{status}
+        </if>
+        <if test="payType != null">
+            and a.pay_type=#{payType}
+        </if>
+        <if test="startTime != null and endTime != null">
+            and a.create_time between #{startTime} and #{endTime}
+        </if>
+        order by a.create_time desc
+    </select>
 </mapper>

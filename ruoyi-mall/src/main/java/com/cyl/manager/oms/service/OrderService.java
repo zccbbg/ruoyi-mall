@@ -23,6 +23,8 @@ import com.cyl.manager.oms.domain.OrderItem;
 import com.cyl.manager.oms.domain.OrderOperateHistory;
 import com.cyl.manager.oms.mapper.OrderItemMapper;
 import com.cyl.manager.oms.mapper.OrderOperateHistoryMapper;
+import com.cyl.manager.oms.pojo.request.ManagerOrderQueryRequest;
+import com.cyl.manager.oms.pojo.vo.ManagerOrderVO;
 import com.cyl.manager.oms.pojo.vo.OrderVO;
 import com.cyl.manager.pms.convert.SkuConvert;
 import com.cyl.manager.pms.domain.Product;
@@ -36,10 +38,12 @@ import com.cyl.manager.ums.mapper.MemberAddressMapper;
 import com.cyl.manager.ums.mapper.MemberCartMapper;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.constant.Constants;
+import com.ruoyi.common.utils.AesCryptoUtils;
 import com.ruoyi.common.utils.IDGenerator;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.framework.config.LocalDataUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -78,6 +82,8 @@ public class OrderService {
     private OrderOperateHistoryMapper orderOperateHistoryMapper;
     @Autowired
     private MemberCartMapper memberCartMapper;
+    @Value("${aes.key}")
+    private String aesKey;
 
     /**
      * 查询订单表
@@ -96,124 +102,14 @@ public class OrderService {
      * @param page 分页条件
      * @return 订单表
      */
-    public List<Order> selectList(OrderQuery query, Pageable page) {
+    public List<ManagerOrderVO> selectList(ManagerOrderQueryRequest query, Pageable page) {
         if (page != null) {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
-        QueryWrapper<Order> qw = new QueryWrapper<>();
-        Long memberId = query.getMemberId();
-        if (memberId != null) {
-            qw.eq("member_id", memberId);
+        if (!StringUtils.isEmpty(query.getUserPhone())){
+            query.setUserPhone(AesCryptoUtils.encrypt(aesKey, query.getUserPhone()));
         }
-        String memberUsernameLike = query.getMemberUsernameLike();
-        if (!StringUtils.isEmpty(memberUsernameLike)) {
-            qw.like("member_username", memberUsernameLike);
-        }
-        BigDecimal totalAmount = query.getTotalAmount();
-        if (totalAmount != null) {
-            qw.eq("total_amount", totalAmount);
-        }
-        BigDecimal purchasePrice = query.getPurchasePrice();
-        if (purchasePrice != null) {
-            qw.eq("purchase_price", purchasePrice);
-        }
-        BigDecimal payAmount = query.getPayAmount();
-        if (payAmount != null) {
-            qw.eq("pay_amount", payAmount);
-        }
-        BigDecimal freightAmount = query.getFreightAmount();
-        if (freightAmount != null) {
-            qw.eq("freight_amount", freightAmount);
-        }
-        Integer payType = query.getPayType();
-        if (payType != null) {
-            qw.eq("pay_type", payType);
-        }
-        Integer status = query.getStatus();
-        if (status != null) {
-            qw.eq("status", status);
-        }
-        Integer aftersaleStatus = query.getAftersaleStatus();
-        if (aftersaleStatus != null) {
-            qw.eq("aftersale_status", aftersaleStatus);
-        }
-        String deliveryCompany = query.getDeliveryCompany();
-        if (!StringUtils.isEmpty(deliveryCompany)) {
-            qw.eq("delivery_company", deliveryCompany);
-        }
-        String deliverySn = query.getDeliverySn();
-        if (!StringUtils.isEmpty(deliverySn)) {
-            qw.eq("delivery_sn", deliverySn);
-        }
-        Integer autoConfirmDay = query.getAutoConfirmDay();
-        if (autoConfirmDay != null) {
-            qw.eq("auto_confirm_day", autoConfirmDay);
-        }
-        String receiverNameLike = query.getReceiverNameLike();
-        if (!StringUtils.isEmpty(receiverNameLike)) {
-            qw.like("receiver_name", receiverNameLike);
-        }
-        String receiverPhone = query.getReceiverPhone();
-        if (!StringUtils.isEmpty(receiverPhone)) {
-            qw.eq("receiver_phone", receiverPhone);
-        }
-        String receiverPostCode = query.getReceiverPostCode();
-        if (!StringUtils.isEmpty(receiverPostCode)) {
-            qw.eq("receiver_post_code", receiverPostCode);
-        }
-        String receiverProvince = query.getReceiverProvince();
-        if (!StringUtils.isEmpty(receiverProvince)) {
-            qw.eq("receiver_province", receiverProvince);
-        }
-        String receiverCity = query.getReceiverCity();
-        if (!StringUtils.isEmpty(receiverCity)) {
-            qw.eq("receiver_city", receiverCity);
-        }
-        String receiverDistrict = query.getReceiverDistrict();
-        if (!StringUtils.isEmpty(receiverDistrict)) {
-            qw.eq("receiver_district", receiverDistrict);
-        }
-        Long receiverProvinceId = query.getReceiverProvinceId();
-        if (receiverProvinceId != null) {
-            qw.eq("receiver_province_id", receiverProvinceId);
-        }
-        Long receiverCityId = query.getReceiverCityId();
-        if (receiverCityId != null) {
-            qw.eq("receiver_city_id", receiverCityId);
-        }
-        Long receiverDistrictId = query.getReceiverDistrictId();
-        if (receiverDistrictId != null) {
-            qw.eq("receiver_district_id", receiverDistrictId);
-        }
-        String receiverDetailAddress = query.getReceiverDetailAddress();
-        if (!StringUtils.isEmpty(receiverDetailAddress)) {
-            qw.eq("receiver_detail_address", receiverDetailAddress);
-        }
-        String note = query.getNote();
-        if (!StringUtils.isEmpty(note)) {
-            qw.eq("note", note);
-        }
-        Integer confirmStatus = query.getConfirmStatus();
-        if (confirmStatus != null) {
-            qw.eq("confirm_status", confirmStatus);
-        }
-        Integer deleteStatus = query.getDeleteStatus();
-        if (deleteStatus != null) {
-            qw.eq("delete_status", deleteStatus);
-        }
-        LocalDateTime paymentTime = query.getPaymentTime();
-        if (paymentTime != null) {
-            qw.eq("payment_time", paymentTime);
-        }
-        LocalDateTime deliveryTime = query.getDeliveryTime();
-        if (deliveryTime != null) {
-            qw.eq("delivery_time", deliveryTime);
-        }
-        LocalDateTime receiveTime = query.getReceiveTime();
-        if (receiveTime != null) {
-            qw.eq("receive_time", receiveTime);
-        }
-        return orderMapper.selectList(qw);
+        return orderMapper.selectManagerOrderPage(query);
     }
 
     /**
@@ -308,11 +204,14 @@ public class OrderService {
         order.setStatus(Constants.OrderStatus.SEND);
         order.setAftersaleStatus(1);
         order.setReceiverName(memberAddress.getName());
-//        order.setReceiverPhone(memberAddress.getPhone());
+        order.setReceiverPhone(memberAddress.getPhoneHidden());
         order.setReceiverPostCode(memberAddress.getPostCode());
         order.setReceiverProvince(memberAddress.getProvince());
         order.setReceiverCity(memberAddress.getCity());
         order.setReceiverDistrict(memberAddress.getDistrict());
+        order.setReceiverProvinceId(memberAddress.getProvinceId());
+        order.setReceiverCityId(memberAddress.getCityId());
+        order.setReceiverDistrictId(memberAddress.getDistrictId());
         order.setReceiverDetailAddress(memberAddress.getDetailAddress());
         order.setNote(form.getNote());
         order.setConfirmStatus(0);

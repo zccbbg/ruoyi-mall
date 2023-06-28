@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.cyl.manager.oms.domain.OrderItem;
-import com.cyl.pay.pojo.vo.PayOrderVO;
 import com.ruoyi.common.annotation.Excel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.core.domain.BaseAudit;
@@ -107,5 +106,4 @@ public class OrderVO extends BaseAudit {
     @Excel(name = "确认收货时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime receiveTime;
     private List<OrderItem> items;
-    private PayOrderVO payOrder;
 }

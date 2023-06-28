@@ -2,6 +2,8 @@ package com.cyl.manager.oms.controller;
 
 import java.util.List;
 
+import com.cyl.manager.oms.pojo.request.ManagerOrderQueryRequest;
+import com.cyl.manager.oms.pojo.vo.ManagerOrderVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageImpl;
@@ -45,8 +47,8 @@ public class OrderController extends BaseController {
     @ApiOperation("查询订单表列表")
     @PreAuthorize("@ss.hasPermi('oms:order:list')")
     @PostMapping("/list")
-    public ResponseEntity<Page<Order>> list(@RequestBody OrderQuery query, Pageable page) {
-        List<Order> list = service.selectList(query, page);
+    public ResponseEntity<Page<ManagerOrderVO>> list(@RequestBody ManagerOrderQueryRequest query, Pageable page) {
+        List<ManagerOrderVO> list = service.selectList(query, page);
         return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
     }
 
@@ -55,9 +57,10 @@ public class OrderController extends BaseController {
     @Log(title = "订单表", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public ResponseEntity<String> export(OrderQuery query) {
-        List<Order> list = service.selectList(query, null);
-        ExcelUtil<OrderVO> util = new ExcelUtil<>(OrderVO.class);
-        return ResponseEntity.ok(util.writeExcel(convert.dos2vos(list), "订单表数据"));
+//        List<Order> list = service.selectList(query, null);
+//        ExcelUtil<OrderVO> util = new ExcelUtil<>(OrderVO.class);
+//        return ResponseEntity.ok(util.writeExcel(convert.dos2vos(list), "订单表数据"));
+        return null;
     }
 
     @ApiOperation("获取订单表详细信息")
