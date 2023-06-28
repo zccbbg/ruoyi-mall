@@ -1,7 +1,7 @@
 package com.ruoyi.web.core.config;
 
-import com.cyl.ums.domain.Member;
-import com.cyl.ums.service.MemberService;
+import com.cyl.manager.ums.domain.Member;
+import com.cyl.manager.ums.service.MemberService;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.domain.model.LoginMember;

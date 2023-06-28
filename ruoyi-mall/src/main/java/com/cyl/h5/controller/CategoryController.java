@@ -1,7 +1,7 @@
 package com.cyl.h5.controller;
 
-import com.cyl.pms.domain.ProductCategory;
-import com.cyl.pms.service.ProductCategoryService;
+import com.cyl.manager.pms.domain.ProductCategory;
+import com.cyl.manager.pms.service.ProductCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

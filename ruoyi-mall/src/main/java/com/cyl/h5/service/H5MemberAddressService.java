@@ -1,11 +1,11 @@
 package com.cyl.h5.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.cyl.ums.domain.Member;
-import com.cyl.ums.domain.MemberAddress;
-import com.cyl.ums.mapper.MemberAddressMapper;
-import com.cyl.ums.pojo.dto.MemberAddressDTO;
-import com.cyl.ums.pojo.vo.MemberAddressVO;
+import com.cyl.manager.ums.domain.Member;
+import com.cyl.manager.ums.domain.MemberAddress;
+import com.cyl.manager.ums.mapper.MemberAddressMapper;
+import com.cyl.manager.ums.pojo.dto.MemberAddressDTO;
+import com.cyl.manager.ums.pojo.vo.MemberAddressVO;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.utils.AesCryptoUtils;
 import com.ruoyi.common.utils.PhoneUtils;
@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;

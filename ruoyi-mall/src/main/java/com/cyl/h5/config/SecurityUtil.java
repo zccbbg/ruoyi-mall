@@ -1,7 +1,6 @@
 package com.cyl.h5.config;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.cyl.ums.domain.Member;
+import com.cyl.manager.ums.domain.Member;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.framework.config.LocalDataUtil;
 import org.springframework.stereotype.Service;

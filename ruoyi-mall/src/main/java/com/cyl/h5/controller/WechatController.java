@@ -2,7 +2,7 @@ package com.cyl.h5.controller;
 
 import com.cyl.external.WechatUtil;
 import com.cyl.h5.pojo.vo.form.WechatLoginForm;
-import com.cyl.ums.service.MemberWechatService;
+import com.cyl.manager.ums.service.MemberWechatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

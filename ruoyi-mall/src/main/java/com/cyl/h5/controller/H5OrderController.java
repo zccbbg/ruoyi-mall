@@ -4,9 +4,9 @@ import com.cyl.h5.pojo.dto.OrderCreateDTO;
 import com.cyl.h5.pojo.vo.OrderCalcVO;
 import com.cyl.h5.pojo.vo.form.OrderSubmitForm;
 import com.cyl.h5.pojo.vo.query.OrderH5Query;
-import com.cyl.oms.pojo.vo.OrderVO;
-import com.cyl.oms.service.OrderService;
-import com.cyl.ums.domain.Member;
+import com.cyl.manager.oms.pojo.vo.OrderVO;
+import com.cyl.manager.oms.service.OrderService;
+import com.cyl.manager.ums.domain.Member;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.redis.RedisService;
 import com.ruoyi.framework.config.LocalDataUtil;
@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/h5/order")

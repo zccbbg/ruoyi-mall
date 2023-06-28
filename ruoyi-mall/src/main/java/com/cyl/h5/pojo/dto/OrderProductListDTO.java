@@ -1,7 +1,7 @@
  package com.cyl.h5.pojo.dto;
 
- import com.cyl.pms.domain.Product;
- import com.cyl.pms.domain.Sku;
+ import com.cyl.manager.pms.domain.Product;
+ import com.cyl.manager.pms.domain.Sku;
  import io.swagger.annotations.ApiModel;
  import io.swagger.annotations.ApiModelProperty;
  import lombok.Data;

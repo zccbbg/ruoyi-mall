@@ -1,6 +1,5 @@
 package com.cyl.h5.pojo.vo;
 
-import com.cyl.pms.pojo.vo.SkuVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

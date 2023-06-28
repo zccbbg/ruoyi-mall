@@ -5,7 +5,7 @@ import com.cyl.h5.pojo.response.RegisterResponse;
 import com.cyl.h5.pojo.response.ValidatePhoneResponse;
 import com.cyl.h5.pojo.response.H5LoginResponse;
 import com.cyl.h5.service.H5MemberService;
-import com.cyl.ums.pojo.vo.MemberVO;
+import com.cyl.manager.ums.pojo.vo.MemberVO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

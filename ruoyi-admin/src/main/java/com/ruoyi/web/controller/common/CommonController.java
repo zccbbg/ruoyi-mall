@@ -1,8 +1,14 @@
 package com.ruoyi.web.controller.common;
 
+import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cyl.manager.ums.domain.Address;
+import com.cyl.manager.ums.mapper.AddressMapper;
+import com.cyl.manager.ums.pojo.dto.AddressDTO;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.redis.RedisService;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.common.utils.file.FileUtils;
@@ -19,6 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 通用请求处理
@@ -32,6 +40,12 @@ public class CommonController
 
     @Autowired
     private ServerConfig serverConfig;
+
+    @Autowired
+    private RedisService redisService;
+
+    @Autowired
+    private AddressMapper addressMapper;
 
     /**
      * 通用下载请求
@@ -116,5 +130,51 @@ public class CommonController
         {
             log.error("下载文件失败", e);
         }
+    }
+
+    @GetMapping("/common/area")
+    public AjaxResult getAddressList() {
+        String addresses = redisService.getAddressList();
+        if (org.apache.commons.lang3.StringUtils.isNotEmpty(addresses)) {
+            return AjaxResult.success(JSON.parseArray(addresses, AddressDTO.class));
+        }
+        QueryWrapper<Address> addressQueryWrapper = new QueryWrapper<>();
+        addressQueryWrapper.in("level", Arrays.asList(0,1,2));
+        List<Address> addressList = addressMapper.selectList(addressQueryWrapper);
+        Map<Long, List<Address>> cityMap = addressList.stream().filter(it -> it.getLevel() == 1).collect(Collectors.groupingBy(it -> it.getParentCode()));
+        Map<Long, List<Address>> districtMap = addressList.stream().filter(it -> it.getLevel() == 2).collect(Collectors.groupingBy(it -> it.getParentCode()));
+        List<AddressDTO> result = new ArrayList<>();
+        addressList.stream().filter(it -> it.getLevel() == 0).forEach(it -> {
+            AddressDTO dto = new AddressDTO();
+            dto.setId(it.getCode());
+            dto.setLevel("province");
+            dto.setName(it.getName());
+            dto.setPid(0L);
+            //获取城市列表
+            List<AddressDTO> child = new ArrayList<>();
+            if (cityMap.containsKey(it.getCode())) {
+                cityMap.get(it.getCode()).forEach(city -> {
+                    AddressDTO cityDto = new AddressDTO();
+                    cityDto.setId(city.getCode());
+                    cityDto.setLevel("city");
+                    cityDto.setName(city.getName());
+                    cityDto.setPid(city.getParentCode());
+                    cityDto.setChildren(districtMap.containsKey(city.getCode()) ?
+                            districtMap.get(city.getCode()).stream().map(district -> {
+                                AddressDTO districtDto = new AddressDTO();
+                                districtDto.setId(district.getCode());
+                                districtDto.setLevel("district");
+                                districtDto.setName(district.getName());
+                                districtDto.setPid(district.getParentCode());
+                                return districtDto;
+                            }).collect(Collectors.toList()) : Collections.EMPTY_LIST);
+                    child.add(cityDto);
+                });
+            }
+            dto.setChildren(child);
+            result.add(dto);
+        });
+        redisService.setAddressList(JSON.toJSONString(result));
+        return AjaxResult.success(result);
     }
 }

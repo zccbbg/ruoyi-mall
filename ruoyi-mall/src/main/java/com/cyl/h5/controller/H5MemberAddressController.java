@@ -1,10 +1,8 @@
 package com.cyl.h5.controller;
 
 import com.cyl.h5.service.H5MemberAddressService;
-import com.cyl.ums.domain.MemberAddress;
-import com.cyl.ums.pojo.dto.MemberAddressDTO;
-import com.cyl.ums.pojo.vo.MemberAddressVO;
-import com.ruoyi.common.core.domain.AjaxResult;
+import com.cyl.manager.ums.pojo.dto.MemberAddressDTO;
+import com.cyl.manager.ums.pojo.vo.MemberAddressVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
