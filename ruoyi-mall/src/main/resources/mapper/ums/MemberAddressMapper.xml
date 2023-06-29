@@ -2,13 +2,14 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cyl.ums.mapper.MemberAddressMapper">
+<mapper namespace="com.cyl.manager.ums.mapper.MemberAddressMapper">
     
     <resultMap type="MemberAddress" id="MemberAddressResult">
         <result property="id" column="id"/>
         <result property="memberId" column="member_id"/>
         <result property="name" column="name"/>
-        <result property="phone" column="phone"/>
+        <result property="phoneHidden" column="phone_hidden"/>
+        <result property="phoneEncrypted" column="phone_encrypted"/>
         <result property="defaultStatus" column="default_status"/>
         <result property="postCode" column="post_code"/>
         <result property="province" column="province"/>
@@ -27,7 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectMemberAddressVo">
-        select id, member_id, name, phone, default_status, post_code, province, city, district, detail_address, is_default, create_by, create_time, update_by, update_time   from ums_member_address
+        select id, member_id, name, phone_hidden,phone_encrypted, default_status, post_code, province, city, district, detail_address, is_default, create_by, create_time, update_by, update_time   from ums_member_address
     </sql>
 
     <select id="selectByEntity" parameterType="MemberAddress" resultMap="MemberAddressResult">
@@ -35,7 +36,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="memberId != null "> and member_id = #{memberId}</if>
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
-            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
             <if test="defaultStatus != null "> and default_status = #{defaultStatus}</if>
             <if test="postCode != null  and postCode != ''"> and post_code = #{postCode}</if>
             <if test="province != null  and province != ''"> and province = #{province}</if>
@@ -93,5 +93,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </if>
         </set>
         where id = #{id, jdbcType=BIGINT}
+    </update>
+    <update id="updateDefault">
+        update ums_member_address
+        set is_default = #{param1}
+        where member_id = #{param2}
     </update>
 </mapper>

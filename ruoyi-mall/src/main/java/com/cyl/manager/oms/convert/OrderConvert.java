@@ -1,0 +1,18 @@
+package com.cyl.manager.oms.convert;
+
+import org.mapstruct.Mapper;
+import com.cyl.manager.oms.domain.Order;
+import com.cyl.manager.oms.pojo.vo.OrderVO;
+import java.util.List;
+/**
+ * 订单表  DO <=> DTO <=> VO / BO / Query
+ *
+ * @author zcc
+ */
+@Mapper(componentModel = "spring")
+public interface OrderConvert  {
+
+    List<OrderVO> dos2vos(List<Order> list);
+
+    OrderVO do2vo(Order order);
+}

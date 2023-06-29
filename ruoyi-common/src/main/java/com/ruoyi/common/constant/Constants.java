@@ -68,6 +68,8 @@ public class Constants
      * 登录用户 redis key
      */
     public static final String LOGIN_TOKEN_KEY = "login_tokens:";
+    public static final String LOGIN_MEMBER_TOKEN_KEY = "login_member_tokens:";
+    public static final String MEMBER_INFO = "member_info";
 
     /**
      * 防重提交 redis key
@@ -98,6 +100,7 @@ public class Constants
      * 令牌前缀
      */
     public static final String LOGIN_USER_KEY = "login_user_key";
+    public static final String LOGIN_MEMBER_KEY = "login_member_key";
 
     /**
      * 用户ID
