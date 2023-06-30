@@ -6,12 +6,13 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @ApiModel(value = "管理后台订单VO")
 public class ManagerOrderVO {
     @ApiModelProperty(name = "id",value = "订单id",required = true,dataType = "String")
-    private String id;
+    private Long id;
 
     @ApiModelProperty(name = "productId",value = "商品id",required = true,dataType = "Long")
     private Long productId;
@@ -66,6 +67,9 @@ public class ManagerOrderVO {
 
     @ApiModelProperty(name = "spData",value = "商品sku属性",required = true,dataType = "String")
     private String spData;
+
+    @ApiModelProperty(name = "productInfo", value = "订单商品数据")
+    private List<ManagerOrderProductVO> productList;
 
     private String receiverName;
 

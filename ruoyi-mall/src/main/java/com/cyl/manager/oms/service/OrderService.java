@@ -24,8 +24,7 @@ import com.cyl.manager.oms.domain.OrderOperateHistory;
 import com.cyl.manager.oms.mapper.OrderItemMapper;
 import com.cyl.manager.oms.mapper.OrderOperateHistoryMapper;
 import com.cyl.manager.oms.pojo.request.ManagerOrderQueryRequest;
-import com.cyl.manager.oms.pojo.vo.ManagerOrderVO;
-import com.cyl.manager.oms.pojo.vo.OrderVO;
+import com.cyl.manager.oms.pojo.vo.*;
 import com.cyl.manager.pms.convert.SkuConvert;
 import com.cyl.manager.pms.domain.Product;
 import com.cyl.manager.pms.domain.Sku;
@@ -36,6 +35,7 @@ import com.cyl.manager.ums.domain.MemberAddress;
 import com.cyl.manager.ums.domain.MemberCart;
 import com.cyl.manager.ums.mapper.MemberAddressMapper;
 import com.cyl.manager.ums.mapper.MemberCartMapper;
+import com.cyl.manager.ums.mapper.MemberMapper;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.utils.AesCryptoUtils;
@@ -82,6 +82,8 @@ public class OrderService {
     private OrderOperateHistoryMapper orderOperateHistoryMapper;
     @Autowired
     private MemberCartMapper memberCartMapper;
+    @Autowired
+    private MemberMapper memberMapper;
     @Value("${aes.key}")
     private String aesKey;
 
@@ -91,8 +93,55 @@ public class OrderService {
      * @param id 订单表主键
      * @return 订单表
      */
-    public Order selectById(Long id) {
-        return orderMapper.selectById(id);
+    public ManagerOrderDetailVO selectById(Long id) {
+        Order order = orderMapper.selectById(id);
+        if (order == null){
+            throw new RuntimeException("查不到订单信息");
+        }
+        ManagerOrderDetailVO managerOrderDetailVO = new ManagerOrderDetailVO();
+        //封装订单信息
+        managerOrderDetailVO.setOrderId(id);
+        managerOrderDetailVO.setOrderStatus(order.getStatus());
+        managerOrderDetailVO.setCreateTime(order.getCreateTime());
+        managerOrderDetailVO.setDeliveryTime(order.getDeliveryTime());
+        managerOrderDetailVO.setExpressName(order.getDeliveryCompany());
+        managerOrderDetailVO.setExpressNo(order.getDeliverySn());
+        managerOrderDetailVO.setPayAmount(order.getPayAmount());
+        managerOrderDetailVO.setPayTime(order.getPaymentTime());
+        managerOrderDetailVO.setPayType(order.getPayType());
+        managerOrderDetailVO.setTotalAmount(order.getTotalAmount());
+        managerOrderDetailVO.setPayAmount(order.getPayAmount());
+        //封装订单地址信息
+        ManagerOrderAddressVo managerOrderAddressVo = new ManagerOrderAddressVo();
+        managerOrderAddressVo.setUserPhone(order.getReceiverPhone());
+        managerOrderAddressVo.setAddress(order.getReceiverDetailAddress());
+        managerOrderAddressVo.setArea(
+                order.getReceiverProvince() +
+                order.getReceiverCity() +
+                order.getReceiverDistrict());
+        managerOrderAddressVo.setName(order.getReceiverName());
+        managerOrderDetailVO.setAddressInfo(managerOrderAddressVo);
+        //查询会员信息
+        Member member = memberMapper.selectById(order.getMemberId());
+        managerOrderDetailVO.setUserName(member.getNickname());
+        managerOrderDetailVO.setUserPhone(member.getPhoneHidden());
+        //查询购买商品信息
+        QueryWrapper<OrderItem> qw = new QueryWrapper<>();
+        qw.eq("order_id", order.getId());
+        List<OrderItem> orderItemList = orderItemMapper.selectList(qw);
+        List<ManagerOrderProductVO> productList = new ArrayList<>();
+        orderItemList.forEach(item -> {
+            ManagerOrderProductVO productVO = new ManagerOrderProductVO();
+            productVO.setProductId(item.getProductId());
+            productVO.setBuyNum(item.getQuantity());
+            productVO.setPic(item.getPic());
+            productVO.setProductName(item.getProductName());
+            productVO.setSalePrice(item.getSalePrice());
+            productVO.setSpData(item.getSpData());
+            productList.add(productVO);
+        });
+        managerOrderDetailVO.setProductInfo(productList);
+        return managerOrderDetailVO;
     }
 
     /**
@@ -102,14 +151,41 @@ public class OrderService {
      * @param page 分页条件
      * @return 订单表
      */
-    public List<ManagerOrderVO> selectList(ManagerOrderQueryRequest query, Pageable page) {
+    public PageImpl<ManagerOrderVO> selectList(ManagerOrderQueryRequest query, Pageable page) {
         if (page != null) {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
         if (!StringUtils.isEmpty(query.getUserPhone())){
             query.setUserPhone(AesCryptoUtils.encrypt(aesKey, query.getUserPhone()));
         }
-        return orderMapper.selectManagerOrderPage(query);
+        List<ManagerOrderVO> managerOrderVOList = orderMapper.selectManagerOrderPage(query);
+        if (CollectionUtil.isEmpty(managerOrderVOList)){
+            return new PageImpl<>(managerOrderVOList, page, 0);
+        }
+        long total = ((com.github.pagehelper.Page) managerOrderVOList).getTotal();
+        Map<Long, ManagerOrderVO> orderMap = managerOrderVOList.stream().collect(Collectors.toMap(ManagerOrderVO::getId, it -> it));
+        //查orderItem
+        QueryWrapper<OrderItem> qw = new QueryWrapper<>();
+        qw.in("order_id", orderMap.keySet());
+        Map<Long, List<OrderItem>> groupedOrderItemMap = orderItemMapper.selectList(qw)
+                .stream().collect(Collectors.groupingBy(OrderItem::getOrderId));
+        groupedOrderItemMap.keySet().forEach(key -> {
+            ManagerOrderVO managerOrderVO = orderMap.get(key);
+            List<OrderItem> orderItemList = groupedOrderItemMap.get(key);
+            List<ManagerOrderProductVO> addProductList = new ArrayList<>();
+            orderItemList.forEach(item -> {
+                ManagerOrderProductVO vo = new ManagerOrderProductVO();
+                vo.setProductName(item.getProductName());
+                vo.setSalePrice(item.getSalePrice());
+                vo.setPic(item.getPic());
+                vo.setBuyNum(item.getQuantity());
+                vo.setProductId(item.getProductId());
+                vo.setSpData(item.getSpData());
+                addProductList.add(vo);
+            });
+            managerOrderVO.setProductList(addProductList);
+        });
+        return new PageImpl<>(new ArrayList<>(orderMap.values()), page, total);
     }
 
     /**

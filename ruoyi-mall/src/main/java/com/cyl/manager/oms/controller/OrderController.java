@@ -3,6 +3,7 @@ package com.cyl.manager.oms.controller;
 import java.util.List;
 
 import com.cyl.manager.oms.pojo.request.ManagerOrderQueryRequest;
+import com.cyl.manager.oms.pojo.vo.ManagerOrderDetailVO;
 import com.cyl.manager.oms.pojo.vo.ManagerOrderVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -48,8 +49,8 @@ public class OrderController extends BaseController {
     @PreAuthorize("@ss.hasPermi('oms:order:list')")
     @PostMapping("/list")
     public ResponseEntity<Page<ManagerOrderVO>> list(@RequestBody ManagerOrderQueryRequest query, Pageable page) {
-        List<ManagerOrderVO> list = service.selectList(query, page);
-        return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
+        return ResponseEntity.ok(service.selectList(query, page));
+//        return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
     }
 
     @ApiOperation("导出订单表列表")
@@ -66,7 +67,7 @@ public class OrderController extends BaseController {
     @ApiOperation("获取订单表详细信息")
     @PreAuthorize("@ss.hasPermi('oms:order:query')")
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Order> getInfo(@PathVariable("id") Long id) {
+    public ResponseEntity<ManagerOrderDetailVO> getInfo(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.selectById(id));
     }
 
