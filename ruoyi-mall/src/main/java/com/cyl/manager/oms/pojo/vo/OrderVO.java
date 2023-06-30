@@ -18,6 +18,8 @@ import lombok.Data;
 public class OrderVO extends BaseAudit {
    /** 订单id */
     private Long id;
+    /** 订单编号 */
+    private String orderSn;
    /** MEMBER_ID */
     @Excel(name = "MEMBER_ID")
     private Long memberId;

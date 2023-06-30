@@ -11,9 +11,10 @@ import java.util.List;
 @Data
 @ApiModel(value = "管理后台订单VO")
 public class ManagerOrderVO {
-    @ApiModelProperty(name = "id",value = "订单id",required = true,dataType = "String")
+    @ApiModelProperty(name = "id",value = "订单id",required = true,dataType = "Long")
     private Long id;
-
+    @ApiModelProperty(name = "orderSn",value = "订单编号",required = true,dataType = "String")
+    private String orderSn;
     @ApiModelProperty(name = "productId",value = "商品id",required = true,dataType = "Long")
     private Long productId;
 

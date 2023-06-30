@@ -11,8 +11,12 @@ import java.util.Date;
 @Data
 @ApiModel("后台订单查询请求体")
 public class ManagerOrderQueryRequest {
-    @ApiModelProperty(name = "orderId", value = "订单id", required = true, dataType = "String")
+    @ApiModelProperty(name = "orderId", value = "订单id", required = true, dataType = "Long")
     private Long orderId;
+
+    @ApiModelProperty(name = "orderSn", value = "订单编号", required = true, dataType = "String")
+    private Long orderSn;
+
 
     @ApiModelProperty(name = "productId", value = "商品id", required = true, dataType = "Long")
     private Long productId;

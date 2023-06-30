@@ -84,6 +84,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectManagerOrderPage" resultType="com.cyl.manager.oms.pojo.vo.ManagerOrderVO">
         select
         a.id,
+        a.order_sn orderSn,
         a.aftersale_status aftersaleStatus,
         a.status,
         a.member_username  userName,
@@ -111,8 +112,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 --         left join oms_order_item b on a.id = b.order_id
         left join ums_member c on a.member_id = c.id
         where a.aftersale_status = 1
-        <if test="orderId != null">
-            and a.id = #{orderId}
+        <if test="orderSn != null">
+            and a.order_sn = #{orderSn}
         </if>
         <!--<if test="productName != null and productName != ''">-->
             <!--and instr(b.product_name, #{productName}) > 0-->

@@ -11,8 +11,10 @@ import java.util.List;
 @Data
 @ApiModel("后台订单详情对象")
 public class ManagerOrderDetailVO {
-    @ApiModelProperty("订单编号")
+    @ApiModelProperty("订单id")
     private Long orderId;
+    @ApiModelProperty("订单编号")
+    private String orderSn;
     @ApiModelProperty("用户昵称")
     private String userName;
     @ApiModelProperty("用户手机号")

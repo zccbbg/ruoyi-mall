@@ -4,6 +4,7 @@ import com.cyl.h5.pojo.dto.OrderCreateDTO;
 import com.cyl.h5.pojo.vo.OrderCalcVO;
 import com.cyl.h5.pojo.vo.form.OrderSubmitForm;
 import com.cyl.h5.pojo.vo.query.OrderH5Query;
+import com.cyl.h5.service.H5OrderService;
 import com.cyl.manager.oms.pojo.vo.OrderVO;
 import com.cyl.manager.oms.service.OrderService;
 import com.cyl.manager.ums.domain.Member;
@@ -26,9 +27,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class H5OrderController {
     @Autowired
-    private OrderService orderService;
-    @Autowired
     private RedisService redisService;
+    @Autowired
+    private H5OrderService service;
 
     @PostMapping("/add")
     public ResponseEntity<Long> submit(@RequestBody OrderSubmitForm form) {
@@ -38,10 +39,10 @@ public class H5OrderController {
         String redisValue = memberId + "_" + System.currentTimeMillis();
         try{
             redisService.lock(redisKey, redisValue, 60);
-            return ResponseEntity.ok(orderService.submit(form));
+            return ResponseEntity.ok(service.submit(form));
         }catch (Exception e){
             log.info("创建订单方法异常", e);
-            return null;
+            throw new RuntimeException("服务繁忙，稍后再试");
         }finally {
             try {
                 redisService.unLock(redisKey, redisValue);
@@ -50,14 +51,14 @@ public class H5OrderController {
             }
         }
     }
-    @PostMapping("orders")
-    public ResponseEntity<Page<OrderVO>> queryOrderPage(@RequestBody OrderH5Query query, Pageable pageReq) {
-        return ResponseEntity.ok(orderService.queryOrderPage(query, pageReq));
-    }
+//    @PostMapping("orders")
+//    public ResponseEntity<Page<OrderVO>> queryOrderPage(@RequestBody OrderH5Query query, Pageable pageReq) {
+//        return ResponseEntity.ok(service.queryOrderPage(query, pageReq));
+//    }
 
     @ApiOperation("下单前校验")
     @PostMapping("/addOrderCheck")
     public ResponseEntity<OrderCalcVO> addOrderCheck(@RequestBody OrderCreateDTO orderCreateDTO){
-        return ResponseEntity.ok(orderService.addOrderCheck(orderCreateDTO));
+        return ResponseEntity.ok(service.addOrderCheck(orderCreateDTO));
     }
 }
