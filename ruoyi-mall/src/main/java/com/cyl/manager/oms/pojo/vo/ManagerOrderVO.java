@@ -66,6 +66,9 @@ public class ManagerOrderVO {
     @ApiModelProperty(name = "note",value = "备注",required = true,dataType = "String")
     private String note;
 
+    @ApiModelProperty("商家备注")
+    private String merchantNote;
+
     @ApiModelProperty(name = "spData",value = "商品sku属性",required = true,dataType = "String")
     private String spData;
 

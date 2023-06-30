@@ -50,7 +50,6 @@ public class OrderController extends BaseController {
     @PostMapping("/list")
     public ResponseEntity<Page<ManagerOrderVO>> list(@RequestBody ManagerOrderQueryRequest query, Pageable page) {
         return ResponseEntity.ok(service.selectList(query, page));
-//        return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
     }
 
     @ApiOperation("导出订单表列表")
@@ -93,5 +92,13 @@ public class OrderController extends BaseController {
 	@DeleteMapping("/{id}")
     public ResponseEntity<Integer> remove(@PathVariable Long id) {
         return ResponseEntity.ok(service.deleteById(id));
+    }
+
+    @ApiOperation("添加备注")
+    @PreAuthorize("@ss.hasPermi('oms:order:note:add')")
+    @Log(title = "订单表", businessType = BusinessType.UPDATE)
+    @PostMapping("/merchantNote/add")
+    public ResponseEntity<Integer> saveMerchantNote(@RequestBody Order order){
+        return ResponseEntity.ok(service.saveMerchantNote(order));
     }
 }

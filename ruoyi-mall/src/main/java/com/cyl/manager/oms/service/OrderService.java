@@ -11,6 +11,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.cyl.h5.pojo.dto.OrderCreateDTO;
@@ -49,6 +50,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.cyl.manager.oms.mapper.OrderMapper;
 import com.cyl.manager.oms.domain.Order;
@@ -268,4 +270,14 @@ public class OrderService {
     }
 
 
+    public Integer saveMerchantNote(Order order) {
+        Order orderInDb = orderMapper.selectById(order.getId());
+        if (orderInDb == null){
+            throw new RuntimeException("订单不存在");
+        }
+        UpdateWrapper<Order> qw = new UpdateWrapper<>();
+        qw.eq("id", order.getId());
+        qw.set("merchant_note", order.getMerchantNote());
+        return orderMapper.update(null, qw);
+    }
 }

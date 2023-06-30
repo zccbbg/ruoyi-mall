@@ -122,6 +122,10 @@ public class Order extends BaseAudit {
     @Excel(name = "订单备注")
     private String note;
 
+    @ApiModelProperty("商家备注")
+    @Excel(name = "商家备注")
+    private String merchantNote;
+
     @ApiModelProperty("确认收货状态：0->未确认；1->已确认")
     @Excel(name = "确认收货状态：0->未确认；1->已确认")
     private Integer confirmStatus;

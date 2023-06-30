@@ -91,6 +91,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.total_amount     totalAmount,
         a.pay_amount       payAmount,
         a.note,
+        a.merchant_note merchantNote,
         a.create_time      createTime,
         a.payment_time     payTime,
         a.receive_time     receiveTime,

@@ -1,6 +1,8 @@
 package com.fjp.lc.test.service;
 
+import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.symmetric.AES;
 import com.cyl.manager.ums.service.MemberCartService;
@@ -61,5 +63,14 @@ public class ServiceTest {
         System.out.println("加密后16进制：" + encryptHex);
         String decryptStr = aes.decryptStr(encryptHex, CharsetUtil.CHARSET_UTF_8);
         System.out.println("解密：" + decryptStr);
+    }
+
+    @Test
+    public void test4(){
+        //参数1为终端ID
+//参数2为数据中心ID
+        Snowflake snowflake = IdUtil.createSnowflake(1, 1);
+        long id = snowflake.nextId();
+        System.out.println("id:" + id);
     }
 }
