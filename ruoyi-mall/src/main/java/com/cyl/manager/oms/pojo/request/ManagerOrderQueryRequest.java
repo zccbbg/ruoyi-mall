@@ -15,7 +15,7 @@ public class ManagerOrderQueryRequest {
     private Long orderId;
 
     @ApiModelProperty(name = "orderSn", value = "订单编号", required = true, dataType = "String")
-    private Long orderSn;
+    private String orderSn;
 
 
     @ApiModelProperty(name = "productId", value = "商品id", required = true, dataType = "Long")

@@ -173,6 +173,7 @@ public class OrderService {
                 .stream().collect(Collectors.groupingBy(OrderItem::getOrderId));
         groupedOrderItemMap.keySet().forEach(key -> {
             ManagerOrderVO managerOrderVO = orderMap.get(key);
+            managerOrderVO.setBuyNum(0);
             List<OrderItem> orderItemList = groupedOrderItemMap.get(key);
             List<ManagerOrderProductVO> addProductList = new ArrayList<>();
             orderItemList.forEach(item -> {
@@ -184,6 +185,7 @@ public class OrderService {
                 vo.setProductId(item.getProductId());
                 vo.setSpData(item.getSpData());
                 addProductList.add(vo);
+                managerOrderVO.setBuyNum(managerOrderVO.getBuyNum() + item.getQuantity());
             });
             managerOrderVO.setProductList(addProductList);
         });
