@@ -299,8 +299,8 @@ public class OrderService {
         Order order = orderMapper.selectById(request.getOrderId());
         QueryWrapper<OrderItem> qw = new QueryWrapper<>();
         qw.eq("order_id", request.getOrderId());
-        OrderItem orderItem = orderItemMapper.selectOne(qw);
-        if (order == null || orderItem == null){
+        List<OrderItem> orderItemList = orderItemMapper.selectList(qw);
+        if (order == null || CollectionUtil.isEmpty(orderItemList)){
             throw new RuntimeException("未找到该订单信息");
         }
         // 是否为待发货、已发货 、已完成
