@@ -153,4 +153,66 @@ public class Constants
     public static final String LOOKUP_LDAP = "ldap://";
 
     public static final String SPAN_ID = "spanId";
+
+    /**
+     * 会员账号状态
+     */
+    public static class MEMBER_ACCOUNT_STATUS {
+        public static final Integer FORBIDDEN = 0;
+        public static final Integer NORMAL = 1;
+    }
+
+    /**
+     * 登录提示信息
+     */
+    public static class LOGIN_INFO {
+        public static final String WRONG = "账号或密码错误";
+        public static final String FORBIDDEN = "您的账号被禁用，请联系管理员";
+        public static final String SUCCESS = "登录成功";
+        public static final String TO_REGISTER = "请先注册";
+    }
+
+    /**
+     * 验证码相关提示信息
+     */
+    public static class VERIFY_CODE_INFO {
+        public static final String EXPIRED = "验证码已过期";
+        public static final String WRONG = "验证码错误";
+    }
+
+    /**
+     * 上架状态：0->下架；1->上架
+     */
+    public static class PublishStatus {
+        public static final Integer GROUNDING = 1;
+        public static final Integer UNDERCARRIAGE = 0;
+    }
+
+    /**
+     * 0->未支付；1->支付宝；2->微信
+     */
+    public static class PayType {
+        public static final Integer NO_PAY = 0;
+        public static final Integer ALIPAY = 1;
+        public static final Integer WECHAT = 2;
+    }
+
+    /**
+     * 订单来源 购物车：cart
+     */
+    public static class OrderFrom {
+        public static final String CART = "cart";
+    }
+
+    /**
+     * 订单状态  0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单
+     */
+    public static class OrderStatus {
+        public static final Integer NOTPAID = 0;
+        public static final Integer SEND = 1;
+        public static final Integer GET = 2;
+        public static final Integer CONFIRM = 3;
+        public static final Integer CLOSED = 4;
+        public static final Integer UNVAILD = 5;
+    }
 }
