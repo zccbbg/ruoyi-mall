@@ -75,6 +75,12 @@ public class ManagerOrderVO {
     @ApiModelProperty(name = "productInfo", value = "订单商品数据")
     private List<ManagerOrderProductVO> productList;
 
+    @ApiModelProperty(name = "deliveryTime",value = "发货时间",required = true,dataType = "LocalDataTime")
+    private Date deliveryTime;
+
+    @ApiModelProperty(name = "deliverySn",value = "物流单号",required = true,dataType = "String")
+    private String deliverySn;
+
     private String receiverName;
 
     private String receiverPhone;
