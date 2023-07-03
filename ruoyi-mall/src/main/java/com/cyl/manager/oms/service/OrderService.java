@@ -21,10 +21,13 @@ import com.cyl.h5.pojo.vo.SkuViewDTO;
 import com.cyl.h5.pojo.vo.form.OrderSubmitForm;
 import com.cyl.h5.pojo.vo.query.OrderH5Query;
 import com.cyl.manager.oms.convert.OrderConvert;
+import com.cyl.manager.oms.domain.OrderDeliveryHistory;
 import com.cyl.manager.oms.domain.OrderItem;
 import com.cyl.manager.oms.domain.OrderOperateHistory;
+import com.cyl.manager.oms.mapper.OrderDeliveryHistoryMapper;
 import com.cyl.manager.oms.mapper.OrderItemMapper;
 import com.cyl.manager.oms.mapper.OrderOperateHistoryMapper;
+import com.cyl.manager.oms.pojo.request.DeliverProductRequest;
 import com.cyl.manager.oms.pojo.request.ManagerOrderQueryRequest;
 import com.cyl.manager.oms.pojo.vo.*;
 import com.cyl.manager.pms.convert.SkuConvert;
@@ -89,6 +92,8 @@ public class OrderService {
     private MemberMapper memberMapper;
     @Value("${aes.key}")
     private String aesKey;
+    @Autowired
+    private OrderDeliveryHistoryMapper orderDeliveryHistoryMapper;
 
     /**
      * 查询订单表
@@ -279,5 +284,92 @@ public class OrderService {
         qw.eq("id", order.getId());
         qw.set("merchant_note", order.getMerchantNote());
         return orderMapper.update(null, qw);
+    }
+
+    /**
+     * 管理后台发货
+     * 目前发货是这样的：待发货、已发货、已完成都能执行发货，每次都会创建一条新的发货记录且修改订单发货信息
+     * @param request 发货请求
+     * @param userId 操作人
+     * @return 结果
+     */
+    @Transactional
+    public String deliverProduct(DeliverProductRequest request, Long userId) {
+        //查询订单
+        Order order = orderMapper.selectById(request.getOrderId());
+        QueryWrapper<OrderItem> qw = new QueryWrapper<>();
+        qw.eq("order_id", request.getOrderId());
+        OrderItem orderItem = orderItemMapper.selectOne(qw);
+        if (order == null || orderItem == null){
+            throw new RuntimeException("未找到该订单信息");
+        }
+        // 是否为待发货、已发货 、已完成
+        if (!(Constants.OrderStatus.SEND.equals(order.getStatus())
+                || Constants.OrderStatus.GET.equals(order.getStatus())
+                || Constants.OrderStatus.CONFIRM.equals(order.getStatus()))){
+            throw new RuntimeException("订单状态错误");
+        }
+        Integer orderStatus =
+                Constants.OrderStatus.SEND.equals(order.getStatus()) ? Constants.OrderStatus.GET : order.getStatus();
+        //更新订单
+        LocalDateTime optDate = LocalDateTime.now();
+        UpdateWrapper<Order> orderQw = new UpdateWrapper();
+        orderQw.eq("id", order.getId())
+                .set("status", orderStatus)
+                .set("delivery_company", request.getExpressName())
+                .set("delivery_sn", request.getExpressSn())
+                .set("update_time", optDate)
+                .set("update_by", userId)
+                .set("delivery_time", optDate);
+        int rows = orderMapper.update(null, orderQw);
+        if (rows < 1){
+            throw new RuntimeException("更新订单发货信息失败");
+        }
+        //创建新的发货记录
+        this.createDeliveryHistory(request, userId, optDate);
+        //创建订单操作记录
+        this.createOrderOptHistory(order.getId(), orderStatus, userId, optDate);
+        return "发货成功";
+    }
+
+    /**
+     * 创建发货记录
+     * @param request 发货请求
+     * @param userId 操作人
+     * @param optDate 操作时间
+     */
+    private void createDeliveryHistory(DeliverProductRequest request, Long userId, LocalDateTime optDate){
+        OrderDeliveryHistory orderDeliveryHistory = new OrderDeliveryHistory();
+        orderDeliveryHistory.setOrderId(request.getOrderId());
+        orderDeliveryHistory.setDeliveryCompany(request.getExpressName());
+        orderDeliveryHistory.setDeliverySn(request.getExpressSn());
+        orderDeliveryHistory.setCreateTime(optDate);
+        orderDeliveryHistory.setCreateBy(userId);
+        int rows = orderDeliveryHistoryMapper.insert(orderDeliveryHistory);
+        if (rows < 1) {
+            throw new RuntimeException("新增订单发货记录失败");
+        }
+    }
+
+    /**
+     * 创建订单操作历史
+     * @param orderId 订单id
+     * @param orderStatus 订单状态
+     * @param userId 操作人
+     * @param optDate 操作时间
+     */
+    private void createOrderOptHistory(Long orderId, Integer orderStatus, Long userId, LocalDateTime optDate){
+        OrderOperateHistory optHistory = new OrderOperateHistory();
+        optHistory.setOrderId(orderId);
+        optHistory.setOperateMan(userId + "");
+        optHistory.setOrderStatus(orderStatus);
+        optHistory.setCreateTime(optDate);
+        optHistory.setCreateBy(userId);
+        optHistory.setUpdateBy(userId);
+        optHistory.setUpdateTime(optDate);
+        int rows = orderOperateHistoryMapper.insert(optHistory);
+        if (rows < 1) {
+            throw new RuntimeException("新增订单操作记录失败");
+        }
     }
 }

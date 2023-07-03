@@ -2,11 +2,16 @@ package com.cyl.manager.oms.controller;
 
 import java.util.List;
 
+import com.cyl.h5.config.SecurityUtil;
+import com.cyl.manager.oms.pojo.request.DeliverProductRequest;
 import com.cyl.manager.oms.pojo.request.ManagerOrderQueryRequest;
 import com.cyl.manager.oms.pojo.vo.ManagerOrderDetailVO;
 import com.cyl.manager.oms.pojo.vo.ManagerOrderVO;
+import com.ruoyi.common.core.redis.RedisService;
+import com.ruoyi.common.utils.SecurityUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
@@ -39,11 +44,14 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 @Api(description ="订单表接口列表")
 @RestController
 @RequestMapping("/oms/order")
+@Slf4j
 public class OrderController extends BaseController {
     @Autowired
     private OrderService service;
     @Autowired
     private OrderConvert convert;
+    @Autowired
+    private RedisService redisService;
 
     @ApiOperation("查询订单表列表")
     @PreAuthorize("@ss.hasPermi('oms:order:list')")
@@ -100,5 +108,27 @@ public class OrderController extends BaseController {
     @PostMapping("/merchantNote/add")
     public ResponseEntity<Integer> saveMerchantNote(@RequestBody Order order){
         return ResponseEntity.ok(service.saveMerchantNote(order));
+    }
+
+    @ApiOperation("管理后台订单发货")
+    @PreAuthorize("@ss.hasPermi('oms:order:delivery')")
+    @PostMapping("/deliverProduct")
+    public ResponseEntity<String> delivery(@RequestBody DeliverProductRequest request){
+        Long userId = SecurityUtils.getUserId();
+        String redisKey = "oms_order_deliverProduct" + request.getOrderId();
+        String redisValue = request.getOrderId() + "_" + System.currentTimeMillis();
+        try{
+            redisService.lock(redisKey, redisValue, 60);
+            return ResponseEntity.ok(service.deliverProduct(request, userId));
+        }catch (Exception e){
+            log.error("订单发货接口异常");
+            throw new RuntimeException("发货失败");
+        }finally {
+            try{
+                redisService.unLock(redisKey, redisValue);;
+            }catch (Exception e){
+                log.error("", e);
+            }
+        }
     }
 }

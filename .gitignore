@@ -43,7 +43,7 @@ nbdist/
 !*/build/*.html
 !*/build/*.xml
 /sql/local.sql
-*local*
+*local
 
 /ruoyi-admin/src/main/resources/application-dev.yml
 /ruoyi-admin/src/main/resources/application-prod.yml
