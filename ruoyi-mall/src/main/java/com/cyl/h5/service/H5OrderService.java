@@ -1,14 +1,17 @@
 package com.cyl.h5.service;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.cyl.h5.pojo.dto.OrderCreateDTO;
 import com.cyl.h5.pojo.dto.OrderProductListDTO;
+import com.cyl.h5.pojo.vo.H5OrderVO;
 import com.cyl.h5.pojo.vo.OrderCalcVO;
 import com.cyl.h5.pojo.vo.SkuViewDTO;
 import com.cyl.h5.pojo.vo.form.OrderSubmitForm;
 import com.cyl.manager.oms.domain.Order;
+import com.cyl.manager.oms.domain.OrderItem;
 import com.cyl.manager.oms.domain.OrderOperateHistory;
 import com.cyl.manager.oms.mapper.OrderItemMapper;
 import com.cyl.manager.oms.mapper.OrderMapper;
@@ -23,20 +26,20 @@ import com.cyl.manager.ums.domain.MemberAddress;
 import com.cyl.manager.ums.domain.MemberCart;
 import com.cyl.manager.ums.mapper.MemberAddressMapper;
 import com.cyl.manager.ums.mapper.MemberCartMapper;
+import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.utils.IDGenerator;
 import com.ruoyi.framework.config.LocalDataUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -171,7 +174,7 @@ public class H5OrderService {
                 throw new RuntimeException("删除购物车失败");
             }
         }
-        //当前返回成功消息，接入支付后可返回payId
+        //当前订单id，接入支付后可返回payId
         return orderId;
     }
 
@@ -229,5 +232,47 @@ public class H5OrderService {
     private String getOrderIdPrefix(){
         LocalDateTime time = LocalDateTime.now();
         return time.format(DateTimeFormatter.ofPattern("yyMMdd")) + "-";
+    }
+
+    /**
+     * h5订单分页查询
+     * @param status 订单状态 -1->全部；0->待付款；1->待发货；2->待收货；-2->售后单
+     * @param memberId 会员id
+     * @param pageable 分页
+     * @return 结果
+     */
+    public PageImpl<H5OrderVO> orderPage(Integer status, Long memberId, Pageable pageable) {
+        // 如果全部且页数为1，看看有无待付款单
+        List<H5OrderVO> unpaidOrderList = new ArrayList<>();
+        if (Constants.H5OrderStatus.ALL.equals(status) && pageable.getPageNumber() == 0){
+            unpaidOrderList = orderMapper.orderPage(Constants.H5OrderStatus.UN_PAY, memberId);
+        }
+        if (pageable != null){
+            PageHelper.startPage(pageable.getPageNumber() + 1, pageable.getPageSize());
+        }
+        List<H5OrderVO> orderList = orderMapper.orderPage(status, memberId);
+        long total = ((com.github.pagehelper.Page) orderList).getTotal();
+        // 两个list都没数据那肯定返回空了
+        if (CollectionUtil.isEmpty(unpaidOrderList) && CollectionUtil.isEmpty(orderList)){
+            return new PageImpl<>(Collections.EMPTY_LIST, pageable, total);
+        }
+        // 开始组装item了
+        // 拿出所有orderId，查item，然后分组 by orderId
+        List<Long> idList = new ArrayList<>();
+        if (CollectionUtil.isNotEmpty(unpaidOrderList)){
+            idList.addAll(unpaidOrderList.stream().map(H5OrderVO::getOrderId).collect(Collectors.toList()));
+        }
+        if (CollectionUtil.isNotEmpty(orderList)){
+            idList.addAll(orderList.stream().map(H5OrderVO::getOrderId).collect(Collectors.toList()));
+        }
+        QueryWrapper<OrderItem> orderItemQw = new QueryWrapper<>();
+        orderItemQw.in("order_id", idList);
+        Map<Long, List<OrderItem>> orderItemMap =
+                orderItemMapper.selectList(orderItemQw).stream().collect(Collectors.groupingBy(OrderItem::getOrderId));
+        orderList.addAll(0, unpaidOrderList);
+        orderList.forEach(item -> {
+            item.setOrderItemList(orderItemMap.get(item.getOrderId()));
+        });
+        return new PageImpl<>(orderList, pageable, total);
     }
 }

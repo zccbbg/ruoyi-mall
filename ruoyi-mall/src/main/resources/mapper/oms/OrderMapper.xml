@@ -144,4 +144,33 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
         order by a.create_time desc
     </select>
+
+    <select id="orderPage" resultType="com.cyl.h5.pojo.vo.H5OrderVO">
+        select
+        id orderId,
+        order_sn,
+        member_id,
+        total_amount,
+        pay_amount,
+        status,
+        aftersale_status,
+        note,
+        delivery_sn,
+        create_time
+        from oms_order
+        where
+        delete_status=0
+        and member_id=#{memberId}
+        <if test="status==-1">
+            and status in (1,2,3,4)
+        </if>
+        <if test="status>-1 and status&lt;3">
+            and status=#{status}
+            and aftersale_status=1
+        </if>
+        <if test="status==-2">
+            and aftersale_status in (2, 3)
+        </if>
+        order by create_time desc
+    </select>
 </mapper>

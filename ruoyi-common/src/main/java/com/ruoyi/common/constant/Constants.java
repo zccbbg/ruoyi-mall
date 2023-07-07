@@ -215,4 +215,19 @@ public class Constants
         public static final Integer CLOSED = 4;
         public static final Integer UNVAILD = 5;
     }
+
+    /**
+     * H5订单查询状态
+     * -1->全部 0->待付款；1->待发货；2->待收货；3->已完成；4->已关闭；5->无效订单 -2->售后单
+     */
+    public static class H5OrderStatus{
+        public static final Integer ALL = -1;
+        public static final Integer UN_PAY = 0;
+        public static final Integer NOT_DELIVERED = 1;
+        public static final Integer DELIVERED = 2;
+        public static final Integer COMPLETED = 3;
+        public static final Integer CLOSED = 4;
+        public static final Integer INVALID = 5;
+        public static final Integer REFUND = -2;
+    }
 }
