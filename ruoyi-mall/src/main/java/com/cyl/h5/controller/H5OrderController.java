@@ -67,4 +67,13 @@ public class H5OrderController {
         Member member = (Member) LocalDataUtil.getVar(Constants.MEMBER_INFO);
         return ResponseEntity.ok(service.orderPage(status, member.getId(), pageable));
     }
+
+    @ApiOperation("订单详情")
+    @GetMapping("/orderDetail")
+    public ResponseEntity<H5OrderVO> orderDetail(@RequestParam(required = false) Long orderId){
+        if (orderId == null){
+            throw new RuntimeException("系统繁忙");
+        }
+        return ResponseEntity.ok(service.orderDetail(orderId));
+    }
 }

@@ -1,6 +1,7 @@
 package com.cyl.h5.pojo.vo;
 
 import com.cyl.manager.oms.domain.OrderItem;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -42,6 +43,31 @@ public class H5OrderVO {
     private String deliverySn;
 
     @ApiModelProperty("下单时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty("支付时间")
+    private LocalDateTime paymentTime;
+
+    @ApiModelProperty("收货人姓名")
+    private String receiverName;
+
+    @ApiModelProperty("收货人手机号")
+    private String receiverPhone;
+
+    @ApiModelProperty("省份/直辖市")
+    private String receiverProvince;
+
+    @ApiModelProperty("城市")
+    private String receiverCity;
+
+    @ApiModelProperty("区")
+    private String receiverDistrict;
+
+    @ApiModelProperty("详细地址")
+    private String receiverDetailAddress;
+
+    @ApiModelProperty("支付倒计时")
+    private Long timeToPay;
 }

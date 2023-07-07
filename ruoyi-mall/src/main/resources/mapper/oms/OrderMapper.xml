@@ -156,7 +156,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         aftersale_status,
         note,
         delivery_sn,
-        create_time
+        create_time,
+        payment_time,
+        receiver_name,
+        receiver_phone,
+        receiver_province,
+        receiver_city,
+        receiver_district,
+        receiver_detail_address
         from oms_order
         where
         delete_status=0
@@ -172,5 +179,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             and aftersale_status in (2, 3)
         </if>
         order by create_time desc
+    </select>
+    <select id="selectOrderDetail" resultType="com.cyl.h5.pojo.vo.H5OrderVO">
+        select
+        id orderId,
+        order_sn,
+        member_id,
+        total_amount,
+        pay_amount,
+        status,
+        aftersale_status,
+        note,
+        delivery_sn,
+        create_time,
+        payment_time,
+        receiver_name,
+        receiver_phone,
+        receiver_province,
+        receiver_city,
+        receiver_district,
+        receiver_detail_address
+        from oms_order
+        where
+        delete_status=0
+        and id=#{orderId}
     </select>
 </mapper>

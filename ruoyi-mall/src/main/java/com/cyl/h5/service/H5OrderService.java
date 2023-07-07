@@ -38,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -274,5 +275,27 @@ public class H5OrderService {
             item.setOrderItemList(orderItemMap.get(item.getOrderId()));
         });
         return new PageImpl<>(orderList, pageable, total);
+    }
+
+    public H5OrderVO orderDetail(Long orderId) {
+        H5OrderVO order = orderMapper.selectOrderDetail(orderId);
+        if (order == null){
+            throw new RuntimeException("未查询到该订单");
+        }
+        // 组装item
+        QueryWrapper<OrderItem> orderItemQw = new QueryWrapper<>();
+        orderItemQw.eq("order_id", orderId);
+        List<OrderItem> orderItemList = orderItemMapper.selectList(orderItemQw);
+        order.setOrderItemList(orderItemList);
+        // 如果未付款，计算倒计时
+        if (Constants.OrderStatus.NOTPAID.equals(order.getStatus())){
+            // 订单超时时间900s，后面可以配置到字典等
+            Integer time = 900;
+            Date addDate = Date.from(order.getCreateTime().plusSeconds(time).atZone(ZoneId.systemDefault()).toInstant());
+            if (addDate.after(new Date())) {
+                order.setTimeToPay(addDate.getTime());
+            }
+        }
+        return order;
     }
 }

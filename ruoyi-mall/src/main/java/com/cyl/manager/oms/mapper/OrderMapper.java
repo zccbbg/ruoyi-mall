@@ -25,4 +25,6 @@ public interface OrderMapper extends BaseMapper<Order> {
     List<ManagerOrderVO> selectManagerOrderPage(ManagerOrderQueryRequest request);
 
     List<H5OrderVO> orderPage(@Param("status") Integer status, @Param("memberId")Long memberId);
+
+    H5OrderVO selectOrderDetail(Long orderId);
 }
