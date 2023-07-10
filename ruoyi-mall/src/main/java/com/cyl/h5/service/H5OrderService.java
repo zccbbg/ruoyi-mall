@@ -3,9 +3,11 @@ package com.cyl.h5.service;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.cyl.h5.pojo.dto.OrderCreateDTO;
 import com.cyl.h5.pojo.dto.OrderProductListDTO;
+import com.cyl.h5.pojo.vo.CountOrderVO;
 import com.cyl.h5.pojo.vo.H5OrderVO;
 import com.cyl.h5.pojo.vo.OrderCalcVO;
 import com.cyl.h5.pojo.vo.SkuViewDTO;
@@ -297,5 +299,54 @@ public class H5OrderService {
             }
         }
         return order;
+    }
+
+    @Transactional
+    public String orderComplete(Long orderId) {
+        LocalDateTime optDate = LocalDateTime.now();
+        Order order = orderMapper.selectById(orderId);
+        OrderItem queryOrderItem = new OrderItem();
+        queryOrderItem.setOrderId(orderId);
+        List<OrderItem> orderItemList = orderItemMapper.selectByEntity(queryOrderItem);
+        if(order == null || CollectionUtil.isEmpty(orderItemList)){
+            throw new RuntimeException("未查询到订单信息");
+        }
+        // 只有【待收货】状态才能确认
+        if(!order.getStatus().equals(Constants.H5OrderStatus.DELIVERED)){
+            throw new RuntimeException("订单状态已改变，请刷新");
+        }
+        //更新订单
+        UpdateWrapper<Order> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id", order.getId());
+        updateWrapper.set("status", Constants.H5OrderStatus.COMPLETED);
+        updateWrapper.set("confirm_status", 1);
+        updateWrapper.set("receive_time", optDate);
+        int rows = orderMapper.update(null, updateWrapper);
+        if (rows < 1){
+            throw new RuntimeException("更新订单状态失败");
+        }
+        //创建订单操作记录
+        OrderOperateHistory optHistory = new OrderOperateHistory();
+        optHistory.setOrderId(order.getId());
+        optHistory.setOperateMan("用户");
+        optHistory.setOrderStatus(Constants.H5OrderStatus.COMPLETED);
+        optHistory.setCreateTime(optDate);
+        optHistory.setCreateBy(order.getMemberId());
+        optHistory.setUpdateBy(order.getMemberId());
+        optHistory.setUpdateTime(optDate);
+        rows = orderOperateHistoryMapper.insert(optHistory);
+        if (rows < 1){
+            throw new RuntimeException("创建订单操作记录失败");
+        }
+        return order.getOrderSn();
+    }
+
+    /**
+     * 统计待付款、待发货、待收货和售后订单数量
+     * @param memberId
+     * @return
+     */
+    public CountOrderVO orderNumCount(Long memberId) {
+        return  orderMapper.countByStatusAndMemberId(memberId);
     }
 }

@@ -204,4 +204,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         delete_status=0
         and id=#{orderId}
     </select>
+    <select id="countByStatusAndMemberId" resultType="com.cyl.h5.pojo.vo.CountOrderVO">
+        select
+            IFNULL(sum(case when status=0 and aftersale_status=1 then 1 else 0 end),0) unpaid,
+            IFNULL(sum(case when status=1 and aftersale_status=1 then 1 else 0 end),0) nosend,
+            IFNULL(sum(case when status=2 and aftersale_status=1 then 1 else 0 end),0) noget,
+            IFNULL(sum(case when aftersale_status in (2,3) then 1 else 0 end),0) aftersale
+        from oms_order
+        where member_id=#{memberId} and delete_status=0
+    </select>
 </mapper>
