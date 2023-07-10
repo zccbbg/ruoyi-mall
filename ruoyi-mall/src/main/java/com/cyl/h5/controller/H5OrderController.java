@@ -1,13 +1,18 @@
 package com.cyl.h5.controller;
 
+import cn.hutool.core.collection.CollectionUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.cyl.h5.pojo.dto.OrderCreateDTO;
+import com.cyl.h5.pojo.request.CancelOrderRequest;
 import com.cyl.h5.pojo.vo.CountOrderVO;
 import com.cyl.h5.pojo.vo.H5OrderVO;
 import com.cyl.h5.pojo.vo.OrderCalcVO;
 import com.cyl.h5.pojo.vo.form.OrderSubmitForm;
 import com.cyl.h5.service.H5OrderService;
+import com.cyl.manager.oms.domain.Order;
 import com.cyl.manager.ums.domain.Member;
 import com.ruoyi.common.constant.Constants;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisService;
 import com.ruoyi.framework.config.LocalDataUtil;
 import io.swagger.annotations.ApiOperation;
@@ -17,6 +22,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/h5/order")
@@ -102,5 +109,26 @@ public class H5OrderController {
         Member member = (Member) LocalDataUtil.getVar(Constants.MEMBER_INFO);
         Long memberId = member.getId();
         return ResponseEntity.ok(service.orderNumCount(memberId));
+    }
+
+    @ApiOperation("取消订单")
+    @PostMapping("/orderCancel")
+    public ResponseEntity<String> orderCancel(@RequestBody CancelOrderRequest request){
+        Member member = (Member) LocalDataUtil.getVar(Constants.MEMBER_INFO);
+        String redisKey = "h5_oms_order_cancel_"+ request.getIdList().get(0);
+        String redisValue = request.getIdList().get(0)+"_"+System.currentTimeMillis();
+        try{
+            redisService.lock(redisKey,redisValue,60);
+            return ResponseEntity.ok(service.orderBatchCancel(request, member.getId()));
+        }catch (Exception e){
+            log.error("订单取消方法异常",e);
+            throw new RuntimeException("订单取消失败");
+        }finally {
+            try {
+                redisService.unLock(redisKey,redisValue);
+            }catch (Exception e){
+                log.error("",e);
+            }
+        }
     }
 }

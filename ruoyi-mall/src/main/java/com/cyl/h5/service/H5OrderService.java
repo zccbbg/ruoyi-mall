@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.cyl.h5.pojo.dto.OrderCreateDTO;
 import com.cyl.h5.pojo.dto.OrderProductListDTO;
+import com.cyl.h5.pojo.request.CancelOrderRequest;
 import com.cyl.h5.pojo.vo.CountOrderVO;
 import com.cyl.h5.pojo.vo.H5OrderVO;
 import com.cyl.h5.pojo.vo.OrderCalcVO;
@@ -19,6 +20,7 @@ import com.cyl.manager.oms.mapper.OrderItemMapper;
 import com.cyl.manager.oms.mapper.OrderMapper;
 import com.cyl.manager.oms.mapper.OrderOperateHistoryMapper;
 import com.cyl.manager.oms.service.OrderItemService;
+import com.cyl.manager.oms.service.OrderOperateHistoryService;
 import com.cyl.manager.pms.domain.Product;
 import com.cyl.manager.pms.domain.Sku;
 import com.cyl.manager.pms.mapper.ProductMapper;
@@ -71,6 +73,9 @@ public class H5OrderService {
 
     @Autowired
     private OrderItemService orderItemService;
+
+    @Autowired
+    private OrderOperateHistoryService orderOperateHistoryService;
 
     @Transactional
     public Long submit(OrderSubmitForm form) {
@@ -348,5 +353,49 @@ public class H5OrderService {
      */
     public CountOrderVO orderNumCount(Long memberId) {
         return  orderMapper.countByStatusAndMemberId(memberId);
+    }
+
+    @Transactional
+    public String orderBatchCancel(CancelOrderRequest request, Long userId) {
+        LocalDateTime optDate = LocalDateTime.now();
+        if (CollectionUtil.isEmpty(request.getIdList())){
+            throw new RuntimeException("未指定需要取消的订单号");
+        }
+        QueryWrapper<Order> orderQw = new QueryWrapper<>();
+        orderQw.in("id", request.getIdList());
+        List<Order> orderList = orderMapper.selectList(orderQw);
+        if (orderList.size() < request.getIdList().size()){
+            throw new RuntimeException("未查询到订单信息");
+        }
+        long count = orderList.stream().filter(it -> !Constants.H5OrderStatus.UN_PAY.equals(it.getStatus())).count();
+        if (count > 0){
+            throw new RuntimeException("订单状态已更新，请刷新页面");
+        }
+        List<OrderOperateHistory> addHistoryList = new ArrayList<>();
+        orderList.forEach(item -> {
+            item.setStatus(Constants.H5OrderStatus.CLOSED);
+            item.setUpdateTime(optDate);
+            item.setUpdateBy(userId);
+            OrderOperateHistory history = new OrderOperateHistory();
+            history.setOrderId(item.getId());
+            history.setOperateMan("用户");
+            history.setOrderStatus(Constants.H5OrderStatus.CLOSED);
+            history.setCreateTime(optDate);
+            history.setCreateBy(userId);
+            history.setUpdateBy(userId);
+            history.setUpdateTime(optDate);
+            addHistoryList.add(history);
+        });
+        //取消订单
+        int rows = orderMapper.cancelBatch(orderList);
+        if (rows < 1){
+            throw new RuntimeException("更改订单状态失败");
+        }
+        //创建订单操作记录
+        boolean flag = orderOperateHistoryService.saveBatch(addHistoryList);
+        if (!flag){
+            throw new RuntimeException("创建订单操作记录失败");
+        }
+        return "取消订单成功";
     }
 }

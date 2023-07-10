@@ -30,4 +30,6 @@ public interface OrderMapper extends BaseMapper<Order> {
     H5OrderVO selectOrderDetail(Long orderId);
 
     CountOrderVO countByStatusAndMemberId(Long memberId);
+
+    Integer cancelBatch(@Param("list") List<Order> orderList);
 }

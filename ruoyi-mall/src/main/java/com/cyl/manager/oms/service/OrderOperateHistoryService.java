@@ -3,6 +3,7 @@ package com.cyl.manager.oms.service;
 import java.util.List;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +20,7 @@ import com.cyl.manager.oms.pojo.query.OrderOperateHistoryQuery;
  * @author zcc
  */
 @Service
-public class OrderOperateHistoryService {
+public class OrderOperateHistoryService extends ServiceImpl<OrderOperateHistoryMapper, OrderOperateHistory> {
     @Autowired
     private OrderOperateHistoryMapper orderOperateHistoryMapper;
 
