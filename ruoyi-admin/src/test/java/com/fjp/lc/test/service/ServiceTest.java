@@ -6,6 +6,9 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.symmetric.AES;
 import com.cyl.manager.ums.service.MemberCartService;
+import com.cyl.wechat.WechatAuthService;
+import com.cyl.wechat.WechatPayService;
+import com.cyl.wechat.response.WechatUserAuth;
 import com.ruoyi.RuoYiApplication;
 import com.ruoyi.common.config.properties.SmsProperties;
 import com.ruoyi.common.core.sms.AliyunSmsTemplate;
@@ -21,6 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = RuoYiApplication.class)
@@ -72,5 +76,19 @@ public class ServiceTest {
         Snowflake snowflake = IdUtil.createSnowflake(1, 1);
         long id = snowflake.nextId();
         System.out.println("id:" + id);
+    }
+
+    @Autowired
+    private WechatPayService wechatPayService;
+    @Autowired
+    private WechatAuthService wechatAuthService;
+    @Test
+    public void test5(){
+//        String code = "0611P2Ga1D8QCF0CVuJa1qNUJa11P2GL";
+//        WechatUserAuth userToken = wechatAuthService.getUserToken(code);
+        String openId="oUA8I6lDdwSfz-EwR4284dU3KOYw";
+        String res = wechatPayService.jsapiPay(UUID.randomUUID().toString().substring(0,30), "测试支付", 1, openId);
+        System.out.println(res);
+
     }
 }

@@ -1,8 +1,10 @@
 package com.ruoyi;
 
+import com.cyl.wechat.WechatPayData;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 /**
  * 启动程序
@@ -13,6 +15,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
         exclude = {DataSourceAutoConfiguration.class},
         scanBasePackages = {"com.ruoyi", "com.cyl"}
 )
+@EnableConfigurationProperties(WechatPayData.class)
 public class RuoYiApplication {
     public static void main(String[] args) {
         // System.setProperty("spring.devtools.restart.enabled", "false");

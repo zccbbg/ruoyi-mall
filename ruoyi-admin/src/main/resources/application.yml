@@ -161,6 +161,12 @@ extra:
     redirect: ""
 scheduling:
   enabled: true
+http-pool:
+  connection-request-timeout: 10000
+  connection-timeout: 10000
+  socket-timeout: 10000
+  max-per-route: 200
+  max-total: 200
 gen:
   # 作者
   author:
