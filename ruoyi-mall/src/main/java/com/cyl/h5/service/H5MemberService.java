@@ -10,8 +10,12 @@ import com.cyl.h5.pojo.response.RegisterResponse;
 import com.cyl.h5.pojo.response.ValidatePhoneResponse;
 import com.cyl.h5.pojo.response.H5LoginResponse;
 import com.cyl.manager.ums.domain.Member;
+import com.cyl.manager.ums.domain.MemberWechat;
 import com.cyl.manager.ums.mapper.MemberMapper;
+import com.cyl.manager.ums.mapper.MemberWechatMapper;
 import com.cyl.manager.ums.pojo.vo.MemberVO;
+import com.cyl.wechat.WechatAuthService;
+import com.cyl.wechat.response.WechatUserAuth;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.domain.model.LoginMember;
 import com.ruoyi.common.core.redis.RedisCache;
@@ -26,6 +30,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Base64Utils;
 
 import java.time.LocalDateTime;
@@ -47,12 +52,20 @@ public class H5MemberService {
     @Value("${aes.key}")
     private String aesKey;
 
+    @Autowired
+    private WechatAuthService wechatAuthService;
+
+    @Autowired
+    private MemberWechatMapper memberWechatMapper;
+
     /**
      * 注册
      * @param request 注册请求体
      * @return 结果
      */
+    @Transactional
     public RegisterResponse register(RegisterRequest request){
+        LocalDateTime optDate = LocalDateTime.now();
         RegisterResponse response = new RegisterResponse();
         //校验验证码
         this.validateVerifyCode(request.getUuid(), request.getMobile(), request.getCode());
@@ -64,8 +77,28 @@ public class H5MemberService {
         member.setNickname("用户" + request.getMobile().substring(7,11));
         member.setStatus(Constants.MEMBER_ACCOUNT_STATUS.NORMAL);
         member.setGender(0);
-        member.setCreateTime(LocalDateTime.now());
-        memberMapper.insert(member);
+        member.setCreateTime(optDate);
+       int rows = memberMapper.insert(member);
+       if (rows < 1){
+           throw new RuntimeException("注册失败，请重试");
+       }
+       //调用微信授权业务拿到openId等
+        WechatUserAuth userToken = wechatAuthService.getUserToken(request.getWechatCode());
+       if (userToken == null){
+           throw new RuntimeException("授权失败，请重试");
+       }
+        MemberWechat memberWechat = new MemberWechat();
+        memberWechat.setMemberId(member.getId());
+        memberWechat.setOpenid(userToken.getOpenid());
+        memberWechat.setAccessToken(userToken.getAccess_token());
+        memberWechat.setExpiresIn(userToken.getExpires_in());
+        memberWechat.setRefreshToken(userToken.getRefresh_token());
+        memberWechat.setCreateTime(optDate);
+        memberWechat.setCreateBy(member.getId());
+        rows = memberWechatMapper.insert(memberWechat);
+        if (rows < 1){
+            throw new RuntimeException("注册失败，请重试");
+        }
         //注册成功直接返回token了
         H5LoginResponse loginResponse = getLoginResponse(member.getId());
         response.setToken(loginResponse.getToken());

@@ -6,6 +6,7 @@ import com.cyl.h5.pojo.response.ValidatePhoneResponse;
 import com.cyl.h5.pojo.response.H5LoginResponse;
 import com.cyl.h5.service.H5MemberService;
 import com.cyl.manager.ums.pojo.vo.MemberVO;
+import com.cyl.wechat.WechatAuthService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ public class H5MemberController {
 
     @Autowired
     private H5MemberService service;
+
 
     @ApiOperation("会员注册")
     @PostMapping("/register")
