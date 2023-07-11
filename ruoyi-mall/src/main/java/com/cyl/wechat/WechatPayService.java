@@ -6,13 +6,15 @@ import com.wechat.pay.java.service.payments.jsapi.model.Payer;
 import com.wechat.pay.java.service.payments.jsapi.model.PrepayRequest;
 import com.wechat.pay.java.service.payments.jsapi.model.PrepayResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
 public class WechatPayService {
 
-    public static final JsapiService service = new JsapiService.Builder().config(WechatPayConfig.getInstance()).build();
+    @Autowired
+    private JsapiService service;
 
     /**
      * jsapi下单
