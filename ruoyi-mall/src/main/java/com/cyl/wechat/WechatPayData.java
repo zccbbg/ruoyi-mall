@@ -1,10 +1,12 @@
 package com.cyl.wechat;
 
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-@Component
+@Data
 @ConfigurationProperties(prefix = "wechat")
+@Component("WechatPayData")
 public class WechatPayData {
 
     /** 商户号 */
