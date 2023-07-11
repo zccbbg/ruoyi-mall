@@ -24,4 +24,7 @@ public class RegisterRequest {
     @NotBlank
     private String code;
 
+    @ApiModelProperty("微信授权code")
+    private String wechatCode;
+
 }
