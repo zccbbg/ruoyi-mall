@@ -1,6 +1,7 @@
 package com.cyl.h5.service;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -8,6 +9,8 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.cyl.h5.pojo.dto.OrderCreateDTO;
 import com.cyl.h5.pojo.dto.OrderProductListDTO;
 import com.cyl.h5.pojo.request.CancelOrderRequest;
+import com.cyl.h5.pojo.request.OrderPayRequest;
+import com.cyl.h5.pojo.response.OrderPayResponse;
 import com.cyl.h5.pojo.vo.CountOrderVO;
 import com.cyl.h5.pojo.vo.H5OrderVO;
 import com.cyl.h5.pojo.vo.OrderCalcVO;
@@ -28,24 +31,37 @@ import com.cyl.manager.pms.mapper.SkuMapper;
 import com.cyl.manager.ums.domain.Member;
 import com.cyl.manager.ums.domain.MemberAddress;
 import com.cyl.manager.ums.domain.MemberCart;
+import com.cyl.manager.ums.domain.MemberWechat;
 import com.cyl.manager.ums.mapper.MemberAddressMapper;
 import com.cyl.manager.ums.mapper.MemberCartMapper;
+import com.cyl.manager.ums.mapper.MemberWechatMapper;
+import com.cyl.wechat.WechatPayData;
+import com.cyl.wechat.WechatPayService;
+import com.cyl.wechat.WechatPayUtil;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.utils.IDGenerator;
 import com.ruoyi.framework.config.LocalDataUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URISyntaxException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class H5OrderService {
@@ -76,6 +92,12 @@ public class H5OrderService {
 
     @Autowired
     private OrderOperateHistoryService orderOperateHistoryService;
+
+    @Autowired
+    private WechatPayService wechatPayService;
+
+    @Autowired
+    private MemberWechatMapper memberWechatMapper;
 
     @Transactional
     public Long submit(OrderSubmitForm form) {
@@ -124,8 +146,11 @@ public class H5OrderService {
 
         //生成一个统一的订单号
         Long orderId = IDGenerator.generateId();
+        //生产一个payId
+        Long payId = IDGenerator.generateId();
         //创建订单
         Order order = new Order();
+        order.setPayId(payId);
         order.setId(orderId);
         order.setOrderSn(this.getOrderIdPrefix() + orderId);
         order.setMemberId(member.getId());
@@ -135,8 +160,7 @@ public class H5OrderService {
         order.setPurchasePrice(BigDecimal.ZERO);
         order.setFreightAmount(BigDecimal.ZERO);
         order.setPayAmount(orderTotalAmount);
-        //暂时为接入支付，直接设置为待发货
-        order.setStatus(Constants.OrderStatus.SEND);
+        order.setStatus(Constants.OrderStatus.NOTPAID);
         order.setAftersaleStatus(1);
         order.setReceiverName(memberAddress.getName());
         order.setReceiverPhone(memberAddress.getPhoneHidden());
@@ -151,7 +175,7 @@ public class H5OrderService {
         order.setNote(form.getNote());
         order.setConfirmStatus(0);
         order.setDeleteStatus(0);
-        order.setPaymentTime(optTime);
+//        order.setPaymentTime(optTime);
         order.setCreateTime(optTime);
         order.setCreateBy(member.getId());
         int rows = orderMapper.insert(order);
@@ -164,7 +188,7 @@ public class H5OrderService {
         OrderOperateHistory orderOperateHistory = new OrderOperateHistory();
         orderOperateHistory.setOrderId(orderId);
         orderOperateHistory.setOperateMan(member.getId() + "");
-        orderOperateHistory.setOrderStatus(Constants.OrderStatus.SEND);
+        orderOperateHistory.setOrderStatus(Constants.OrderStatus.NOTPAID);
         orderOperateHistory.setCreateTime(optTime);
         orderOperateHistory.setCreateBy(member.getId());
         rows = orderOperateHistoryMapper.insert(orderOperateHistory);
@@ -183,7 +207,7 @@ public class H5OrderService {
             }
         }
         //当前订单id，接入支付后可返回payId
-        return orderId;
+        return payId;
     }
 
     public OrderCalcVO addOrderCheck(OrderCreateDTO orderCreateDTO) {
@@ -398,4 +422,59 @@ public class H5OrderService {
         }
         return "取消订单成功";
     }
+
+    /**
+     * 订单支付
+     * @param req 支付请求
+     * @return
+     */
+    public OrderPayResponse orderPay(OrderPayRequest req) {
+        QueryWrapper<Order> qw = new QueryWrapper<>();
+        qw.eq("pay_id", req.getPayId());
+        qw.eq("status", 0);
+        List<Order> orderList = orderMapper.selectList(qw);
+        if (CollectionUtil.isEmpty(orderList)){
+            throw new RuntimeException("没有待支付的订单");
+        }
+        QueryWrapper<MemberWechat> memberWechatQw = new QueryWrapper<>();
+        memberWechatQw.eq("member_id", req.getMemberId());
+        MemberWechat memberWechat = memberWechatMapper.selectOne(memberWechatQw);
+        if (memberWechat == null || StrUtil.isBlank(memberWechat.getOpenid())){
+            throw new RuntimeException("获取用户openId失败");
+        }
+        QueryWrapper<OrderItem> orderItemQw = new QueryWrapper<>();
+        orderItemQw.eq("order_id", orderList.get(0).getId());
+        List<OrderItem> orderItemList = orderItemMapper.selectList(orderItemQw);
+        String orderDesc = orderItemList.get(0).getProductName().substring(0, Math.min(40, orderItemList.get(0).getProductName().length()));
+        String prepayId = wechatPayService.jsapiPay(
+                String.valueOf(req.getPayId()),
+                orderDesc,
+                Integer.valueOf(orderList.stream().map(Order::getPayAmount).
+                        reduce(BigDecimal.ZERO, BigDecimal::add).multiply(new BigDecimal(100)).stripTrailingZeros().toPlainString()),
+                memberWechat.getOpenid()
+        );
+        OrderPayResponse response = new OrderPayResponse();
+        response.setPayType(2);
+        String appId = WechatPayData.appId;
+        String nonceStr = WechatPayUtil.generateNonceStr();
+        long timeStamp = WechatPayUtil.getCurrentTimestamp();
+        prepayId = "prepay_id=" + prepayId;
+        String signType = "RSA";
+        String paySign = null;
+        String signatureStr = Stream.of(appId, String.valueOf(timeStamp), nonceStr, prepayId)
+                .collect(Collectors.joining("\n", "", "\n"));
+        try {
+            paySign = WechatPayUtil.getSign(signatureStr, WechatPayData.privateKeyPath);
+        } catch (Exception e) {
+            throw new RuntimeException("支付失败");
+        }
+        response.setAppId(appId);
+        response.setTimeStamp(String.valueOf(timeStamp));
+        response.setNonceStr(nonceStr);
+        response.setSignType(signType);
+        response.setPackage_(prepayId);
+        response.setPaySign(paySign);
+        return response;
+    }
+
 }

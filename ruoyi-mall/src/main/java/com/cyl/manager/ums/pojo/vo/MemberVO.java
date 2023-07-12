@@ -64,4 +64,7 @@ public class MemberVO extends BaseAudit {
    /** 用户剩余积分 */
     @Excel(name = "用户剩余积分")
     private BigDecimal integral;
+    /** openId */
+    @Excel(name = "openId")
+    private String openId;
 }

@@ -4,6 +4,8 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.cyl.h5.pojo.dto.OrderCreateDTO;
 import com.cyl.h5.pojo.request.CancelOrderRequest;
+import com.cyl.h5.pojo.request.OrderPayRequest;
+import com.cyl.h5.pojo.response.OrderPayResponse;
 import com.cyl.h5.pojo.vo.CountOrderVO;
 import com.cyl.h5.pojo.vo.H5OrderVO;
 import com.cyl.h5.pojo.vo.OrderCalcVO;
@@ -125,6 +127,30 @@ public class H5OrderController {
             throw new RuntimeException("订单取消失败");
         }finally {
             try {
+                redisService.unLock(redisKey,redisValue);
+            }catch (Exception e){
+                log.error("",e);
+            }
+        }
+    }
+
+    @ApiOperation("订单支付")
+    @PostMapping("/orderPay")
+    public ResponseEntity<OrderPayResponse> orderPay(@RequestBody OrderPayRequest req){
+        log.info("订单支付","提交的数据："+JSONObject.toJSONString(req));
+        String redisKey = "h5_oms_order_pay_"+req.getPayId();
+        String redisValue = req.getPayId()+"_"+System.currentTimeMillis();
+        try {
+            redisService.lock(redisKey, redisValue, 60);
+            Member member = (Member) LocalDataUtil.getVar(Constants.MEMBER_INFO);
+            Long memberId = member.getId();
+            req.setMemberId(memberId);
+            return ResponseEntity.ok(service.orderPay(req));
+        }catch (Exception e){
+            log.error("支付方法异常", e);
+            throw new RuntimeException("支付失败");
+        }finally {
+            try{
                 redisService.unLock(redisKey,redisValue);
             }catch (Exception e){
                 log.error("",e);

@@ -18,6 +18,8 @@ import lombok.Data;
 public class OrderVO extends BaseAudit {
    /** 订单id */
     private Long id;
+    /** 支付id */
+    private Long payId;
     /** 订单编号 */
     private String orderSn;
    /** MEMBER_ID */

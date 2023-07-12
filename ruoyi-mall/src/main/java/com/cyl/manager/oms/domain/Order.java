@@ -26,6 +26,9 @@ public class Order extends BaseAudit {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
+    @ApiModelProperty("支付id")
+    private Long payId;
+
     @ApiModelProperty("订单编号")
     @Excel(name = "订单编号")
     private String orderSn;

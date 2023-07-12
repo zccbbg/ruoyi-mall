@@ -212,6 +212,10 @@ public class H5MemberService {
         MemberVO memberVO = new MemberVO();
         BeanUtils.copyProperties(member, memberVO);
         memberVO.setPhone(AesCryptoUtils.decrypt(aesKey, member.getPhoneEncrypted()));
+        QueryWrapper<MemberWechat> qw = new QueryWrapper<>();
+        qw.eq("member_id", member.getId());
+        MemberWechat memberWechat = memberWechatMapper.selectOne(qw);
+        memberVO.setOpenId(memberWechat.getOpenid());
         return memberVO;
     }
 }
