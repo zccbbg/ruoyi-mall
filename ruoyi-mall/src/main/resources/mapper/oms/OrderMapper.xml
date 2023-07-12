@@ -195,6 +195,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectOrderDetail" resultType="com.cyl.h5.pojo.vo.H5OrderVO">
         select
         id orderId,
+        pay_id,
         order_sn,
         member_id,
         total_amount,

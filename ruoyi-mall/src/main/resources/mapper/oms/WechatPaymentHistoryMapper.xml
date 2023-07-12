@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.manager.oms.mapper.WechatPaymentHistoryMapper">
+    
+    <resultMap type="WechatPaymentHistory" id="OmsWechatPaymentHistoryResult">
+        <result property="id" column="id"/>
+        <result property="paymentId" column="payment_id"/>
+        <result property="memberId" column="member_id"/>
+        <result property="openid" column="openid"/>
+        <result property="realName" column="real_name"/>
+        <result property="title" column="title"/>
+        <result property="orderId" column="order_id"/>
+        <result property="money" column="money"/>
+        <result property="opType" column="op_type"/>
+        <result property="paymentStatus" column="payment_status"/>
+        <result property="remark" column="remark"/>
+        <result property="attach" column="attach"/>
+        <result property="responseBody" column="response_body"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="selectOmsWechatPaymentHistoryVo">
+        select id, payment_id, member_id, openid, real_name, title, order_id, money, op_type, payment_status, remark, attach, response_body, create_by, create_time, update_by, update_time   from oms_wechat_payment_history
+    </sql>
+
+    <select id="selectByEntity" parameterType="WechatPaymentHistory" resultMap="OmsWechatPaymentHistoryResult">
+        <include refid="selectOmsWechatPaymentHistoryVo"/>
+        <where>  
+            <if test="paymentId != null  and paymentId != ''"> and payment_id = #{paymentId}</if>
+            <if test="memberId != null "> and member_id = #{memberId}</if>
+            <if test="openid != null  and openid != ''"> and openid = #{openid}</if>
+            <if test="realName != null  and realName != ''"> and real_name like concat('%', #{realName}, '%')</if>
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="orderId != null "> and order_id = #{orderId}</if>
+            <if test="money != null "> and money = #{money}</if>
+            <if test="opType != null "> and op_type = #{opType}</if>
+            <if test="paymentStatus != null "> and payment_status = #{paymentStatus}</if>
+            <if test="attach != null  and attach != ''"> and attach = #{attach}</if>
+            <if test="responseBody != null  and responseBody != ''"> and response_body = #{responseBody}</if>
+        </where>
+    </select>
+</mapper>
