@@ -2,12 +2,14 @@ package com.cyl.h5.service;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.cyl.h5.pojo.dto.OrderCreateDTO;
 import com.cyl.h5.pojo.dto.OrderProductListDTO;
+import com.cyl.h5.pojo.dto.PayNotifyMessageDTO;
 import com.cyl.h5.pojo.request.CancelOrderRequest;
 import com.cyl.h5.pojo.request.OrderPayRequest;
 import com.cyl.h5.pojo.response.OrderPayResponse;
@@ -19,9 +21,11 @@ import com.cyl.h5.pojo.vo.form.OrderSubmitForm;
 import com.cyl.manager.oms.domain.Order;
 import com.cyl.manager.oms.domain.OrderItem;
 import com.cyl.manager.oms.domain.OrderOperateHistory;
+import com.cyl.manager.oms.domain.WechatPaymentHistory;
 import com.cyl.manager.oms.mapper.OrderItemMapper;
 import com.cyl.manager.oms.mapper.OrderMapper;
 import com.cyl.manager.oms.mapper.OrderOperateHistoryMapper;
+import com.cyl.manager.oms.mapper.WechatPaymentHistoryMapper;
 import com.cyl.manager.oms.service.OrderItemService;
 import com.cyl.manager.oms.service.OrderOperateHistoryService;
 import com.cyl.manager.pms.domain.Product;
@@ -40,13 +44,19 @@ import com.cyl.wechat.WechatPayService;
 import com.cyl.wechat.WechatPayUtil;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.constant.Constants;
+import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.redis.RedisService;
+import com.ruoyi.common.enums.OrderStatus;
+import com.ruoyi.common.enums.TradeStatusEnum;
 import com.ruoyi.common.utils.IDGenerator;
 import com.ruoyi.framework.config.LocalDataUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,6 +74,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
+@Slf4j
 public class H5OrderService {
 
     @Autowired
@@ -98,6 +109,12 @@ public class H5OrderService {
 
     @Autowired
     private MemberWechatMapper memberWechatMapper;
+
+    @Autowired
+    private WechatPaymentHistoryMapper wechatPaymentHistoryMapper;
+
+    @Autowired
+    private RedisService redisService;
 
     @Transactional
     public Long submit(OrderSubmitForm form) {
@@ -446,6 +463,31 @@ public class H5OrderService {
         orderItemQw.eq("order_id", orderList.get(0).getId());
         List<OrderItem> orderItemList = orderItemMapper.selectList(orderItemQw);
         String orderDesc = orderItemList.get(0).getProductName().substring(0, Math.min(40, orderItemList.get(0).getProductName().length()));
+        //保存微信支付历史
+        LocalDateTime optDate = LocalDateTime.now();
+        QueryWrapper<WechatPaymentHistory> wxPaymentQw = new QueryWrapper<>();
+        wxPaymentQw.eq("order_id", orderList.get(0).getId());
+        wxPaymentQw.eq("op_type", Constants.PaymentOpType.PAY);
+        WechatPaymentHistory wechatPaymentHistory = wechatPaymentHistoryMapper.selectOne(wxPaymentQw);
+        if (wechatPaymentHistory == null){
+            wechatPaymentHistory = new WechatPaymentHistory();
+            wechatPaymentHistory.setOrderId(orderList.get(0).getPayId());
+            wechatPaymentHistory.setMemberId(req.getMemberId());
+            wechatPaymentHistory.setOpenid(memberWechat.getOpenid());
+            wechatPaymentHistory.setTitle(orderItemList.get(0).getProductName());
+            wechatPaymentHistory.setMoney(orderList.get(0).getPayAmount());
+            wechatPaymentHistory.setOpType(Constants.PaymentOpType.PAY);
+            wechatPaymentHistory.setPaymentStatus(0);
+            wechatPaymentHistory.setCreateBy(req.getMemberId());
+            wechatPaymentHistory.setCreateTime(optDate);
+            wechatPaymentHistory.setUpdateBy(req.getMemberId());
+            wechatPaymentHistory.setUpdateTime(optDate);
+            wechatPaymentHistoryMapper.insert(wechatPaymentHistory);
+        }else {
+            wechatPaymentHistory.setMoney(orderList.get(0).getPayAmount());
+            wechatPaymentHistoryMapper.updateById(wechatPaymentHistory);
+        }
+        //调用wx的jsapi拿prepayId，返回签名等信息
         String prepayId = wechatPayService.jsapiPay(
                 String.valueOf(req.getPayId()),
                 orderDesc,
@@ -477,4 +519,65 @@ public class H5OrderService {
         return response;
     }
 
+    /**
+     * 支付回调方法
+     * @param messageDTO
+     * @return
+     */
+    @Transactional
+    public ResponseEntity<String> payCallBack(PayNotifyMessageDTO messageDTO){
+        log.info("【订单支付回调】" + JSONObject.toJSON(messageDTO));
+        String redisKey = "h5_oms_order_pay_notify_" + messageDTO.getOutTradeNo();
+        String redisValue = messageDTO.getOutTradeNo() + "_" + System.currentTimeMillis();
+        LocalDateTime optDate = LocalDateTime.now();
+        try{
+            redisService.lock(redisKey, redisValue, 60);
+            //先判断回信回调的是否未success
+            if (!TradeStatusEnum.SUCCESS.getStatus().equals(messageDTO.getTradeStatus())){
+                log.error("【订单支付回调】订单状态不是支付成功状态" + messageDTO.getTradeStatus());
+                throw new RuntimeException();
+            }
+            QueryWrapper<WechatPaymentHistory> paymentWrapper = new QueryWrapper<>();
+            paymentWrapper.eq("order_id", messageDTO.getOutTradeNo());
+            paymentWrapper.eq("op_type", Constants.PaymentOpType.PAY);
+            WechatPaymentHistory paymentHistory = wechatPaymentHistoryMapper.selectOne(paymentWrapper);
+            if (paymentHistory.getPaymentStatus() != Constants.PaymentStatus.INCOMPLETE) {
+                log.info("【订单支付回调】支付订单不是未支付状态，不再处理" + "orderId" + paymentHistory.getOrderId() + "status" + paymentHistory.getPaymentStatus());
+                throw new RuntimeException();
+            }
+            QueryWrapper<Order> orderQw = new QueryWrapper<>();
+            orderQw.eq("pay_id", messageDTO.getOutTradeNo());
+            orderQw.eq("status", OrderStatus.UN_PAY.getType());
+            List<Order> orderList = orderMapper.selectList(orderQw);
+            orderList.forEach(order -> {
+                order.setPaymentTime(messageDTO.getPayTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+                order.setStatus(OrderStatus.NOT_DELIVERED.getType());
+                orderMapper.updateById(order);
+
+                OrderOperateHistory optHistory = new OrderOperateHistory();
+                optHistory.setOrderId(order.getId());
+                optHistory.setOperateMan("系统");
+                optHistory.setOrderStatus(OrderStatus.COMPLETE.getType());
+                optHistory.setCreateTime(optDate);
+                optHistory.setCreateBy(order.getMemberId());
+                optHistory.setUpdateBy(order.getMemberId());
+                optHistory.setUpdateTime(optDate);
+                orderOperateHistoryMapper.insert(optHistory);
+            });
+            UpdateWrapper<WechatPaymentHistory> paymentHistoryUpdateWrapper = new UpdateWrapper<>();
+            paymentHistoryUpdateWrapper.eq("order_id", messageDTO.getOutTradeNo()).set("payment_id", messageDTO.getTradeNo())
+                    .set("payment_status", Constants.PaymentStatus.COMPLETE).set("update_time", optDate);
+            wechatPaymentHistoryMapper.update(null, paymentHistoryUpdateWrapper);
+        }catch (Exception e){
+            log.error("订单支付回调异常");
+            throw new RuntimeException("订单支付回调异常");
+        }finally {
+            try{
+                redisService.unLock(redisKey, redisValue);
+            }catch (Exception e){
+                log.error("", e);
+            }
+        }
+        return ResponseEntity.ok("订单支付回调成功");
+    }
 }

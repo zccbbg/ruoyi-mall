@@ -5,6 +5,8 @@ import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.symmetric.AES;
+import com.cyl.h5.pojo.dto.PayNotifyMessageDTO;
+import com.cyl.h5.service.H5OrderService;
 import com.cyl.manager.ums.service.MemberCartService;
 import com.cyl.wechat.WechatAuthService;
 import com.cyl.wechat.WechatPayService;
@@ -13,15 +15,19 @@ import com.ruoyi.RuoYiApplication;
 import com.ruoyi.common.config.properties.SmsProperties;
 import com.ruoyi.common.core.sms.AliyunSmsTemplate;
 import com.ruoyi.common.core.sms.SmsTemplate;
+import com.ruoyi.common.enums.TradeStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -90,5 +96,20 @@ public class ServiceTest {
         String res = wechatPayService.jsapiPay(UUID.randomUUID().toString().substring(0,30), "测试支付", 1, openId);
         System.out.println(res);
 
+    }
+
+    @Autowired
+    private H5OrderService h5OrderService;
+
+    @Test
+    public void test6(){
+        PayNotifyMessageDTO messageDTO = new PayNotifyMessageDTO();
+        messageDTO.setPayTime(new Date());
+        messageDTO.setOutTradeNo(5364038883215361L);
+        messageDTO.setMemberId(22L);
+        messageDTO.setTradeStatus(TradeStatusEnum.TRADE_SUCCESS.getStatus());
+        messageDTO.setTradeNo("");
+        ResponseEntity<String> stringResponseEntity = h5OrderService.payCallBack(messageDTO);
+        System.out.println(stringResponseEntity.getBody());
     }
 }

@@ -230,4 +230,21 @@ public class Constants
         public static final Integer INVALID = 5;
         public static final Integer REFUND = -2;
     }
+
+    /**
+     * 交易类型（1为支付  2为提现  3为退款）
+     */
+    public static class PaymentOpType {
+        public static final Integer PAY = 1;
+        public static final Integer WITHDRAWAL = 2;
+        public static final Integer REFUND = 3;
+    }
+
+    /**
+     * 状态（0：未完成交易   1：完成关键交易）
+     */
+    public static class PaymentStatus {
+        public static final Integer INCOMPLETE = 0;
+        public static final Integer COMPLETE = 1;
+    }
 }
