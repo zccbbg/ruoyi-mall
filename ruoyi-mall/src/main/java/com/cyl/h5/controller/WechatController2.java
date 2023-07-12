@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @RestController
 @RequestMapping("")
-public class WechatController {
+public class WechatController2 {
     @Autowired
     private MemberWechatService memberWechatService;
     /**
