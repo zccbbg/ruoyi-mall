@@ -17,7 +17,7 @@ public class WechatPayConfig {
         if (wechatPayConfig == null) {
             wechatPayConfig = new RSAAutoCertificateConfig.Builder()
                     .merchantId(WechatPayData.merchantId)
-                    .privateKeyFromPath(WechatPayConfig.class.getResource(WechatPayData.privateKeyPath).getPath())
+                    .privateKeyFromPath(WechatPayData.privateKeyPath)
                     .merchantSerialNumber(WechatPayData.merchantSerialNumber)
                     .apiV3Key(WechatPayData.apiV3key)
                     .build();
