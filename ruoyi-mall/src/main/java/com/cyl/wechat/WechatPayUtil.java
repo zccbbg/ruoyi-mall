@@ -29,8 +29,7 @@ public class WechatPayUtil {
     public static String getSign(String signatureStr,String privateKey) throws InvalidKeyException, NoSuchAlgorithmException, SignatureException, IOException, URISyntaxException {
         //replace 根据实际情况，不一定都需要
         String replace = privateKey.replace("\\n", "\n");
-        ClassPathResource classPathResource = new ClassPathResource(privateKey);
-        InputStream certStream = classPathResource.getInputStream();
+        InputStream certStream = Files.newInputStream(Paths.get(privateKey));
         PrivateKey merchantPrivateKey = PemUtil.readPemPrivateKey(certStream);
         Signature sign = Signature.getInstance("SHA256withRSA");
         sign.initSign(merchantPrivateKey);

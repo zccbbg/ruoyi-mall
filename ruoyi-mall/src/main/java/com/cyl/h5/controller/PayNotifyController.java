@@ -38,7 +38,7 @@ import java.util.Map;
  */
 @Api(description ="微信回调接口列表")
 @RestController
-@RequestMapping("/wechat/pay/callback")
+@RequestMapping("/no-auth/wechat")
 public class PayNotifyController {
     private static final Logger log = LoggerFactory.getLogger(PayNotifyController.class);
 
@@ -52,7 +52,7 @@ public class PayNotifyController {
      * @param request
      * @throws IOException
      */
-    @PostMapping("/weChatPayNotify")
+    @PostMapping("/notify")
     public void weChatPayNotify(HttpServletRequest request) throws Exception {
         log.info("收到了微信支付回调");
         // 从请求头中获取信息
