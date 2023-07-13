@@ -1,5 +1,6 @@
 package com.cyl.h5.pojo.dto;
 
+import com.wechat.pay.java.service.partnerpayments.jsapi.model.Transaction;
 import lombok.Data;
 
 import java.util.Date;
@@ -23,7 +24,7 @@ public class PayNotifyMessageDTO {
      * USERPAYING：用户支付中（仅付款码支付会返回）
      * PAYERROR：支付失败（仅付款码支付会返回）
      */
-    private Integer tradeStatus;
+    private Transaction.TradeStateEnum tradeStatus;
 
     /**支付时间**/
     private Date payTime;

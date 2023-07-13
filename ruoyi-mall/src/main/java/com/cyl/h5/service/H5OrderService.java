@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.cyl.h5.pojo.dto.MicroMallOrderSyncMsg;
 import com.cyl.h5.pojo.dto.OrderCreateDTO;
 import com.cyl.h5.pojo.dto.OrderProductListDTO;
 import com.cyl.h5.pojo.dto.PayNotifyMessageDTO;
@@ -50,6 +51,7 @@ import com.ruoyi.common.enums.OrderStatus;
 import com.ruoyi.common.enums.TradeStatusEnum;
 import com.ruoyi.common.utils.IDGenerator;
 import com.ruoyi.framework.config.LocalDataUtil;
+import com.wechat.pay.java.service.partnerpayments.jsapi.model.Transaction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -533,7 +535,7 @@ public class H5OrderService {
         try{
             redisService.lock(redisKey, redisValue, 60);
             //先判断回信回调的是否未success
-            if (!TradeStatusEnum.SUCCESS.getStatus().equals(messageDTO.getTradeStatus())){
+            if (!Transaction.TradeStateEnum.SUCCESS.equals(messageDTO.getTradeStatus())){
                 log.error("【订单支付回调】订单状态不是支付成功状态" + messageDTO.getTradeStatus());
                 throw new RuntimeException();
             }
