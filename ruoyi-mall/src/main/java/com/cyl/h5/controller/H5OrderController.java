@@ -2,6 +2,7 @@ package com.cyl.h5.controller;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.cyl.h5.pojo.dto.ApplyRefundDTO;
 import com.cyl.h5.pojo.dto.OrderCreateDTO;
 import com.cyl.h5.pojo.request.CancelOrderRequest;
 import com.cyl.h5.pojo.request.OrderPayRequest;
@@ -154,6 +155,26 @@ public class H5OrderController {
                 redisService.unLock(redisKey,redisValue);
             }catch (Exception e){
                 log.error("",e);
+            }
+        }
+    }
+
+    @ApiOperation("申请售后")
+    @PostMapping("/applyRefund")
+    public ResponseEntity<String> applyRefund(@RequestBody ApplyRefundDTO applyRefundDTO){
+        String redisKey = "h5_oms_order_applyRefund_" + applyRefundDTO.getOrderId();
+        String redisValue = applyRefundDTO.getOrderId() + "_" + System.currentTimeMillis();
+        try{
+            redisService.lock(redisKey, redisValue, 60);
+            return ResponseEntity.ok(service.applyRefund(applyRefundDTO));
+        }catch (Exception e){
+            log.error("申请售后发生异常",e);
+            throw new RuntimeException(e.getMessage());
+        }finally {
+            try {
+                redisService.unLock(redisKey, redisValue);
+            } catch (Exception e) {
+                log.error("", e);
             }
         }
     }

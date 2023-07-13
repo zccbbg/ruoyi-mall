@@ -85,6 +85,7 @@ public class PayNotifyController {
         NotificationParser parser = new NotificationParser((NotificationConfig) config);
         // 以支付通知回调为例，验签、解密并转换成 Transaction
         Transaction transaction = parser.parse(requestParam, Transaction.class);
+        log.info("【transaction】" + JSONObject.toJSON(transaction));
         PayNotifyMessageDTO message = new PayNotifyMessageDTO();
         message.setTradeNo(transaction.getOutTradeNo());
         message.setMemberId(Long.valueOf(transaction.getAttach()));

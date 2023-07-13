@@ -90,7 +90,7 @@ public class ServiceTest {
 //        String code = "0611P2Ga1D8QCF0CVuJa1qNUJa11P2GL";
 //        WechatUserAuth userToken = wechatAuthService.getUserToken(code);
         String openId="oUA8I6lDdwSfz-EwR4284dU3KOYw";
-        String res = wechatPayService.jsapiPay(UUID.randomUUID().toString().substring(0,30), "测试支付", 1, openId);
+        String res = wechatPayService.jsapiPay(UUID.randomUUID().toString().substring(0,30), "测试支付", 1, openId, 22L);
         System.out.println(res);
 
     }

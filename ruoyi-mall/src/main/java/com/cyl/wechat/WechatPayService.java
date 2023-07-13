@@ -24,12 +24,13 @@ public class WechatPayService {
      * @param openId   用户openid
      * @return  prepay_id
      */
-    public String jsapiPay(String orderNo,String desc,Integer totalAmount,String openId){
+    public String jsapiPay(String orderNo,String desc,Integer totalAmount,String openId, Long memberId){
         PrepayRequest prepayRequest = new PrepayRequest();
         prepayRequest.setAppid(WechatPayData.appId);
         prepayRequest.setMchid(WechatPayData.merchantId);
         prepayRequest.setDescription(desc);
         prepayRequest.setOutTradeNo(orderNo);
+        prepayRequest.setAttach(String.valueOf(memberId));
         prepayRequest.setNotifyUrl(WechatPayData.notifyUrl);
         Amount amount = new Amount();
         amount.setTotal(totalAmount);

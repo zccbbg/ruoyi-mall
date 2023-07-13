@@ -7,10 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.cyl.h5.pojo.dto.MicroMallOrderSyncMsg;
-import com.cyl.h5.pojo.dto.OrderCreateDTO;
-import com.cyl.h5.pojo.dto.OrderProductListDTO;
-import com.cyl.h5.pojo.dto.PayNotifyMessageDTO;
+import com.cyl.h5.pojo.dto.*;
 import com.cyl.h5.pojo.request.CancelOrderRequest;
 import com.cyl.h5.pojo.request.OrderPayRequest;
 import com.cyl.h5.pojo.response.OrderPayResponse;
@@ -495,7 +492,8 @@ public class H5OrderService {
                 orderDesc,
                 Integer.valueOf(orderList.stream().map(Order::getPayAmount).
                         reduce(BigDecimal.ZERO, BigDecimal::add).multiply(new BigDecimal(100)).stripTrailingZeros().toPlainString()),
-                memberWechat.getOpenid()
+                memberWechat.getOpenid(),
+                req.getMemberId()
         );
         OrderPayResponse response = new OrderPayResponse();
         response.setPayType(2);
@@ -581,5 +579,15 @@ public class H5OrderService {
             }
         }
         return ResponseEntity.ok("订单支付回调成功");
+    }
+
+    /**
+     * 申请售后
+     * @param applyRefundDTO
+     * @return
+     */
+    public String applyRefund(ApplyRefundDTO applyRefundDTO) {
+
+        return null;
     }
 }
