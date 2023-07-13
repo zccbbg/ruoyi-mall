@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.cyl.h5.pojo.dto.PayNotifyMessageDTO;
 import com.cyl.h5.service.H5OrderService;
+import com.cyl.wechat.WechatPayConfig;
 import com.cyl.wechat.WechatPayData;
 import com.cyl.wechat.response.WeChatPayNotify;
 import com.wechat.pay.java.core.Config;
@@ -77,13 +78,9 @@ public class PayNotifyController {
                 .timestamp(timestamp)
                 .body(requestBody.toString())
                 .build();
+        log.info("【requestParam】" + JSONObject.toJSON(requestParam));
         //初始化了 RSAAutoCertificateConfig
-        Config config = new RSAAutoCertificateConfig.Builder()
-                .merchantId(WechatPayData.merchantId)
-                .privateKeyFromPath(WechatPayData.privateKeyPath)
-                .merchantSerialNumber(WechatPayData.merchantSerialNumber)
-                .apiV3Key(WechatPayData.apiV3key)
-                .build();
+        Config config = WechatPayConfig.getInstance();
         // 初始化解析器 NotificationParser
         NotificationParser parser = new NotificationParser((NotificationConfig) config);
         // 以支付通知回调为例，验签、解密并转换成 Transaction
