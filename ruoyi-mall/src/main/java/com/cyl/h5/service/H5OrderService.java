@@ -569,7 +569,7 @@ public class H5OrderService {
                     .set("payment_status", Constants.PaymentStatus.COMPLETE).set("update_time", optDate);
             wechatPaymentHistoryMapper.update(null, paymentHistoryUpdateWrapper);
         }catch (Exception e){
-            log.error("订单支付回调异常");
+            log.error("订单支付回调异常",e);
             throw new RuntimeException("订单支付回调异常");
         }finally {
             try{
