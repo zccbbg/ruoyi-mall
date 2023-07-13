@@ -47,3 +47,4 @@ nbdist/
 /ruoyi-admin/src/main/resources/application-dev.yml
 /ruoyi-admin/src/main/resources/application-prod.yml
 *local*.yml
+apiclient_key.pem
