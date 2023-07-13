@@ -87,7 +87,7 @@ public class PayNotifyController {
         Transaction transaction = parser.parse(requestParam, Transaction.class);
         log.info("【transaction】" + JSONObject.toJSON(transaction));
         PayNotifyMessageDTO message = new PayNotifyMessageDTO();
-        message.setTradeNo(transaction.getOutTradeNo());
+        message.setOutTradeNo(Long.valueOf(transaction.getOutTradeNo()));
         message.setMemberId(Long.valueOf(transaction.getAttach()));
         message.setTradeStatus(transaction.getTradeState());
         if (StrUtil.isEmpty(transaction.getSuccessTime())){
