@@ -3,6 +3,8 @@ package com.ruoyi.common.utils;
 import java.lang.management.ManagementFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
@@ -151,5 +153,15 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         // 计算差多少秒//输出结果
         // long sec = diff % nd % nh % nm / ns;
         return day + "天" + hour + "小时" + min + "分钟";
+    }
+
+    /**
+     * 获取2个时间间隔天数
+     * @param beginTime
+     * @param endTime
+     * @return
+     */
+    public static Long betweenDay(LocalDateTime beginTime, LocalDateTime endTime){
+        return ChronoUnit.DAYS.between(beginTime.toLocalDate().atStartOfDay(),endTime.toLocalDate().atStartOfDay());
     }
 }

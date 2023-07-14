@@ -22,7 +22,7 @@ public class ApplyRefundDTO {
     @ApiModelProperty(value = "申请退货数量", required = true)
     private Integer quantity;
 
-    @ApiModelProperty(value = "退款金额", required = true)
+    @ApiModelProperty(value = "退款金额")
     private BigDecimal refundAmount;
 
     @ApiModelProperty(value = "描述")

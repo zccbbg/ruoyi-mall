@@ -1,6 +1,7 @@
 package com.cyl.h5.service;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -16,14 +17,8 @@ import com.cyl.h5.pojo.vo.H5OrderVO;
 import com.cyl.h5.pojo.vo.OrderCalcVO;
 import com.cyl.h5.pojo.vo.SkuViewDTO;
 import com.cyl.h5.pojo.vo.form.OrderSubmitForm;
-import com.cyl.manager.oms.domain.Order;
-import com.cyl.manager.oms.domain.OrderItem;
-import com.cyl.manager.oms.domain.OrderOperateHistory;
-import com.cyl.manager.oms.domain.WechatPaymentHistory;
-import com.cyl.manager.oms.mapper.OrderItemMapper;
-import com.cyl.manager.oms.mapper.OrderMapper;
-import com.cyl.manager.oms.mapper.OrderOperateHistoryMapper;
-import com.cyl.manager.oms.mapper.WechatPaymentHistoryMapper;
+import com.cyl.manager.oms.domain.*;
+import com.cyl.manager.oms.mapper.*;
 import com.cyl.manager.oms.service.OrderItemService;
 import com.cyl.manager.oms.service.OrderOperateHistoryService;
 import com.cyl.manager.pms.domain.Product;
@@ -44,8 +39,10 @@ import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisService;
+import com.ruoyi.common.enums.OrderRefundStatus;
 import com.ruoyi.common.enums.OrderStatus;
 import com.ruoyi.common.enums.TradeStatusEnum;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.IDGenerator;
 import com.ruoyi.framework.config.LocalDataUtil;
 import com.wechat.pay.java.service.partnerpayments.jsapi.model.Transaction;
@@ -114,6 +111,9 @@ public class H5OrderService {
 
     @Autowired
     private RedisService redisService;
+
+    @Autowired
+    private AftersaleMapper aftersaleMapper;
 
     @Transactional
     public Long submit(OrderSubmitForm form) {
@@ -586,8 +586,102 @@ public class H5OrderService {
      * @param applyRefundDTO
      * @return
      */
+    @Transactional
     public String applyRefund(ApplyRefundDTO applyRefundDTO) {
+        Order order = orderMapper.selectById(applyRefundDTO.getOrderId());
+        //是否符合售后条件
+        this.checkIfCanApplyRefund(order);
+        LocalDateTime optDate = LocalDateTime.now();
+        Long memberId = order.getMemberId();
+        //创建售后单aftersale
+        Aftersale addAftersale = new Aftersale();
+        addAftersale.setId(IDGenerator.generateId());
+        addAftersale.setMemberId(order.getMemberId());
+        addAftersale.setOrderId(order.getId());
+        addAftersale.setReturnAmount(order.getPayAmount());
+        addAftersale.setType(applyRefundDTO.getApplyRefundType());
+        addAftersale.setStatus(OrderRefundStatus.APPLY.getType());
+        addAftersale.setReason(applyRefundDTO.getReason());
+        addAftersale.setQuantity(applyRefundDTO.getQuantity());
+        addAftersale.setReason(applyRefundDTO.getReason());
+        addAftersale.setDescription(applyRefundDTO.getDescription());
+        addAftersale.setProofPics(applyRefundDTO.getProofPics());
+        addAftersale.setCreateTime(optDate);
+        addAftersale.setCreateBy(memberId);
+        addAftersale.setUpdateTime(optDate);
+        addAftersale.setUpdateBy(memberId);
+        int rows = aftersaleMapper.insert(addAftersale);
+        if (rows != 1) {
+            throw new RuntimeException("插入订单售后失败");
+        }
+        //创建aftersale item
+        QueryWrapper<OrderItem> orderItemQw = new QueryWrapper<>();
+        orderItemQw.eq("order_id", order.getId());
+        List<OrderItem> orderItemList = orderItemMapper.selectList(orderItemQw);
+        List<AftersaleItem> addAftersaleItemList = new ArrayList<>();
+        orderItemList.forEach(orderItem -> {
+            AftersaleItem aftersaleItem = new AftersaleItem();
+            aftersaleItem.setMemberId(memberId);
+            aftersaleItem.setOrderId(orderItem.getOrderId());
+            aftersaleItem.setOrderItemId(orderItem.getId());
+            aftersaleItem.setReturnAmount(orderItem.getSalePrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
+            aftersaleItem.setQuantity(orderItem.getQuantity());
+            aftersaleItem.setCreateTime(optDate);
+            aftersaleItem.setCreateBy(memberId);
+            aftersaleItem.setUpdateTime(optDate);
+            aftersaleItem.setUpdateBy(memberId);
+            addAftersaleItemList.add(aftersaleItem);
+        });
+        rows = aftersaleMapper.insertBatch(addAftersaleItemList);
+        if (rows < 1){
+            throw new RuntimeException("创建售后订单item失败");
+        }
+        //更新订单
+        UpdateWrapper<Order> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id", order.getId()).set("aftersale_status", OrderRefundStatus.APPLY.getType())
+                .set("update_time", optDate)
+                .set("update_by", memberId);
+        rows = orderMapper.update(null, updateWrapper);
+        if (rows < 1){
+            throw new RuntimeException("修改订单状态失败");
+        }
+        //创建订单操作记录
+        OrderOperateHistory optHistory = new OrderOperateHistory();
+        optHistory.setOrderId(order.getId());
+        optHistory.setOperateMan("用户");
+        optHistory.setOrderStatus(11);
+        optHistory.setCreateTime(optDate);
+        optHistory.setCreateBy(memberId);
+        optHistory.setUpdateBy(memberId);
+        optHistory.setUpdateTime(optDate);
+        rows = orderOperateHistoryMapper.insert(optHistory);
+        if (rows < 1){
+            throw new RuntimeException("创建订单操作记录失败");
+        }
+        return "售后申请成功";
+    }
 
-        return null;
+    /**
+     * check是否能售后 可售后的状态为：待发货、待收货、已完成
+     * @param order 订单
+     */
+    private void checkIfCanApplyRefund(Order order){
+        if (order == null){
+            throw new RuntimeException("为查询到订单信息");
+        }
+        Integer status = order.getStatus();
+        boolean flag = OrderStatus.NOT_DELIVERED.getType().equals(status) || OrderStatus.DELIVERED.getType().equals(status)
+                || OrderStatus.COMPLETE.getType().equals(status);
+        if (!flag){
+            throw new RuntimeException("该订单无法申请售后");
+        }
+        if (OrderStatus.COMPLETE.getType().equals(order.getStatus()) &&
+                DateUtils.betweenDay(LocalDateTime.now(), order.getReceiveTime()) > 7){
+            throw new RuntimeException("订单确认收货时间已超过7天，无法申请售后");
+        }
+        if(OrderRefundStatus.APPLY.getType().equals(order.getAftersaleStatus())
+                || OrderRefundStatus.WAIT.getType().equals(order.getAftersaleStatus())){
+            throw new RuntimeException("售后正在处理中");
+        }
     }
 }
