@@ -14,6 +14,7 @@ import com.ruoyi.RuoYiApplication;
 import com.ruoyi.common.config.properties.SmsProperties;
 import com.ruoyi.common.core.sms.AliyunSmsTemplate;
 import com.ruoyi.common.core.sms.SmsTemplate;
+import com.wechat.pay.java.service.partnerpayments.jsapi.model.Transaction;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -102,9 +103,9 @@ public class ServiceTest {
     public void test6(){
         PayNotifyMessageDTO messageDTO = new PayNotifyMessageDTO();
         messageDTO.setPayTime(new Date());
-        messageDTO.setOutTradeNo(5364038883215361L);
+        messageDTO.setOutTradeNo(5365581195495425L);
         messageDTO.setMemberId(22L);
-//        messageDTO.setTradeStatus(TradeStatusEnum.TRADE_SUCCESS.getStatus());
+        messageDTO.setTradeStatus(Transaction.TradeStateEnum.SUCCESS);
         messageDTO.setTradeNo("");
         ResponseEntity<String> stringResponseEntity = h5OrderService.payCallBack(messageDTO);
         System.out.println(stringResponseEntity.getBody());

@@ -47,17 +47,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <sql id="selectOrderVo">
         select id, member_id, member_username, total_amount, purchase_price, pay_amount, freight_amount, pay_type, status, aftersale_status, delivery_company, delivery_sn, auto_confirm_day, receiver_name, receiver_phone, receiver_post_code, receiver_province, receiver_city, receiver_district, receiver_province_id, receiver_city_id, receiver_district_id, receiver_detail_address, note, confirm_status, delete_status, payment_time, delivery_time, receive_time, create_by, create_time, update_by, update_time   from oms_order
     </sql>
-    <delete id="cancelBatch">
+    <update id="cancelBatch">
         <foreach collection="list" item="item" index="index" open="" close="" separator=";">
             update oms_order
-            <set>
-                status=#{item.status},
-                update_by=#{item.updateBy},
-                update_time=#{item.updateTime}
-            </set>
+            set
+            status=#{item.status},
+            update_by=#{item.updateBy},
+            update_time=#{item.updateTime}
             where id=#{item.id}
         </foreach>
-    </delete>
+    </update>
 
     <select id="selectByEntity" parameterType="Order" resultMap="OrderResult">
         <include refid="selectOrderVo"/>
