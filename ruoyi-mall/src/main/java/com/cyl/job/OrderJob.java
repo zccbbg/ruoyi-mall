@@ -29,7 +29,7 @@ public class OrderJob {
     private OrderMapper orderMapper;
 
     @Async
-    @Scheduled(cron = "20 20 10 * * ?")
+    @Scheduled(cron = "20 20 1 * * ?")
     public void cancelOrder(){
         log.info("【取消订单任务开始】");
         QueryWrapper<Order> qw = new QueryWrapper<>();
