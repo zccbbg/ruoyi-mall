@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyl.manager.oms.domain.Aftersale;
 import com.cyl.manager.oms.domain.AftersaleItem;
 import com.cyl.manager.oms.pojo.request.ManagerAftersaleOrderRequest;
-import com.cyl.manager.oms.pojo.vo.ManagerRefundOrderVo;
+import com.cyl.manager.oms.pojo.vo.ManagerRefundOrderVO;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -24,6 +24,6 @@ public interface AftersaleMapper extends BaseMapper<Aftersale> {
 
     Integer insertBatch(@Param("list") List<AftersaleItem> list);
 
-    List<ManagerRefundOrderVo> selectManagerRefundOrder(ManagerAftersaleOrderRequest managerAftersaleOrderPageRequest);
+    List<ManagerRefundOrderVO> selectManagerRefundOrder(ManagerAftersaleOrderRequest managerAftersaleOrderPageRequest);
 
 }

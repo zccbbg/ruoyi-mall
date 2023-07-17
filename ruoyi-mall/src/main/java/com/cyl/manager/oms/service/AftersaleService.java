@@ -1,6 +1,5 @@
 package com.cyl.manager.oms.service;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,8 +16,9 @@ import com.cyl.manager.oms.mapper.OrderMapper;
 import com.cyl.manager.oms.mapper.OrderOperateHistoryMapper;
 import com.cyl.manager.oms.pojo.request.DealWithAftersaleRequest;
 import com.cyl.manager.oms.pojo.request.ManagerAftersaleOrderRequest;
-import com.cyl.manager.oms.pojo.vo.ManagerOrderProductVO;
-import com.cyl.manager.oms.pojo.vo.ManagerRefundOrderVo;
+import com.cyl.manager.oms.pojo.vo.*;
+import com.cyl.manager.ums.domain.Member;
+import com.cyl.manager.ums.mapper.MemberMapper;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.domain.model.LoginUser;
@@ -26,11 +26,9 @@ import com.ruoyi.common.enums.AftersaleStatus;
 import com.ruoyi.common.enums.OrderRefundStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.cyl.manager.oms.mapper.AftersaleMapper;
 import com.cyl.manager.oms.domain.Aftersale;
-import com.cyl.manager.oms.pojo.query.AftersaleQuery;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -53,14 +51,79 @@ public class AftersaleService {
     @Autowired
     private OrderOperateHistoryMapper orderOperateHistoryMapper;
 
+    @Autowired
+    private MemberMapper memberMapper;
+
     /**
      * 查询订单售后
      *
      * @param id 订单售后主键
      * @return 订单售后
      */
-    public Aftersale selectById(Long id) {
-        return aftersaleMapper.selectById(id);
+    public ManagerRefundOrderDetailVO selectById(Long id) {
+        Order order = orderMapper.selectById(id);
+        if (order == null){
+            throw new RuntimeException("无该订单信息");
+        }
+        ManagerRefundOrderDetailVO result = new ManagerRefundOrderDetailVO();
+        //订单基本信息
+        result.setOrderId(order.getId());
+        result.setOrderSn(order.getOrderSn());
+        result.setCreateTime(order.getCreateTime());
+        result.setPayType(order.getPayType());
+        result.setPayTime(order.getPaymentTime());
+        result.setStatus(order.getStatus());
+        result.setExpressName(order.getDeliveryCompany());
+        result.setExpressNo(order.getOrderSn());
+        result.setTotalAmount(order.getTotalAmount());
+        result.setPayAmount(order.getPayAmount());
+        //用户信息
+        Member member = memberMapper.selectById(order.getMemberId());
+        result.setNickName(member.getNickname());
+        result.setPhone(member.getPhoneHidden());
+        //收货信息
+        OrderAddressVO orderAddressVO = new OrderAddressVO();
+        orderAddressVO.setAddress(order.getReceiverDetailAddress());
+        orderAddressVO.setName(order.getReceiverName());
+        orderAddressVO.setUserPhone(order.getReceiverPhone());
+        orderAddressVO.setArea(order.getReceiverProvince() + order.getReceiverCity() + order.getReceiverDistrict());
+        result.setAddressInfo(orderAddressVO);
+        //orderItem
+        QueryWrapper<OrderItem> orderItemQw = new QueryWrapper<>();
+        orderItemQw.eq("order_id", id);
+        List<OrderItem> orderItemList = orderItemMapper.selectList(orderItemQw);
+        List<ManagerOrderProductVO> productList = new ArrayList<>();
+        orderItemList.forEach(orderItem -> {
+            ManagerOrderProductVO productVO = new ManagerOrderProductVO();
+            productVO.setPic(orderItem.getPic());
+            productVO.setSpData(orderItem.getSpData());
+            productVO.setProductName(orderItem.getProductName());
+            productVO.setSalePrice(orderItem.getSalePrice());
+            productVO.setBuyNum(orderItem.getQuantity());
+            productVO.setProductId(orderItem.getProductId());
+            productList.add(productVO);
+        });
+        result.setProductList(productList);
+        //售后信息
+        QueryWrapper<Aftersale> aftersaleQw = new QueryWrapper<>();
+        aftersaleQw.eq("order_id", order.getId());
+        List<Aftersale> aftersaleList = aftersaleMapper.selectList(aftersaleQw);
+        List<RefundInfoVO> refundInfoList = new ArrayList<>();
+        aftersaleList.forEach(aftersale -> {
+            RefundInfoVO refundInfo = new RefundInfoVO();
+            refundInfo.setId(aftersale.getId());
+            refundInfo.setApplyRefundType(aftersale.getType());
+            refundInfo.setApplyRefundTime(aftersale.getCreateTime());
+            refundInfo.setRefundAmount(aftersale.getReturnAmount());
+            refundInfo.setReason(aftersale.getReason());
+            refundInfo.setDescription(aftersale.getDescription());
+            refundInfo.setProofPics(aftersale.getProofPics());
+            refundInfo.setRefundStatus(aftersale.getStatus());
+            refundInfo.setRemark(aftersale.getHandleNote());
+            refundInfoList.add(refundInfo);
+        });
+        result.setRefundInfoList(refundInfoList);
+        return result;
     }
 
     /**
@@ -70,15 +133,18 @@ public class AftersaleService {
      * @param page 分页条件
      * @return 订单售后
      */
-    public List<ManagerRefundOrderVo> selectList(ManagerAftersaleOrderRequest query, Pageable page) {
+    public List<ManagerRefundOrderVO> selectList(ManagerAftersaleOrderRequest query, Pageable page) {
         if (page != null) {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
-        List<ManagerRefundOrderVo> managerRefundOrderVos = aftersaleMapper.selectManagerRefundOrder(query);
-        if (CollectionUtil.isEmpty(managerRefundOrderVos)){
-            return managerRefundOrderVos;
+        if (StrUtil.isNotBlank(query.getOrderSn()) && query.getOrderSn().length() > 7){
+            query.setOrderSn(query.getOrderSn().substring(7));
         }
-        Set<Long> idSet = managerRefundOrderVos.stream().map(ManagerRefundOrderVo::getOrderId).collect(Collectors.toSet());
+        List<ManagerRefundOrderVO> managerRefundOrderVOS = aftersaleMapper.selectManagerRefundOrder(query);
+        if (CollectionUtil.isEmpty(managerRefundOrderVOS)){
+            return managerRefundOrderVOS;
+        }
+        Set<Long> idSet = managerRefundOrderVOS.stream().map(ManagerRefundOrderVO::getOrderId).collect(Collectors.toSet());
         //查一下orderSn集合
         QueryWrapper<Order> orderQw = new QueryWrapper<>();
         orderQw.in("id", idSet);
@@ -87,7 +153,7 @@ public class AftersaleService {
         QueryWrapper<OrderItem> orderItemQw = new QueryWrapper<>();
         orderItemQw.in("order_id", idSet);
         Map<Long, List<OrderItem>> orderItemMap = orderItemMapper.selectList(orderItemQw).stream().collect(Collectors.groupingBy(OrderItem::getOrderId));
-        managerRefundOrderVos.forEach(vo -> {
+        managerRefundOrderVOS.forEach(vo -> {
             Order order = orderMap.get(vo.getOrderId());
             vo.setOrderSn(order.getOrderSn());
             List<OrderItem> orderItemList = orderItemMap.get(vo.getOrderId());
@@ -104,7 +170,7 @@ public class AftersaleService {
             });
             vo.setProductList(productList);
         });
-        return managerRefundOrderVos;
+        return managerRefundOrderVOS;
     }
 
     /**

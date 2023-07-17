@@ -119,7 +119,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 --         b.sp_data          spData,
 --         b.product_id       productId,
 --         b.product_name     productName,
-        c.phone            userPhone,
+        c.phone_hidden            userPhone,
         c.nickname         nickName
         from oms_order a
 --         left join oms_order_item b on a.id = b.order_id

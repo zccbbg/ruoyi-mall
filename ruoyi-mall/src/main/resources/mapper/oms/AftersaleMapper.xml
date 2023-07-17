@@ -67,7 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="handleMan != null  and handleMan != ''"> and handle_man = #{handleMan}</if>
         </where>
     </select>
-    <select id="selectManagerRefundOrder" resultType="com.cyl.manager.oms.pojo.vo.ManagerRefundOrderVo">
+    <select id="selectManagerRefundOrder" resultType="com.cyl.manager.oms.pojo.vo.ManagerRefundOrderVO">
         SELECT a.id            id,
         a.return_amount applyReturnAmount,
         a.quantity      refundNum,
@@ -89,8 +89,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="id != null">
                 and a.id = #{id}
             </if>
-            <if test="orderId != null">
-                and a.order_id = #{orderId}
+            <if test="orderSn != null and orderSn != ''">
+                and a.order_id = #{orderSn}
             </if>
             <if test="userPhone != null and userPhone != ''">
                 and instr(c.phone, #{userPhone}) > 0

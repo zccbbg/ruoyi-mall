@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.cyl.manager.oms.pojo.request.DealWithAftersaleRequest;
 import com.cyl.manager.oms.pojo.request.ManagerAftersaleOrderRequest;
-import com.cyl.manager.oms.pojo.vo.ManagerRefundOrderVo;
-import com.ruoyi.common.core.domain.AjaxResult;
+import com.cyl.manager.oms.pojo.vo.ManagerRefundOrderDetailVO;
+import com.cyl.manager.oms.pojo.vo.ManagerRefundOrderVO;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.core.redis.RedisService;
 import com.ruoyi.common.utils.SecurityUtils;
@@ -33,8 +33,7 @@ import com.cyl.manager.oms.convert.AftersaleConvert;
 import com.cyl.manager.oms.domain.Aftersale;
 import com.cyl.manager.oms.pojo.query.AftersaleQuery;
 import com.cyl.manager.oms.service.AftersaleService;
-import com.cyl.manager.oms.pojo.vo.AftersaleVO;
-import com.ruoyi.common.utils.poi.ExcelUtil;
+
 /**
  * 订单售后Controller
  * 
@@ -56,8 +55,8 @@ public class AftersaleController extends BaseController {
     @ApiOperation("查询订单售后列表")
     @PreAuthorize("@ss.hasPermi('oms:aftersale:list')")
     @PostMapping("/list")
-    public ResponseEntity<Page<ManagerRefundOrderVo>> list(@RequestBody ManagerAftersaleOrderRequest query, Pageable page) {
-        List<ManagerRefundOrderVo> list = service.selectList(query, page);
+    public ResponseEntity<Page<ManagerRefundOrderVO>> list(@RequestBody ManagerAftersaleOrderRequest query, Pageable page) {
+        List<ManagerRefundOrderVO> list = service.selectList(query, page);
         return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
     }
 
@@ -75,8 +74,8 @@ public class AftersaleController extends BaseController {
     @ApiOperation("获取订单售后详细信息")
     @PreAuthorize("@ss.hasPermi('oms:aftersale:query')")
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Aftersale> getInfo(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(service.selectById(id));
+    public ResponseEntity<ManagerRefundOrderDetailVO> getInfo(@PathVariable("id") Long orderId) {
+        return ResponseEntity.ok(service.selectById(orderId));
     }
 
     @ApiOperation("新增订单售后")

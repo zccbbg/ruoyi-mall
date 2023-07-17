@@ -10,7 +10,7 @@ import java.util.List;
 
  @Data
  @ApiModel(value = "售后订单vo")
- public class ManagerRefundOrderVo {
+ public class ManagerRefundOrderVO {
      @ApiModelProperty(name = "id",value = "售后单id",required = true,dataType = "Long")
      private Long id;
 
