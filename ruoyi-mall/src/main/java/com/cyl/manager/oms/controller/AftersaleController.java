@@ -2,10 +2,16 @@ package com.cyl.manager.oms.controller;
 
 import java.util.List;
 
+import com.cyl.manager.oms.pojo.request.DealWithAftersaleRequest;
 import com.cyl.manager.oms.pojo.request.ManagerAftersaleOrderRequest;
 import com.cyl.manager.oms.pojo.vo.ManagerRefundOrderVo;
+import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.domain.model.LoginUser;
+import com.ruoyi.common.core.redis.RedisService;
+import com.ruoyi.common.utils.SecurityUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
@@ -38,11 +44,14 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 @Api(description ="订单售后接口列表")
 @RestController
 @RequestMapping("/oms/aftersale")
+@Slf4j
 public class AftersaleController extends BaseController {
     @Autowired
     private AftersaleService service;
     @Autowired
     private AftersaleConvert convert;
+    @Autowired
+    private RedisService redisService;
 
     @ApiOperation("查询订单售后列表")
     @PreAuthorize("@ss.hasPermi('oms:aftersale:list')")
@@ -92,5 +101,26 @@ public class AftersaleController extends BaseController {
 	@DeleteMapping("/{id}")
     public ResponseEntity<Integer> remove(@PathVariable Long id) {
         return ResponseEntity.ok(service.deleteById(id));
+    }
+
+    @ApiOperation("售后订单操作")
+    @PostMapping("/dealWith")
+    public ResponseEntity<String> updateStatus(@RequestBody DealWithAftersaleRequest request){
+        LoginUser user = SecurityUtils.getLoginUser();
+        String redisKey = "manager_oms_order_updateOrderStatus_" + user.getUserId();
+        String redisValue = user.getUserId() + "_" + System.currentTimeMillis();
+        try {
+            redisService.lock(redisKey, redisValue, 60);
+            return ResponseEntity.ok(service.dealWith(request, user));
+        } catch (Exception e) {
+            log.error("售后订单操作发生异常", e);
+            throw new RuntimeException(e.getMessage());
+        } finally {
+            try {
+                redisService.unLock(redisKey, redisValue);
+            } catch (Exception e) {
+                log.error("", e);
+            }
+        }
     }
 }

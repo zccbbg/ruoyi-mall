@@ -72,4 +72,7 @@ import java.util.List;
 
      @ApiModelProperty(name = "productInfo", value = "售后单商品数据")
      private List<ManagerOrderProductVO> productList;
+
+     @ApiModelProperty(name = "handleMan", value = "处理人员")
+     private String handleMan;
  }

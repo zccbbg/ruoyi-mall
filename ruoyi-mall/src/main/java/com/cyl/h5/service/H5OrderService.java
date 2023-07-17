@@ -691,6 +691,7 @@ public class H5OrderService {
      * @param orderId 订单id
      * @return
      */
+    @Transactional
     public String cancelRefund(Long orderId) {
         Order order = orderMapper.selectById(orderId);
         if (order == null){

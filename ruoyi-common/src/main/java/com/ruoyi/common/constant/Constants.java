@@ -247,4 +247,10 @@ public class Constants
         public static final Integer INCOMPLETE = 0;
         public static final Integer COMPLETE = 1;
     }
+
+    public static class OptType {
+        public static final Integer AGREE = 1;
+        public static final Integer REFUSE = 2;
+        public static final Integer GIVING = 3;
+    }
 }
