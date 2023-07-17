@@ -39,6 +39,7 @@ import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisService;
+import com.ruoyi.common.enums.AftersaleStatus;
 import com.ruoyi.common.enums.OrderRefundStatus;
 import com.ruoyi.common.enums.OrderStatus;
 import com.ruoyi.common.enums.TradeStatusEnum;
@@ -600,7 +601,7 @@ public class H5OrderService {
         addAftersale.setOrderId(order.getId());
         addAftersale.setReturnAmount(order.getPayAmount());
         addAftersale.setType(applyRefundDTO.getApplyRefundType());
-        addAftersale.setStatus(OrderRefundStatus.APPLY.getType());
+        addAftersale.setStatus(AftersaleStatus.APPLY.getType());
         addAftersale.setReason(applyRefundDTO.getReason());
         addAftersale.setQuantity(applyRefundDTO.getQuantity());
         addAftersale.setReason(applyRefundDTO.getReason());
@@ -683,5 +684,51 @@ public class H5OrderService {
                 || OrderRefundStatus.WAIT.getType().equals(order.getAftersaleStatus())){
             throw new RuntimeException("售后正在处理中");
         }
+    }
+
+    /**
+     * 取消售后
+     * @param orderId 订单id
+     * @return
+     */
+    public String cancelRefund(Long orderId) {
+        Order order = orderMapper.selectById(orderId);
+        if (order == null){
+            throw new RuntimeException("未查询到该订单");
+        }
+        //查询是否有（待处理和退货中）售后单
+        QueryWrapper<Aftersale> aftersaleQw = new QueryWrapper<>();
+        aftersaleQw.eq("order_id", orderId);
+        aftersaleQw.in("status", Arrays.asList(AftersaleStatus.APPLY.getType(), AftersaleStatus.WAIT.getType()));
+        Aftersale aftersale = aftersaleMapper.selectOne(aftersaleQw);
+        if (aftersale == null){
+            throw new RuntimeException("无售后单");
+        }
+        if (OrderRefundStatus.SUCCESS.getType().equals(order.getAftersaleStatus())){
+            throw new RuntimeException("已退款成功");
+        }
+        Member member = (Member) LocalDataUtil.getVar(Constants.MEMBER_INFO);
+        LocalDateTime optDate = LocalDateTime.now();
+        //更新售后单状态
+        UpdateWrapper<Aftersale> aftersaleUpdateWrapper = new UpdateWrapper<>();
+        aftersaleUpdateWrapper.eq("id", aftersale.getId());
+        aftersaleUpdateWrapper.set("status", AftersaleStatus.CANCEL.getType());
+        aftersaleUpdateWrapper.set("update_time", optDate);
+        aftersaleUpdateWrapper.set("update_by", member.getId());
+        int rows = aftersaleMapper.update(null, aftersaleUpdateWrapper);
+        if (rows < 1){
+            throw new RuntimeException("更新售后单失败");
+        }
+        //更新订单售后状态
+        // 更新订单
+        UpdateWrapper<Order> updateOrderWrapper = new UpdateWrapper<>();
+        updateOrderWrapper.eq("id", orderId)
+                .set("aftersale_status", OrderRefundStatus.NO_REFUND.getType()).set("update_time", optDate)
+                .set("update_by", member.getId());
+        rows = orderMapper.update(null, updateOrderWrapper);
+        if (rows != 1) {
+            throw new RuntimeException("更新订单状态失败");
+        }
+        return "售后取消成功";
     }
 }

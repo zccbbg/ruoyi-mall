@@ -178,4 +178,25 @@ public class H5OrderController {
             }
         }
     }
+
+    @ApiOperation("取消售后")
+    @GetMapping("/cancelRefund")
+    public ResponseEntity<String> cancelRefund(Long orderId){
+        log.info("【取消售后】订单id：" + orderId);
+        String redisKey = "h5_oms_order_cancelRefund_" + orderId;
+        String redisValue = orderId + "_" + System.currentTimeMillis();
+        try{
+            redisService.lock(redisKey, redisValue, 60);
+            return ResponseEntity.ok(service.cancelRefund(orderId));
+        }catch (Exception e){
+            log.error("取消售后发生异常",e);
+            throw new RuntimeException(e.getMessage());
+        }finally {
+            try {
+                redisService.unLock(redisKey, redisValue);
+            } catch (Exception e) {
+                log.error("", e);
+            }
+        }
+    }
 }
