@@ -107,6 +107,7 @@ public class AftersaleService {
         //售后信息
         QueryWrapper<Aftersale> aftersaleQw = new QueryWrapper<>();
         aftersaleQw.eq("order_id", order.getId());
+        aftersaleQw.orderByDesc("create_time");
         List<Aftersale> aftersaleList = aftersaleMapper.selectList(aftersaleQw);
         List<RefundInfoVO> refundInfoList = new ArrayList<>();
         aftersaleList.forEach(aftersale -> {
