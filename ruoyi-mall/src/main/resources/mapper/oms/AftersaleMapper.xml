@@ -67,4 +67,44 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="handleMan != null  and handleMan != ''"> and handle_man = #{handleMan}</if>
         </where>
     </select>
+    <select id="selectManagerRefundOrder" resultType="com.cyl.manager.oms.pojo.vo.ManagerRefundOrderVo">
+        SELECT a.id            id,
+        a.return_amount applyReturnAmount,
+        a.quantity      refundNum,
+        a.type          applyRefundType,
+        a.reason        reason,
+        a.description   description,
+        a.proof_pics    proof_pics,
+        a.order_id      orderId,
+        a.create_time   applyRefundTime,
+        a.status        aftersaleStatus,
+        a.handle_time   handleTime,
+        a.handle_note   note,
+        c.nickname      nickName,
+        c.phone         phone
+        FROM oms_aftersale a
+        left join ums_member c on a.member_id = c.id
+        <where>
+            <if test="id != null">
+                and a.id = #{id}
+            </if>
+            <if test="orderId != null">
+                and a.order_id = #{orderId}
+            </if>
+            <if test="userPhone != null and userPhone != ''">
+                and instr(c.phone, #{userPhone}) > 0
+            </if>
+            <if test="status != null">
+                and a.status = #{status}
+            </if>
+            <if test="type != null">
+                and a.type = #{type}
+            </if>
+            <if test="startTime != null and endTime != null">
+                and a.create_time between #{startTime} and #{endTime}
+            </if>
+        </where>
+        order by a.create_time desc
+    </select>
+
 </mapper>

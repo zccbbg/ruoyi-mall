@@ -2,9 +2,18 @@ package com.cyl.manager.oms.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cyl.manager.oms.domain.Order;
+import com.cyl.manager.oms.domain.OrderItem;
+import com.cyl.manager.oms.mapper.OrderItemMapper;
+import com.cyl.manager.oms.mapper.OrderMapper;
+import com.cyl.manager.oms.pojo.request.ManagerAftersaleOrderRequest;
+import com.cyl.manager.oms.pojo.vo.ManagerOrderProductVO;
+import com.cyl.manager.oms.pojo.vo.ManagerRefundOrderVo;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +34,12 @@ public class AftersaleService {
     @Autowired
     private AftersaleMapper aftersaleMapper;
 
+    @Autowired
+    private OrderMapper orderMapper;
+
+    @Autowired
+    private OrderItemMapper orderItemMapper;
+
     /**
      * 查询订单售后
      *
@@ -42,60 +57,41 @@ public class AftersaleService {
      * @param page 分页条件
      * @return 订单售后
      */
-    public List<Aftersale> selectList(AftersaleQuery query, Pageable page) {
+    public List<ManagerRefundOrderVo> selectList(ManagerAftersaleOrderRequest query, Pageable page) {
         if (page != null) {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
-        QueryWrapper<Aftersale> qw = new QueryWrapper<>();
-        Long memberId = query.getMemberId();
-        if (memberId != null) {
-            qw.eq("member_id", memberId);
+        List<ManagerRefundOrderVo> managerRefundOrderVos = aftersaleMapper.selectManagerRefundOrder(query);
+        if (CollectionUtil.isEmpty(managerRefundOrderVos)){
+            return managerRefundOrderVos;
         }
-        Long orderId = query.getOrderId();
-        if (orderId != null) {
-            qw.eq("order_id", orderId);
-        }
-        BigDecimal returnAmount = query.getReturnAmount();
-        if (returnAmount != null) {
-            qw.eq("return_amount", returnAmount);
-        }
-        Integer type = query.getType();
-        if (type != null) {
-            qw.eq("type", type);
-        }
-        Integer status = query.getStatus();
-        if (status != null) {
-            qw.eq("status", status);
-        }
-        LocalDateTime handleTime = query.getHandleTime();
-        if (handleTime != null) {
-            qw.eq("handle_time", handleTime);
-        }
-        Integer quantity = query.getQuantity();
-        if (quantity != null) {
-            qw.eq("quantity", quantity);
-        }
-        String reason = query.getReason();
-        if (!StringUtils.isEmpty(reason)) {
-            qw.eq("reason", reason);
-        }
-        String description = query.getDescription();
-        if (!StringUtils.isEmpty(description)) {
-            qw.eq("description", description);
-        }
-        String proofPics = query.getProofPics();
-        if (!StringUtils.isEmpty(proofPics)) {
-            qw.eq("proof_pics", proofPics);
-        }
-        String handleNote = query.getHandleNote();
-        if (!StringUtils.isEmpty(handleNote)) {
-            qw.eq("handle_note", handleNote);
-        }
-        String handleMan = query.getHandleMan();
-        if (!StringUtils.isEmpty(handleMan)) {
-            qw.eq("handle_man", handleMan);
-        }
-        return aftersaleMapper.selectList(qw);
+        Set<Long> idSet = managerRefundOrderVos.stream().map(ManagerRefundOrderVo::getOrderId).collect(Collectors.toSet());
+        //查一下orderSn集合
+        QueryWrapper<Order> orderQw = new QueryWrapper<>();
+        orderQw.in("id", idSet);
+        Map<Long, Order> orderMap = orderMapper.selectList(orderQw).stream().collect(Collectors.toMap(Order::getId, it -> it));
+        //封装售后单商品数据
+        QueryWrapper<OrderItem> orderItemQw = new QueryWrapper<>();
+        orderItemQw.in("order_id", idSet);
+        Map<Long, List<OrderItem>> orderItemMap = orderItemMapper.selectList(orderItemQw).stream().collect(Collectors.groupingBy(OrderItem::getOrderId));
+        managerRefundOrderVos.forEach(vo -> {
+            Order order = orderMap.get(vo.getOrderId());
+            vo.setOrderSn(order.getOrderSn());
+            List<OrderItem> orderItemList = orderItemMap.get(vo.getOrderId());
+            List<ManagerOrderProductVO> productList = new ArrayList<>();
+            orderItemList.forEach(item -> {
+                ManagerOrderProductVO productVO = new ManagerOrderProductVO();
+                productVO.setProductName(item.getProductName());
+                productVO.setSalePrice(item.getSalePrice());
+                productVO.setPic(item.getPic());
+                productVO.setBuyNum(item.getQuantity());
+                productVO.setProductId(item.getProductId());
+                productVO.setSpData(item.getSpData());
+                productList.add(productVO);
+            });
+            vo.setProductList(productList);
+        });
+        return managerRefundOrderVos;
     }
 
     /**

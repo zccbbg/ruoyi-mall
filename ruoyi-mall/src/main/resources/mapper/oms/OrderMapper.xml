@@ -225,4 +225,5 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from oms_order
         where member_id=#{memberId} and delete_status=0
     </select>
+
 </mapper>

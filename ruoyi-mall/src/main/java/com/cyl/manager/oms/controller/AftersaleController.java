@@ -2,6 +2,8 @@ package com.cyl.manager.oms.controller;
 
 import java.util.List;
 
+import com.cyl.manager.oms.pojo.request.ManagerAftersaleOrderRequest;
+import com.cyl.manager.oms.pojo.vo.ManagerRefundOrderVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageImpl;
@@ -45,8 +47,8 @@ public class AftersaleController extends BaseController {
     @ApiOperation("查询订单售后列表")
     @PreAuthorize("@ss.hasPermi('oms:aftersale:list')")
     @PostMapping("/list")
-    public ResponseEntity<Page<Aftersale>> list(@RequestBody AftersaleQuery query, Pageable page) {
-        List<Aftersale> list = service.selectList(query, page);
+    public ResponseEntity<Page<ManagerRefundOrderVo>> list(@RequestBody ManagerAftersaleOrderRequest query, Pageable page) {
+        List<ManagerRefundOrderVo> list = service.selectList(query, page);
         return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
     }
 
@@ -55,9 +57,10 @@ public class AftersaleController extends BaseController {
     @Log(title = "订单售后", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public ResponseEntity<String> export(AftersaleQuery query) {
-        List<Aftersale> list = service.selectList(query, null);
-        ExcelUtil<AftersaleVO> util = new ExcelUtil<>(AftersaleVO.class);
-        return ResponseEntity.ok(util.writeExcel(convert.dos2vos(list), "订单售后数据"));
+//        List<Aftersale> list = service.selectList(query, null);
+//        ExcelUtil<AftersaleVO> util = new ExcelUtil<>(AftersaleVO.class);
+//        return ResponseEntity.ok(util.writeExcel(convert.dos2vos(list), "订单售后数据"));
+        return null;
     }
 
     @ApiOperation("获取订单售后详细信息")
