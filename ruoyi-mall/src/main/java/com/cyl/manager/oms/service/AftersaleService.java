@@ -74,7 +74,8 @@ public class AftersaleService {
         result.setPayTime(order.getPaymentTime());
         result.setStatus(order.getStatus());
         result.setExpressName(order.getDeliveryCompany());
-        result.setExpressNo(order.getOrderSn());
+        result.setDeliveryTime(order.getDeliveryTime());
+        result.setExpressNo(order.getDeliverySn());
         result.setTotalAmount(order.getTotalAmount());
         result.setPayAmount(order.getPayAmount());
         //用户信息
