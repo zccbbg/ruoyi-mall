@@ -1,8 +1,11 @@
 package com.cyl.h5.service;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.cyl.h5.pojo.request.BindOpenIdRequest;
 import com.cyl.h5.pojo.request.H5AccountLoginRequest;
 import com.cyl.h5.pojo.request.H5SmsLoginRequest;
 import com.cyl.h5.pojo.request.RegisterRequest;
@@ -147,6 +150,7 @@ public class H5MemberService {
     }
 
     public H5LoginResponse smsLogin(String data){
+        LocalDateTime optDate = LocalDateTime.now();
         if (StringUtils.isEmpty(data)){
             throw new RuntimeException(Constants.LOGIN_INFO.WRONG);
         }
@@ -158,10 +162,36 @@ public class H5MemberService {
         qw.eq("phone_encrypted", AesCryptoUtils.encrypt(aesKey, request.getMobile()));
         Member member = memberMapper.selectOne(qw);
         if (member == null){
-            throw new RuntimeException(Constants.LOGIN_INFO.TO_REGISTER);
+            //新会员，注册并登录
+            member = new Member();
+            member.setPhoneEncrypted(AesCryptoUtils.encrypt(aesKey, request.getMobile()));
+            member.setPhoneHidden(PhoneUtils.hidePhone(request.getMobile()));
+            member.setNickname("用户" + request.getMobile().substring(7,11));
+            member.setStatus(Constants.MEMBER_ACCOUNT_STATUS.NORMAL);
+            member.setGender(0);
+            member.setCreateTime(optDate);
+            int rows = memberMapper.insert(member);
+            if (rows < 1){
+                throw new RuntimeException("注册失败，请重试");
+            }
+            MemberWechat memberWechat = new MemberWechat();
+            memberWechat.setMemberId(member.getId());
+            if (request.getAuthInfo() != null){
+                memberWechat.setOpenid(request.getAuthInfo().getOpenid());
+                memberWechat.setAccessToken(request.getAuthInfo().getAccess_token());
+                memberWechat.setExpiresIn(request.getAuthInfo().getExpires_in());
+                memberWechat.setRefreshToken(request.getAuthInfo().getRefresh_token());
+            }
+            memberWechat.setCreateTime(optDate);
+            memberWechat.setCreateBy(member.getId());
+            rows = memberWechatMapper.insert(memberWechat);
+            if (rows < 1){
+                throw new RuntimeException("注册失败，请重试");
+            }
+        }else {
+            //校验会员状态
+            validateMemberStatus(member);
         }
-        //校验会员状态
-        validateMemberStatus(member);
         return getLoginResponse(member.getId());
     }
 
@@ -217,5 +247,29 @@ public class H5MemberService {
         MemberWechat memberWechat = memberWechatMapper.selectOne(qw);
         memberVO.setOpenId(memberWechat.getOpenid());
         return memberVO;
+    }
+
+    public WechatUserAuth getWechatUserAuth(String data) {
+        BindOpenIdRequest request = JSON.parseObject(new String(Base64Utils.decodeFromString(data)), BindOpenIdRequest.class);
+        WechatUserAuth userToken = wechatAuthService.getUserToken(request.getCode());
+        if (userToken == null){
+            log.error("微信授权失败");
+            throw new RuntimeException("授权失败，请重试");
+        }
+        return userToken;
+    }
+
+    public void setWechatInfo(String data) {
+        WechatUserAuth authInfo = JSON.parseObject(new String(Base64Utils.decodeFromString(data)), WechatUserAuth.class);
+        Member member = (Member) LocalDataUtil.getVar(Constants.MEMBER_INFO);
+        UpdateWrapper<MemberWechat> wrapper = new UpdateWrapper<>();
+        wrapper.eq("member_id", member.getId());
+        wrapper.set("openid", authInfo.getOpenid());
+        wrapper.set("access_token", authInfo.getAccess_token());
+        wrapper.set("expires_in", authInfo.getExpires_in());
+        wrapper.set("refresh_token", authInfo.getRefresh_token());
+        wrapper.set("update_time", LocalDateTime.now());
+        wrapper.set("update_by", member.getId());
+        memberWechatMapper.update(null, wrapper);
     }
 }
