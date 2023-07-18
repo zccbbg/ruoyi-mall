@@ -51,12 +51,6 @@ public class H5MemberController {
         return ResponseEntity.ok(service.getMemberInfo());
     }
 
-    @ApiOperation("获取微信用户授权信息")
-    @PostMapping("/member/getWechatUserAuth")
-    public ResponseEntity<WechatUserAuth> getWechatUserAuth(@RequestBody String data){
-        return ResponseEntity.ok(service.getWechatUserAuth(data));
-    }
-
     @ApiOperation("设置会员微信信息")
     @PostMapping("/member/setWechatInfo")
     public void setWechatInfo(@RequestBody String data){

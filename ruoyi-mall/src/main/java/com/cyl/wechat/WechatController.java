@@ -1,10 +1,12 @@
 package com.cyl.wechat;
 
+import com.cyl.h5.service.H5MemberService;
 import com.cyl.wechat.response.JssdkConfigResponse;
+import com.cyl.wechat.response.WechatUserAuth;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +16,9 @@ import java.util.stream.Stream;
 @RestController
 @RequestMapping("/no-auth/wechat")
 public class WechatController {
+
+    @Autowired
+    private H5MemberService service;
 
     @GetMapping("/jssdk")
     public ResponseEntity<JssdkConfigResponse> getJssdkConfig(){
@@ -31,5 +36,11 @@ public class WechatController {
         response.setTimeStamp(String.valueOf(timeStamp));
         response.setSignature(signature);
         return ResponseEntity.ok(response);
+    }
+
+    @ApiOperation("获取微信用户授权信息")
+    @PostMapping("/getWechatUserAuth")
+    public ResponseEntity<WechatUserAuth> getWechatUserAuth(@RequestBody String data){
+        return ResponseEntity.ok(service.getWechatUserAuth(data));
     }
 }
