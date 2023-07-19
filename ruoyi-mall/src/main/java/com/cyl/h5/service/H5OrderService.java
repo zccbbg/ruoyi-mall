@@ -204,6 +204,7 @@ public class H5OrderService {
         // 保存订单操作记录
         OrderOperateHistory orderOperateHistory = new OrderOperateHistory();
         orderOperateHistory.setOrderId(orderId);
+        orderOperateHistory.setOrderSn(order.getOrderSn());
         orderOperateHistory.setOperateMan(member.getId() + "");
         orderOperateHistory.setOrderStatus(Constants.OrderStatus.NOTPAID);
         orderOperateHistory.setCreateTime(optTime);
@@ -374,6 +375,7 @@ public class H5OrderService {
         //创建订单操作记录
         OrderOperateHistory optHistory = new OrderOperateHistory();
         optHistory.setOrderId(order.getId());
+        optHistory.setOrderSn(order.getOrderSn());
         optHistory.setOperateMan("用户");
         optHistory.setOrderStatus(Constants.H5OrderStatus.COMPLETED);
         optHistory.setCreateTime(optDate);
@@ -419,6 +421,7 @@ public class H5OrderService {
             item.setUpdateBy(userId);
             OrderOperateHistory history = new OrderOperateHistory();
             history.setOrderId(item.getId());
+            history.setOrderSn(item.getOrderSn());
             history.setOperateMan("用户");
             history.setOrderStatus(Constants.H5OrderStatus.CLOSED);
             history.setCreateTime(optDate);
@@ -557,6 +560,7 @@ public class H5OrderService {
 
                 OrderOperateHistory optHistory = new OrderOperateHistory();
                 optHistory.setOrderId(order.getId());
+                optHistory.setOrderSn(order.getOrderSn());
                 optHistory.setOperateMan("系统");
                 optHistory.setOrderStatus(OrderStatus.COMPLETE.getType());
                 optHistory.setCreateTime(optDate);
@@ -649,6 +653,7 @@ public class H5OrderService {
         //创建订单操作记录
         OrderOperateHistory optHistory = new OrderOperateHistory();
         optHistory.setOrderId(order.getId());
+        optHistory.setOrderSn(order.getOrderSn());
         optHistory.setOperateMan("用户");
         optHistory.setOrderStatus(11);
         optHistory.setCreateTime(optDate);

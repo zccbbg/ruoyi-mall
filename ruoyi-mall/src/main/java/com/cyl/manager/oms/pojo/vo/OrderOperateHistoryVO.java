@@ -15,6 +15,9 @@ public class OrderOperateHistoryVO extends BaseAudit {
    /** 订单id */
     @Excel(name = "订单id")
     private Long orderId;
+    /** 订单号 */
+    @Excel(name = "订单号")
+    private String orderSn;
    /** 操作人：用户；系统；后台管理员 */
     @Excel(name = "操作人：用户；系统；后台管理员")
     private String operateMan;

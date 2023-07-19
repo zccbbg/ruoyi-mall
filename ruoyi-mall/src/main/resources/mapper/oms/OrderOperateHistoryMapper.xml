@@ -7,6 +7,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="OrderOperateHistory" id="OrderOperateHistoryResult">
         <result property="id" column="id"/>
         <result property="orderId" column="order_id"/>
+        <result property="orderSn" column="order_sn"/>
         <result property="operateMan" column="operate_man"/>
         <result property="orderStatus" column="order_status"/>
         <result property="note" column="note"/>

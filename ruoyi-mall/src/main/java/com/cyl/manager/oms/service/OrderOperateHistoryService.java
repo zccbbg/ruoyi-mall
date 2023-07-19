@@ -2,6 +2,8 @@ package com.cyl.manager.oms.service;
 
 import java.util.List;
 import java.time.LocalDateTime;
+
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
@@ -46,9 +48,9 @@ public class OrderOperateHistoryService extends ServiceImpl<OrderOperateHistoryM
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
         QueryWrapper<OrderOperateHistory> qw = new QueryWrapper<>();
-        Long orderId = query.getOrderId();
-        if (orderId != null) {
-            qw.eq("order_id", orderId);
+        String orderSn = query.getOrderSn();
+        if (StrUtil.isNotBlank(orderSn)) {
+            qw.eq("order_sn", orderSn);
         }
         String operateMan = query.getOperateMan();
         if (!StringUtils.isEmpty(operateMan)) {
@@ -62,6 +64,7 @@ public class OrderOperateHistoryService extends ServiceImpl<OrderOperateHistoryM
         if (!StringUtils.isEmpty(note)) {
             qw.eq("note", note);
         }
+        qw.orderByDesc("create_time");
         return orderOperateHistoryMapper.selectList(qw);
     }
 

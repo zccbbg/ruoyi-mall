@@ -328,7 +328,7 @@ public class OrderService {
         //创建新的发货记录
         this.createDeliveryHistory(request, userId, optDate);
         //创建订单操作记录
-        this.createOrderOptHistory(order.getId(), orderStatus, userId, optDate);
+        this.createOrderOptHistory(order.getId(), order.getOrderSn(), orderStatus, userId, optDate);
         return "发货成功";
     }
 
@@ -358,9 +358,10 @@ public class OrderService {
      * @param userId 操作人
      * @param optDate 操作时间
      */
-    private void createOrderOptHistory(Long orderId, Integer orderStatus, Long userId, LocalDateTime optDate){
+    private void createOrderOptHistory(Long orderId, String orderSn, Integer orderStatus, Long userId, LocalDateTime optDate){
         OrderOperateHistory optHistory = new OrderOperateHistory();
         optHistory.setOrderId(orderId);
+        optHistory.setOrderSn(orderSn);
         optHistory.setOperateMan(userId + "");
         optHistory.setOrderStatus(orderStatus);
         optHistory.setCreateTime(optDate);

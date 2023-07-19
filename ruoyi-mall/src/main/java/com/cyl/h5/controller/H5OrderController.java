@@ -149,7 +149,7 @@ public class H5OrderController {
             return ResponseEntity.ok(service.orderPay(req));
         }catch (Exception e){
             log.error("支付方法异常", e);
-            throw new RuntimeException("支付失败");
+            throw new RuntimeException(e.getMessage());
         }finally {
             try{
                 redisService.unLock(redisKey,redisValue);

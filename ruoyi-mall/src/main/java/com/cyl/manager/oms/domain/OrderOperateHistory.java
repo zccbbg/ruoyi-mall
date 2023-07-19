@@ -24,6 +24,10 @@ public class OrderOperateHistory extends BaseAudit {
     @Excel(name = "订单id")
     private Long orderId;
 
+    @ApiModelProperty("订单号")
+    @Excel(name = "订单号")
+    private String orderSn;
+
     @ApiModelProperty("操作人：用户；系统；后台管理员")
     @Excel(name = "操作人：用户；系统；后台管理员")
     private String operateMan;

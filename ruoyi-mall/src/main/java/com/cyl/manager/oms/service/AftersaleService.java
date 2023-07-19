@@ -242,6 +242,7 @@ public class AftersaleService {
         //要创建的订单操作记录，status后续判断再设置
         OrderOperateHistory optHistory = new OrderOperateHistory();
         optHistory.setOrderId(order.getId());
+        optHistory.setOrderSn(order.getOrderSn());
         optHistory.setOperateMan("后台管理员");
         optHistory.setCreateTime(optDate);
         optHistory.setCreateBy(user.getUserId());

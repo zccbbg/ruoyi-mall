@@ -12,8 +12,8 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(description="订单操作历史记录 查询 对象")
 @Data
 public class OrderOperateHistoryQuery {
-    @ApiModelProperty("订单id 精确匹配")
-    private Long orderId;
+    @ApiModelProperty("订单号 精确匹配")
+    private String orderSn;
 
     @ApiModelProperty("操作人：用户；系统；后台管理员 精确匹配")
     private String operateMan;
