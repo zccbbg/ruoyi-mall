@@ -9,11 +9,10 @@
 * 高效率开发，使用代码生成器可以一键生成前后端代码。
 
 ## 项目地址
-|                | gitee                                     | github                               |
-|:--------------:|:------------------------------------------|:-------------------------------------|
-| 管理端vue element | https://gitee.com/zccbbg/ruoyi-mall-vue   | https://github.com/zccbbg/ruoyi-mall-vue |
-|    小程序taro     | https://gitee.com/zccbbg/ruo-yi-mall-taro | https://github.com/zccbbg/RuoYi-Mall-Taro |
-|   小程序uniapp    | 即将开源                                      | 即将开源                                 |
+|                | gitee                                   | github                                       |
+|:--------------:|:----------------------------------------|:---------------------------------------------|
+| 管理端vue element | https://gitee.com/zccbbg/ruoyi-mall-vue | https://github.com/zccbbg/ruoyi-mall-vue     |
+|   h5 uniapp    | https://gitee.com/zccbbg/ruoyi-mall-uniapp | https://github.com/zccbbg/ruoyi-mall-uniapp  |
 
 ## 在线体验
 - 演示地址：http://mall.ichengle.top/
