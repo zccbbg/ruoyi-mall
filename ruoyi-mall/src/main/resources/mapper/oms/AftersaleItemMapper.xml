@@ -25,6 +25,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, member_id, order_id, order_item_id, return_amount, quantity, create_by, create_time, update_by, update_time   from oms_aftersale_item
     </sql>
 
+    <insert id="insertBatch" parameterType="list">
+        insert into oms_aftersale_item
+        (member_id,order_id,aftersale_id,order_item_id,return_amount,quantity,create_by,create_time,update_by,update_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                #{item.memberId,jdbcType=BIGINT},
+                #{item.orderId,jdbcType=BIGINT},
+                #{item.aftersaleId,jdbcType=BIGINT},
+                #{item.orderItemId,jdbcType=BIGINT},
+                #{item.returnAmount,jdbcType=DECIMAL},
+                #{item.quantity,jdbcType=BIGINT},
+                #{item.createBy,jdbcType=BIGINT},
+                #{item.createTime,jdbcType=DATE},
+                #{item.updateBy,jdbcType=BIGINT},
+                #{item.updateTime,jdbcType=DATE}
+            </trim>
+        </foreach>
+    </insert>
+
     <select id="selectByEntity" parameterType="AftersaleItem" resultMap="AftersaleItemResult">
         <include refid="selectAftersaleItemVo"/>
         <where>  

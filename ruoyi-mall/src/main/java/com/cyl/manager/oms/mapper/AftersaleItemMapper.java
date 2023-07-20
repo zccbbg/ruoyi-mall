@@ -3,6 +3,7 @@ package com.cyl.manager.oms.mapper;
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyl.manager.oms.domain.AftersaleItem;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 订单售后Mapper接口
@@ -17,4 +18,7 @@ public interface AftersaleItemMapper extends BaseMapper<AftersaleItem> {
      * @return 订单售后集合
      */
     List<AftersaleItem> selectByEntity(AftersaleItem aftersaleItem);
+
+    Integer insertBatch(@Param("list") List<AftersaleItem> list);
+
 }

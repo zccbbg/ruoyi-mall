@@ -12,11 +12,10 @@ import com.cyl.h5.pojo.dto.*;
 import com.cyl.h5.pojo.request.CancelOrderRequest;
 import com.cyl.h5.pojo.request.OrderPayRequest;
 import com.cyl.h5.pojo.response.OrderPayResponse;
-import com.cyl.h5.pojo.vo.CountOrderVO;
-import com.cyl.h5.pojo.vo.H5OrderVO;
-import com.cyl.h5.pojo.vo.OrderCalcVO;
-import com.cyl.h5.pojo.vo.SkuViewDTO;
+import com.cyl.h5.pojo.vo.*;
 import com.cyl.h5.pojo.vo.form.OrderSubmitForm;
+import com.cyl.manager.oms.convert.AftersaleItemConvert;
+import com.cyl.manager.oms.convert.OrderItemConvert;
 import com.cyl.manager.oms.domain.*;
 import com.cyl.manager.oms.mapper.*;
 import com.cyl.manager.oms.service.OrderItemService;
@@ -48,6 +47,7 @@ import com.ruoyi.common.utils.IDGenerator;
 import com.ruoyi.framework.config.LocalDataUtil;
 import com.wechat.pay.java.service.partnerpayments.jsapi.model.Transaction;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -115,6 +115,15 @@ public class H5OrderService {
 
     @Autowired
     private AftersaleMapper aftersaleMapper;
+
+    @Autowired
+    private AftersaleItemMapper aftersaleItemMapper;
+
+    @Autowired
+    private AftersaleItemConvert aftersaleItemConvert;
+
+    @Autowired
+    private OrderItemConvert orderItemConvert;
 
     @Transactional
     public Long submit(OrderSubmitForm form) {
@@ -627,6 +636,7 @@ public class H5OrderService {
         orderItemList.forEach(orderItem -> {
             AftersaleItem aftersaleItem = new AftersaleItem();
             aftersaleItem.setMemberId(memberId);
+            aftersaleItem.setAftersaleId(addAftersale.getId());
             aftersaleItem.setOrderId(orderItem.getOrderId());
             aftersaleItem.setOrderItemId(orderItem.getId());
             aftersaleItem.setReturnAmount(orderItem.getSalePrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
@@ -637,7 +647,7 @@ public class H5OrderService {
             aftersaleItem.setUpdateBy(memberId);
             addAftersaleItemList.add(aftersaleItem);
         });
-        rows = aftersaleMapper.insertBatch(addAftersaleItemList);
+        rows = aftersaleItemMapper.insertBatch(addAftersaleItemList);
         if (rows < 1){
             throw new RuntimeException("创建售后订单item失败");
         }
@@ -736,5 +746,35 @@ public class H5OrderService {
             throw new RuntimeException("更新订单状态失败");
         }
         return "售后取消成功";
+    }
+
+    /**
+     * 售后订单详情
+     * @param orderId 订单id
+     * @return
+     */
+    public AftersaleRefundInfoVO refundOrderDetail(Long orderId) {
+        QueryWrapper<Aftersale> aftersaleQw = new QueryWrapper<>();
+        aftersaleQw.eq("order_id", orderId);
+        aftersaleQw.orderByDesc("create_time");
+        aftersaleQw.last("limit 1");
+        Aftersale aftersale = aftersaleMapper.selectOne(aftersaleQw);
+        if (aftersale == null){
+            throw new RuntimeException("未查询到售后订单");
+        }
+        //查一下售后订单item
+        QueryWrapper<AftersaleItem> aftersaleItemQw = new QueryWrapper<>();
+        aftersaleItemQw.eq("aftersale_id", aftersale.getId());
+        List<AftersaleItem> aftersaleItemList = aftersaleItemMapper.selectList(aftersaleItemQw);
+        List<Long> orderItemIdList = aftersaleItemList.stream().map(AftersaleItem::getOrderItemId).collect(Collectors.toList());
+        //再去查orderItem
+        QueryWrapper<OrderItem> orderItemQw = new QueryWrapper<>();
+        orderItemQw.in("id", orderItemIdList);
+        List<OrderItem> orderItemList = orderItemMapper.selectList(orderItemQw);
+        AftersaleRefundInfoVO vo = new AftersaleRefundInfoVO();
+        BeanUtils.copyProperties(aftersale, vo);
+        vo.setAftersaleItemList(aftersaleItemConvert.dos2vos(aftersaleItemList));
+        vo.setOrderItemList(orderItemConvert.dos2vos(orderItemList));
+        return vo;
     }
 }

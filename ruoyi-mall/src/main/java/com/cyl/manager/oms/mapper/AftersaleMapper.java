@@ -22,8 +22,6 @@ public interface AftersaleMapper extends BaseMapper<Aftersale> {
      */
     List<Aftersale> selectByEntity(Aftersale aftersale);
 
-    Integer insertBatch(@Param("list") List<AftersaleItem> list);
-
     List<ManagerRefundOrderVO> selectManagerRefundOrder(ManagerAftersaleOrderRequest managerAftersaleOrderPageRequest);
 
 }

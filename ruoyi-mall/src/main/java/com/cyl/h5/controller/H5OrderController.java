@@ -7,6 +7,7 @@ import com.cyl.h5.pojo.dto.OrderCreateDTO;
 import com.cyl.h5.pojo.request.CancelOrderRequest;
 import com.cyl.h5.pojo.request.OrderPayRequest;
 import com.cyl.h5.pojo.response.OrderPayResponse;
+import com.cyl.h5.pojo.vo.AftersaleRefundInfoVO;
 import com.cyl.h5.pojo.vo.CountOrderVO;
 import com.cyl.h5.pojo.vo.H5OrderVO;
 import com.cyl.h5.pojo.vo.OrderCalcVO;
@@ -96,7 +97,7 @@ public class H5OrderController {
             return ResponseEntity.ok(service.orderComplete(orderId));
         }catch (Exception e){
             log.error("确认收货异常",e);
-            throw new RuntimeException("确认收货失败");
+            throw new RuntimeException(e.getMessage());
         }finally {
             try{
                 redisService.unLock(redisKey,redisValue);
@@ -198,5 +199,11 @@ public class H5OrderController {
                 log.error("", e);
             }
         }
+    }
+
+    @ApiOperation("售后订单详情")
+    @GetMapping("/refundOrderDetail")
+    public ResponseEntity<AftersaleRefundInfoVO> refundOrderDetail(@RequestParam Long orderId){
+        return ResponseEntity.ok(service.refundOrderDetail(orderId));
     }
 }

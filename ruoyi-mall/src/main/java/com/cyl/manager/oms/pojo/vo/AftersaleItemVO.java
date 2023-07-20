@@ -16,6 +16,9 @@ public class AftersaleItemVO extends BaseAudit {
    /** MEMBER_ID */
     @Excel(name = "MEMBER_ID")
     private Long memberId;
+    /** 售后单id */
+    @Excel(name = "售后单id")
+    private Long aftersaleId;
    /** 订单id */
     @Excel(name = "订单id")
     private Long orderId;
