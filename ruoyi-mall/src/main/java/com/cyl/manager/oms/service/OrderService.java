@@ -120,6 +120,7 @@ public class OrderService {
         managerOrderDetailVO.setPayType(order.getPayType());
         managerOrderDetailVO.setTotalAmount(order.getTotalAmount());
         managerOrderDetailVO.setPayAmount(order.getPayAmount());
+        managerOrderDetailVO.setReceiveTime(order.getReceiveTime());
         //封装订单地址信息
         ManagerOrderAddressVo managerOrderAddressVo = new ManagerOrderAddressVo();
         managerOrderAddressVo.setUserPhone(order.getReceiverPhone());

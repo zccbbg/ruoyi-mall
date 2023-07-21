@@ -33,6 +33,8 @@ public class ManagerOrderDetailVO {
     private List<ManagerOrderProductVO> productInfo;
     @ApiModelProperty("发货时间")
     private LocalDateTime deliveryTime;
+    @ApiModelProperty("收货时间")
+    private LocalDateTime receiveTime;
     @ApiModelProperty("物流单号")
     private String expressNo;
     @ApiModelProperty("物流名称")
