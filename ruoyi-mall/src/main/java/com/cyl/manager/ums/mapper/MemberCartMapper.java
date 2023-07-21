@@ -3,6 +3,8 @@ package com.cyl.manager.ums.mapper;
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyl.manager.ums.domain.MemberCart;
+import com.cyl.manager.ums.pojo.query.MemberCartQuery;
+import com.cyl.manager.ums.pojo.vo.MemberCartVO;
 
 /**
  * 购物车Mapper接口
@@ -17,4 +19,9 @@ public interface MemberCartMapper extends BaseMapper<MemberCart> {
      * @return 购物车集合
      */
     List<MemberCart> selectByEntity(MemberCart memberCart);
+
+    /**
+     *
+     */
+    List<MemberCartVO> selectByPage(MemberCartQuery query);
 }

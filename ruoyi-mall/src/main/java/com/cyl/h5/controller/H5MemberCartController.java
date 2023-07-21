@@ -1,11 +1,11 @@
 package com.cyl.h5.controller;
 
+import com.cyl.h5.service.H5MemberCartService;
 import com.cyl.manager.ums.convert.MemberCartConvert;
 import com.cyl.manager.ums.domain.Member;
 import com.cyl.manager.ums.domain.MemberCart;
 import com.cyl.manager.ums.pojo.query.MemberCartQuery;
 import com.cyl.manager.ums.pojo.vo.MemberCartVO;
-import com.cyl.manager.ums.service.MemberCartService;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.framework.config.LocalDataUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +17,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/h5/cart")
-public class CartController {
+public class H5MemberCartController {
     @Autowired
-    private MemberCartService memberCartService;
+    private H5MemberCartService memberCartService;
     @Autowired
     private MemberCartConvert memberCartConvert;
 

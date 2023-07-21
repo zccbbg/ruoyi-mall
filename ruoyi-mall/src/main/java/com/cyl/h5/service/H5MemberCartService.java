@@ -1,8 +1,7 @@
-package com.cyl.manager.ums.service;
+package com.cyl.h5.service;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyl.h5.config.SecurityUtil;
@@ -17,18 +16,14 @@ import com.cyl.manager.ums.mapper.MemberCartMapper;
 import com.cyl.manager.ums.pojo.query.MemberCartQuery;
 import com.cyl.manager.ums.pojo.vo.MemberCartVO;
 import com.cyl.manager.ums.pojo.vo.form.UpdateMemberCartForm;
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.exception.base.BaseException;
-import com.ruoyi.common.utils.AesCryptoUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.SortUtil;
 import com.ruoyi.framework.config.LocalDataUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -43,7 +38,7 @@ import java.util.stream.Collectors;
  * @author zcc
  */
 @Service
-public class MemberCartService {
+public class H5MemberCartService {
     @Autowired
     private MemberCartMapper memberCartMapper;
     @Autowired
@@ -52,8 +47,6 @@ public class MemberCartService {
     private ProductMapper productMapper;
     @Autowired
     private MemberCartConvert memberCartConvert;
-    @Value("${aes.key}")
-    private String aesKey;
 
     /**
      * 查询购物车
@@ -72,34 +65,38 @@ public class MemberCartService {
      * @param page  分页条件
      * @return 购物车
      */
-    public PageImpl<MemberCartVO> selectList(MemberCartQuery query, Pageable page) {
+    public List<MemberCartVO> selectList(MemberCartQuery query, Pageable page) {
         if (page != null) {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize(), SortUtil.sort2string(page.getSort(),"id desc"));
         }
-        if (!StrUtil.isEmpty(query.getPhone())){
-            query.setPhone(AesCryptoUtils.encrypt(aesKey, query.getPhone()));
+        QueryWrapper<MemberCart> qw = new QueryWrapper<>();
+        if (query.getMemberId() != null){
+            qw.eq("member_id", query.getMemberId());
         }
-        List<MemberCartVO> memberCartList = memberCartMapper.selectByPage(query);
-        long total = ((com.github.pagehelper.Page)memberCartList).getTotal();
+        List<MemberCart> memberCartList = memberCartMapper.selectList(qw);
         if (CollectionUtil.isEmpty(memberCartList)){
-            return new PageImpl<>(Collections.EMPTY_LIST, page, total);
+            return Collections.emptyList();
         }
         //查sku
-        List<Long> skuIdList = memberCartList.stream().map(MemberCartVO::getSkuId).collect(Collectors.toList());
+        List<Long> skuIdList = memberCartList.stream().map(MemberCart::getSkuId).collect(Collectors.toList());
         QueryWrapper<Sku> skuQw = new QueryWrapper<>();
         skuQw.in("id", skuIdList);
         Map<Long, Sku> skuMap = skuMapper.selectList(skuQw).stream().collect(Collectors.toMap(Sku::getId, it -> it));
+        List<MemberCartVO> resList = new ArrayList<>();
         memberCartList.forEach(item -> {
+            MemberCartVO memberCartVO = new MemberCartVO();
+            BeanUtils.copyProperties(item, memberCartVO);
             if (!skuMap.containsKey(item.getSkuId())){
-                item.setStatus(0);
-                item.setSkuIfExist(0);
+                memberCartVO.setStatus(0);
+                memberCartVO.setSkuIfExist(0);
             }else {
                 Sku sku = skuMap.get(item.getSkuId());
-                item.setPrice(sku.getPrice());
-                item.setSkuIfExist(1);
+                memberCartVO.setPrice(sku.getPrice());
+                memberCartVO.setSkuIfExist(1);
             }
+            resList.add(memberCartVO);
         });
-        return new PageImpl<>(memberCartList, page, total);
+        return resList;
     }
 
     /**
@@ -193,5 +190,33 @@ public class MemberCartService {
             return 0;
         }
         return c.getQuantity();
+    }
+
+    public void injectSku(List<MemberCartDTO> resList) {
+        List<Long> skuIds = resList.stream().map(MemberCartDTO::getSkuId).distinct().collect(Collectors.toList());
+        if (CollUtil.isEmpty(skuIds)) {
+            return;
+        }
+        List<Sku> skus = skuMapper.selectBatchIds(skuIds);
+        Map<Long, Sku> map = new HashMap<>();
+        skus.forEach(it -> {
+            map.put(it.getId(), it);
+        });
+        resList.forEach(it -> {
+            Sku s = map.get(it.getSkuId());
+            if (s == null) {
+                return;
+            }
+            it.setPrice(s.getPrice());
+        });
+    }
+
+    public List<Long> mineCartIds() {
+        QueryWrapper<MemberCart> qw = new QueryWrapper<>();
+        qw.eq("member_id", SecurityUtils.getUserId());
+        qw.eq("status", 1);
+        qw.select("id");
+        List<MemberCart> list = memberCartMapper.selectList(qw);
+        return list.stream().map(MemberCart::getId).collect(Collectors.toList());
     }
 }

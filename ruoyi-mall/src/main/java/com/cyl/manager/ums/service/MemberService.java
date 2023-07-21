@@ -107,4 +107,8 @@ public class MemberService {
         wrapper.set("status", dto.getStatus());
         return memberMapper.update(null, wrapper);
     }
+
+    public String getPhoneDecrypted(String phoneEncrypted) {
+        return AesCryptoUtils.decrypt(aesKey, phoneEncrypted);
+    }
 }

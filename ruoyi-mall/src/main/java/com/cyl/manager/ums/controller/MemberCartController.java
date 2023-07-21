@@ -1,7 +1,9 @@
 package com.cyl.manager.ums.controller;
 
+import com.cyl.manager.ums.pojo.vo.MemberCartVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,8 @@ import com.cyl.manager.ums.domain.MemberCart;
 import com.cyl.manager.ums.pojo.query.MemberCartQuery;
 import com.cyl.manager.ums.service.MemberCartService;
 
+import java.util.List;
+
 /**
  * 购物车Controller
  * 
@@ -41,10 +45,8 @@ public class MemberCartController extends BaseController {
     @ApiOperation("查询购物车列表")
     @PreAuthorize("@ss.hasPermi('ums:memberCart:list')")
     @PostMapping("/list")
-    public ResponseEntity<Page<MemberCart>> list(@RequestBody MemberCartQuery query, Pageable page) {
-//        List<MemberCart> list = service.selectList(query, page);
-//        return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
-        return null;
+    public ResponseEntity<PageImpl<MemberCartVO>> list(@RequestBody MemberCartQuery query, Pageable page) {
+        return ResponseEntity.ok(service.selectList(query, page));
     }
 
     @ApiOperation("导出购物车列表")

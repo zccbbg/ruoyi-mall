@@ -27,13 +27,16 @@ public class MemberCartQuery {
     @ApiModelProperty("SKU ID 精确匹配")
     private Long skuId;
 
-    @ApiModelProperty("PRODUCT_NAME 精确匹配")
-    private String productNameLike;
+    @ApiModelProperty("商品名称 精确匹配")
+    private String productName;
 
     @ApiModelProperty("商品属性 精确匹配")
     private String spData;
 
     @ApiModelProperty("商品数量 精确匹配")
     private Integer quantity;
+
+    @ApiModelProperty("用户手机号")
+    private String phone;
 
 }
