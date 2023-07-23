@@ -1,14 +1,16 @@
 package com.cyl.h5.service;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.cyl.h5.pojo.dto.*;
+import com.cyl.h5.pojo.dto.ApplyRefundDTO;
+import com.cyl.h5.pojo.dto.OrderCreateDTO;
+import com.cyl.h5.pojo.dto.OrderProductListDTO;
+import com.cyl.h5.pojo.dto.PayNotifyMessageDTO;
 import com.cyl.h5.pojo.request.CancelOrderRequest;
 import com.cyl.h5.pojo.request.OrderPayRequest;
 import com.cyl.h5.pojo.response.OrderPayResponse;
@@ -36,12 +38,10 @@ import com.cyl.wechat.WechatPayService;
 import com.cyl.wechat.WechatPayUtil;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.constant.Constants;
-import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisService;
 import com.ruoyi.common.enums.AftersaleStatus;
 import com.ruoyi.common.enums.OrderRefundStatus;
 import com.ruoyi.common.enums.OrderStatus;
-import com.ruoyi.common.enums.TradeStatusEnum;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.IDGenerator;
 import com.ruoyi.framework.config.LocalDataUtil;
@@ -49,20 +49,14 @@ import com.wechat.pay.java.service.partnerpayments.jsapi.model.Transaction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.URISyntaxException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -102,6 +96,7 @@ public class H5OrderService {
     private OrderOperateHistoryService orderOperateHistoryService;
 
     @Autowired
+    @Lazy
     private WechatPayService wechatPayService;
 
     @Autowired
@@ -499,6 +494,7 @@ public class H5OrderService {
             wechatPaymentHistory.setMoney(orderList.get(0).getPayAmount());
             wechatPaymentHistoryMapper.updateById(wechatPaymentHistory);
         }
+        //请开启微信支付 wechat.enabled=true
         //调用wx的jsapi拿prepayId，返回签名等信息
         String prepayId = wechatPayService.jsapiPay(
                 String.valueOf(req.getPayId()),

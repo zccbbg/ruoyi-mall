@@ -13,8 +13,8 @@ spring:
             slave:
                 # 从数据源开关/默认关闭
                 enabled: false
-                url: 
-                username: 
+                url:
+                username:
                 password:
             statViewServlet:
                 # 控制台管理用户名和密码
@@ -43,6 +43,7 @@ aliyun:
         endPoint: 你的endpoint     # Endpoint:在阿里云oss控制台查看自己使用的endpoint
         bucketName: 你的bucketName   # bucket 名称
 wechat:
+    enabled: false
     appId: 你的微信服务号信息
     secret: 你的微信服务号信息
     merchantId: 微信支付商户号
