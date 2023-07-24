@@ -3,9 +3,16 @@ package com.cyl.manager.ums.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.cyl.manager.oms.domain.Order;
+import com.cyl.manager.oms.mapper.AftersaleMapper;
+import com.cyl.manager.oms.mapper.OrderMapper;
+import com.cyl.manager.ums.domain.MemberCart;
+import com.cyl.manager.ums.mapper.MemberCartMapper;
 import com.cyl.manager.ums.pojo.dto.ChangeMemberStatusDTO;
+import com.cyl.manager.ums.pojo.vo.MemberDataStatisticsVO;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.utils.AesCryptoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +36,15 @@ public class MemberService {
     private MemberMapper memberMapper;
     @Value("${aes.key}")
     private String aesKey;
+
+    @Autowired
+    private MemberCartMapper memberCartMapper;
+
+    @Autowired
+    private OrderMapper orderMapper;
+
+    @Autowired
+    private AftersaleMapper aftersaleMapper;
 
     /**
      * 查询会员信息
@@ -110,5 +126,15 @@ public class MemberService {
 
     public String getPhoneDecrypted(String phoneEncrypted) {
         return AesCryptoUtils.decrypt(aesKey, phoneEncrypted);
+    }
+
+    public MemberDataStatisticsVO viewStatistics(Long memberId) {
+        LambdaQueryWrapper<MemberCart> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(MemberCart::getMemberId, memberId);
+        int cartCount = memberCartMapper.selectCount(wrapper);
+        MemberDataStatisticsVO vo = orderMapper.statOrderCountAndAmount(memberId);
+        vo.setCartCount(cartCount);
+        vo.setAftersaleCount(aftersaleMapper.countByMemberId(memberId));
+        return vo;
     }
 }

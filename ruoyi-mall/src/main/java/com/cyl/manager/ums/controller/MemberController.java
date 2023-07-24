@@ -3,6 +3,7 @@ package com.cyl.manager.ums.controller;
 import java.util.List;
 
 import com.cyl.manager.ums.pojo.dto.ChangeMemberStatusDTO;
+import com.cyl.manager.ums.pojo.vo.MemberDataStatisticsVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageImpl;
@@ -96,5 +97,11 @@ public class MemberController extends BaseController {
     @GetMapping("/phone/decrypt/{phoneEncrypted}")
     public ResponseEntity<String> getPhoneDecrypted(@PathVariable String phoneEncrypted){
         return ResponseEntity.ok(service.getPhoneDecrypted(phoneEncrypted));
+    }
+
+    @ApiOperation("查看会员统计数据")
+    @GetMapping("/view/statistics/{memberId}")
+    public ResponseEntity<MemberDataStatisticsVO> viewStatistics(@PathVariable Long memberId){
+        return ResponseEntity.ok(service.viewStatistics(memberId));
     }
 }

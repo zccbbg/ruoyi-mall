@@ -89,5 +89,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
         order by a.create_time desc
     </select>
+    <select id="countByMemberId" resultType="java.lang.Integer">
+        select
+            IFNULL(count(distinct id), 0)
+            from oms_aftersale
+        where member_id=#{memberId}
+    </select>
 
 </mapper>

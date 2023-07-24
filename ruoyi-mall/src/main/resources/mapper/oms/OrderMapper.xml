@@ -225,5 +225,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from oms_order
         where member_id=#{memberId} and delete_status=0
     </select>
+    <select id="statOrderCountAndAmount" resultType="com.cyl.manager.ums.pojo.vo.MemberDataStatisticsVO">
+        select
+            IFNULL(count(id), 0) orderCount,
+            IFNULL(sum(pay_amount), 0) orderAmount
+        from oms_order
+        where status in (1,2,3) and aftersale_status=1 and member_id=#{memberId}
+    </select>
 
 </mapper>

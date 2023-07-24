@@ -24,4 +24,6 @@ public interface AftersaleMapper extends BaseMapper<Aftersale> {
 
     List<ManagerRefundOrderVO> selectManagerRefundOrder(ManagerAftersaleOrderRequest managerAftersaleOrderPageRequest);
 
+    int countByMemberId(Long memberId);
+
 }

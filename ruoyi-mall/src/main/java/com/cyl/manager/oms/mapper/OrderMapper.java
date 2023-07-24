@@ -7,6 +7,7 @@ import com.cyl.h5.pojo.vo.H5OrderVO;
 import com.cyl.manager.oms.domain.Order;
 import com.cyl.manager.oms.pojo.request.ManagerOrderQueryRequest;
 import com.cyl.manager.oms.pojo.vo.ManagerOrderVO;
+import com.cyl.manager.ums.pojo.vo.MemberDataStatisticsVO;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -32,6 +33,8 @@ public interface OrderMapper extends BaseMapper<Order> {
     CountOrderVO countByStatusAndMemberId(Long memberId);
 
     Integer cancelBatch(@Param("list") List<Order> orderList);
+
+    MemberDataStatisticsVO statOrderCountAndAmount(Long memberId);
 
 
 }
