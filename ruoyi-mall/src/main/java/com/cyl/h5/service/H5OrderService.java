@@ -380,7 +380,7 @@ public class H5OrderService {
         OrderOperateHistory optHistory = new OrderOperateHistory();
         optHistory.setOrderId(order.getId());
         optHistory.setOrderSn(order.getOrderSn());
-        optHistory.setOperateMan("用户");
+        optHistory.setOperateMan("" + order.getMemberId());
         optHistory.setOrderStatus(Constants.H5OrderStatus.COMPLETED);
         optHistory.setCreateTime(optDate);
         optHistory.setCreateBy(order.getMemberId());
@@ -426,7 +426,7 @@ public class H5OrderService {
             OrderOperateHistory history = new OrderOperateHistory();
             history.setOrderId(item.getId());
             history.setOrderSn(item.getOrderSn());
-            history.setOperateMan("用户");
+            history.setOperateMan("" + item.getMemberId());
             history.setOrderStatus(Constants.H5OrderStatus.CLOSED);
             history.setCreateTime(optDate);
             history.setCreateBy(userId);
@@ -660,7 +660,7 @@ public class H5OrderService {
         OrderOperateHistory optHistory = new OrderOperateHistory();
         optHistory.setOrderId(order.getId());
         optHistory.setOrderSn(order.getOrderSn());
-        optHistory.setOperateMan("用户");
+        optHistory.setOperateMan("" + memberId);
         optHistory.setOrderStatus(11);
         optHistory.setCreateTime(optDate);
         optHistory.setCreateBy(memberId);

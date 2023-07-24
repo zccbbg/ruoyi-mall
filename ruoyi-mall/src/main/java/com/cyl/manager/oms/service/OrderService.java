@@ -366,7 +366,7 @@ public class OrderService {
         OrderOperateHistory optHistory = new OrderOperateHistory();
         optHistory.setOrderId(orderId);
         optHistory.setOrderSn(orderSn);
-        optHistory.setOperateMan(userId + "");
+        optHistory.setOperateMan("后台管理员");
         optHistory.setOrderStatus(orderStatus);
         optHistory.setCreateTime(optDate);
         optHistory.setCreateBy(userId);
