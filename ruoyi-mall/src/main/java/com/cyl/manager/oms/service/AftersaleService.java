@@ -6,8 +6,10 @@ import java.util.stream.Collectors;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.cyl.manager.oms.convert.OrderOperateHistoryConvert;
 import com.cyl.manager.oms.domain.Order;
 import com.cyl.manager.oms.domain.OrderItem;
 import com.cyl.manager.oms.domain.OrderOperateHistory;
@@ -53,6 +55,9 @@ public class AftersaleService {
 
     @Autowired
     private MemberMapper memberMapper;
+
+    @Autowired
+    private OrderOperateHistoryConvert historyConvert;
 
     /**
      * 查询订单售后
@@ -222,6 +227,7 @@ public class AftersaleService {
         //所以目前只需要查看是否有待处理的售后单
         QueryWrapper<Aftersale> aftersaleQw = new QueryWrapper<>();
         aftersaleQw.eq("status", AftersaleStatus.APPLY.getType());
+        aftersaleQw.eq("order_id", request.getOrderId());
         Aftersale aftersale = aftersaleMapper.selectOne(aftersaleQw);
         if (aftersale == null){
             throw new RuntimeException("没有售后单");
@@ -251,6 +257,7 @@ public class AftersaleService {
         //封装售后wrapper
         UpdateWrapper<Aftersale> aftersaleWrapper = new UpdateWrapper<>();
         aftersaleWrapper.eq("order_id", request.getOrderId());
+        aftersaleWrapper.eq("status", AftersaleStatus.APPLY.getType());
         aftersaleWrapper.set("handle_man", user.getUser().getNickName());
         aftersaleWrapper.set("update_time", optDate);
         aftersaleWrapper.set("handle_time", optDate);
@@ -284,5 +291,14 @@ public class AftersaleService {
             throw new RuntimeException("创建订单操作记录失败");
         }
         return "操作成功";
+    }
+
+    public List<OrderOperateHistoryVO> log(Long orderId) {
+        LambdaQueryWrapper<OrderOperateHistory> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrderOperateHistory::getOrderId, orderId);
+        wrapper.in(OrderOperateHistory::getOrderStatus, Arrays.asList(11, 12, 13, 14));
+        wrapper.orderByDesc(OrderOperateHistory::getCreateTime);
+        List<OrderOperateHistory> historyList = orderOperateHistoryMapper.selectList(wrapper);
+        return historyConvert.dos2vos(historyList);
     }
 }

@@ -6,6 +6,7 @@ import com.cyl.manager.oms.pojo.request.DealWithAftersaleRequest;
 import com.cyl.manager.oms.pojo.request.ManagerAftersaleOrderRequest;
 import com.cyl.manager.oms.pojo.vo.ManagerRefundOrderDetailVO;
 import com.cyl.manager.oms.pojo.vo.ManagerRefundOrderVO;
+import com.cyl.manager.oms.pojo.vo.OrderOperateHistoryVO;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.core.redis.RedisService;
 import com.ruoyi.common.utils.SecurityUtils;
@@ -121,5 +122,11 @@ public class AftersaleController extends BaseController {
                 log.error("", e);
             }
         }
+    }
+
+    @ApiOperation("查看日志")
+    @GetMapping("/log/{orderId}")
+    public ResponseEntity<List<OrderOperateHistoryVO>> log(@PathVariable Long orderId){
+        return ResponseEntity.ok(service.log(orderId));
     }
 }

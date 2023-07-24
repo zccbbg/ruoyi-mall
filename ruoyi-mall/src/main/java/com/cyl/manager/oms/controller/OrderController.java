@@ -7,6 +7,7 @@ import com.cyl.manager.oms.pojo.request.DeliverProductRequest;
 import com.cyl.manager.oms.pojo.request.ManagerOrderQueryRequest;
 import com.cyl.manager.oms.pojo.vo.ManagerOrderDetailVO;
 import com.cyl.manager.oms.pojo.vo.ManagerOrderVO;
+import com.cyl.manager.oms.pojo.vo.OrderOperateHistoryVO;
 import com.ruoyi.common.core.redis.RedisService;
 import com.ruoyi.common.utils.SecurityUtils;
 import io.swagger.annotations.Api;
@@ -131,4 +132,11 @@ public class OrderController extends BaseController {
             }
         }
     }
+
+    @ApiOperation("订单日志")
+    @GetMapping("/log/{orderId}")
+    public ResponseEntity<List<OrderOperateHistoryVO>> log(@PathVariable Long orderId){
+        return ResponseEntity.ok(service.log(orderId));
+    }
+
 }

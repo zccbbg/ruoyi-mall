@@ -21,6 +21,7 @@ import com.cyl.h5.pojo.vo.SkuViewDTO;
 import com.cyl.h5.pojo.vo.form.OrderSubmitForm;
 import com.cyl.h5.pojo.vo.query.OrderH5Query;
 import com.cyl.manager.oms.convert.OrderConvert;
+import com.cyl.manager.oms.convert.OrderOperateHistoryConvert;
 import com.cyl.manager.oms.domain.OrderDeliveryHistory;
 import com.cyl.manager.oms.domain.OrderItem;
 import com.cyl.manager.oms.domain.OrderOperateHistory;
@@ -94,6 +95,8 @@ public class OrderService {
     private String aesKey;
     @Autowired
     private OrderDeliveryHistoryMapper orderDeliveryHistoryMapper;
+    @Autowired
+    private OrderOperateHistoryConvert historyConvert;
 
     /**
      * 查询订单表
@@ -373,5 +376,19 @@ public class OrderService {
         if (rows < 1) {
             throw new RuntimeException("新增订单操作记录失败");
         }
+    }
+
+    /**
+     * 根据订单id查询订单操作日志
+     * @param orderId 订单id
+     * @return 结果
+     */
+    public List<OrderOperateHistoryVO> log(Long orderId) {
+        LambdaQueryWrapper<OrderOperateHistory> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrderOperateHistory::getOrderId, orderId);
+        wrapper.in(OrderOperateHistory::getOrderStatus, Arrays.asList(0, 1, 2, 3, 4));
+        wrapper.orderByDesc(OrderOperateHistory::getCreateTime);
+        List<OrderOperateHistory> historyList = orderOperateHistoryMapper.selectList(wrapper);
+        return historyConvert.dos2vos(historyList);
     }
 }
