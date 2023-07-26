@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.manager.ums.mapper.MemberLogininforMapper">
+    
+    <resultMap type="MemberLogininfor" id="MemberLogininforResult">
+        <result property="id" column="id"/>
+        <result property="phone" column="phone"/>
+        <result property="memberId" column="member_id"/>
+        <result property="ipaddr" column="ipaddr"/>
+        <result property="loginLocation" column="login_location"/>
+        <result property="browser" column="browser"/>
+        <result property="os" column="os"/>
+        <result property="loginTime" column="login_time"/>
+    </resultMap>
+
+    <sql id="selectMemberLogininforVo">
+        select id, phone, member_id, ipaddr, login_location, browser, os, login_time  from ums_member_logininfor
+    </sql>
+
+    <select id="selectByEntity" parameterType="MemberLogininfor" resultMap="MemberLogininforResult">
+        <include refid="selectMemberLogininforVo"/>
+        <where>  
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="memberId != null "> and member_id = #{memberId}</if>
+            <if test="ipaddr != null  and ipaddr != ''"> and ipaddr = #{ipaddr}</if>
+            <if test="loginLocation != null  and loginLocation != ''"> and login_location = #{loginLocation}</if>
+            <if test="browser != null  and browser != ''"> and browser = #{browser}</if>
+            <if test="os != null  and os != ''"> and os = #{os}</if>
+            <if test="loginTime != null "> and login_time = #{loginTime}</if>
+        </where>
+    </select>
+</mapper>
