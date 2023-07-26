@@ -13,21 +13,24 @@ import com.cyl.h5.pojo.response.RegisterResponse;
 import com.cyl.h5.pojo.response.ValidatePhoneResponse;
 import com.cyl.h5.pojo.response.H5LoginResponse;
 import com.cyl.manager.ums.domain.Member;
+import com.cyl.manager.ums.domain.MemberLogininfor;
 import com.cyl.manager.ums.domain.MemberWechat;
+import com.cyl.manager.ums.mapper.MemberLogininforMapper;
 import com.cyl.manager.ums.mapper.MemberMapper;
 import com.cyl.manager.ums.mapper.MemberWechatMapper;
 import com.cyl.manager.ums.pojo.vo.MemberVO;
+import com.cyl.manager.ums.service.MemberLogininforService;
 import com.cyl.wechat.WechatAuthService;
 import com.cyl.wechat.response.WechatUserAuth;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.domain.model.LoginMember;
 import com.ruoyi.common.core.redis.RedisCache;
-import com.ruoyi.common.utils.AesCryptoUtils;
-import com.ruoyi.common.utils.PhoneUtils;
-import com.ruoyi.common.utils.SecurityUtils;
-import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.*;
+import com.ruoyi.common.utils.ip.AddressUtils;
+import com.ruoyi.common.utils.ip.IpUtils;
 import com.ruoyi.framework.config.LocalDataUtil;
 import com.ruoyi.framework.web.service.TokenService;
+import eu.bitwalker.useragentutils.UserAgent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +63,13 @@ public class H5MemberService {
 
     @Autowired
     private MemberWechatMapper memberWechatMapper;
+
+    @Autowired
+    private MemberLogininforService memberLogininforService;
+
+    @Autowired
+    private MemberLogininforMapper memberLogininforMapper;
+
 
     /**
      * 注册
@@ -192,6 +202,7 @@ public class H5MemberService {
             //校验会员状态
             validateMemberStatus(member);
         }
+
         return getLoginResponse(member.getId());
     }
 
@@ -232,6 +243,8 @@ public class H5MemberService {
         LoginMember loginMember = new LoginMember();
         loginMember.setMemberId(memberId);
         String token = tokenService.createMemberToken(loginMember);
+        //record登录
+        this.insert(memberId);
         H5LoginResponse response = new H5LoginResponse();
         response.setToken(token);
         return response;
@@ -271,5 +284,25 @@ public class H5MemberService {
         wrapper.set("update_time", LocalDateTime.now());
         wrapper.set("update_by", member.getId());
         memberWechatMapper.update(null, wrapper);
+    }
+
+    /**
+     * 新增会员登录记录
+     *
+     * @param memberId 会员id
+     * @return 结果
+     */
+    public void insert(Long memberId) {
+        Member member = memberMapper.selectById(memberId);
+        UserAgent userAgent = UserAgent.parseUserAgentString(ServletUtils.getRequest().getHeader("User-Agent"));
+        MemberLogininfor memberLogininfor = new MemberLogininfor();
+        memberLogininfor.setMemberId(memberId);
+        memberLogininfor.setPhone(member.getPhoneHidden());
+        memberLogininfor.setOs(userAgent.getOperatingSystem().getName());
+        memberLogininfor.setIpaddr(IpUtils.getIpAddr(ServletUtils.getRequest()));
+        memberLogininfor.setBrowser(userAgent.getBrowser().getName());
+        memberLogininfor.setLoginLocation(AddressUtils.getRealAddressByIP(memberLogininfor.getIpaddr()));
+        memberLogininfor.setLoginTime(LocalDateTime.now());
+        memberLogininforMapper.insert(memberLogininfor);
     }
 }
