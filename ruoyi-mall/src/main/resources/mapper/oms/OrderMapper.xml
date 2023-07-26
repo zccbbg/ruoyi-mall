@@ -232,5 +232,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from oms_order
         where status in (1,2,3) and aftersale_status=1 and member_id=#{memberId}
     </select>
+    <select id="statWaitDelivered" resultType="java.lang.Integer">
+        select IFNULL(count(id), 0) from oms_order where status=1 and aftersale_status=1
+    </select>
+    <select id="statTodayData" resultType="com.cyl.manager.statistics.pojo.vo.OrderAndAftersaleStatisticsVO">
+        select
+            IFNULL(sum(case when status in (2,3) then 1 else 0 end), 0) todayHasDeliveredCount,
+            IFNULL(count(id), 0) todayOrderCount,
+            IFNULL(sum(case when status in (1,2,3) then pay_amount else 0 end), 0) todayTransactionAmount
+        from oms_order
+        where create_time between #{startTime} and #{endTime}
+    </select>
 
 </mapper>

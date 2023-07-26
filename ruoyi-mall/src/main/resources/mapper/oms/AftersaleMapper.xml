@@ -95,5 +95,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             from oms_aftersale
         where member_id=#{memberId}
     </select>
+    <select id="statPendingAndProcessing"
+            resultType="com.cyl.manager.statistics.pojo.vo.OrderAndAftersaleStatisticsVO">
+        select
+            IFNULL(sum(case when status=0 then 1 else 0 end), 0) pendingAftersaleCount,
+            IFNULL(sum(case when status=1 then 1 else 0 end), 0) processingAftersaleCount
+        from oms_aftersale
+    </select>
 
 </mapper>

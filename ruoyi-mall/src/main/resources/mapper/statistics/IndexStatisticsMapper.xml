@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.manager.statistics.mapper.IndexStatisticsMapper">
+    <sql id="dateRange">
+                SELECT
+            curdate( ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 1 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 2 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 3 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 4 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 5 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 6 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 7 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 8 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 9 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 10 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 11 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 12 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 13 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 14 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 15 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 16 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 17 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 18 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 19 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 20 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 21 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 22 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 23 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 24 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 25 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 26 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 27 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 28 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 29 DAY ) AS date
+    </sql>
+    <resultMap id="topSalesResultMap" type="com.cyl.manager.statistics.pojo.vo.ProductTopVO">
+        <result property="productName" column="product_name"/>
+        <result property="totalSales" column="total_sales"/>
+        <result property="pic" column="pic"/>
+        <result property="spData" column="sp_data"/>
+    </resultMap>
+     <select id="goodsStatistics" parameterType="com.cyl.manager.statistics.pojo.GoodsStatisticsQueryParam" resultMap="topSalesResultMap">
+        SELECT product_id ,
+               product_name,
+               pic,
+               SUM(quantity) as total_sales
+        FROM oms_order_item item right join oms_order o on o.id=item.order_id
+        WHERE DATE(item.create_time) between DATE(#{startDate}) AND DATE(#{endDate}) AND o.status in(1,2,3)
+        GROUP BY product_id, product_name
+        ORDER BY total_sales DESC
+        LIMIT #{size}
+    </select>
+    <select id="orderStatistics" resultType="com.cyl.manager.statistics.pojo.vo.OrderStatisticsVO">
+        select a.date,
+        IFNULL(b.order_count,0)    orderCount,
+        IFNULL(b.order_amount,0)  orderAmount
+        from
+        (
+        <include refid="dateRange"></include>
+        ) a
+        left join (
+                SELECT DATE_FORMAT(create_time, '%Y-%m-%d') as date,
+                COUNT(*)                            as order_count,
+               SUM(total_amount)                    as order_amount
+        FROM oms_order
+        WHERE create_time >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) AND status in(1,2,3)
+        GROUP BY DATE_FORMAT(create_time, '%Y-%m-%d')
+        ) b
+        on a.date=b.date
+        order by a.date asc
+    </select>
+    <select id="goodsSkuStatistics" resultMap="topSalesResultMap">
+        SELECT product_id ,
+               product_name,
+               pic,
+               sp_data,
+               SUM(quantity) as total_sales
+        FROM oms_order_item item right join oms_order o on o.id=item.order_id
+        WHERE DATE(item.create_time) between DATE(#{startDate}) AND DATE(#{endDate}) AND o.status in(1,2,3)
+        GROUP BY sku_id
+        ORDER BY total_sales DESC
+            LIMIT #{size}
+    </select>
+</mapper>

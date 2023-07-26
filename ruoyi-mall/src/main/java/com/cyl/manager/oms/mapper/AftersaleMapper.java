@@ -6,6 +6,7 @@ import com.cyl.manager.oms.domain.Aftersale;
 import com.cyl.manager.oms.domain.AftersaleItem;
 import com.cyl.manager.oms.pojo.request.ManagerAftersaleOrderRequest;
 import com.cyl.manager.oms.pojo.vo.ManagerRefundOrderVO;
+import com.cyl.manager.statistics.pojo.vo.OrderAndAftersaleStatisticsVO;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -26,4 +27,5 @@ public interface AftersaleMapper extends BaseMapper<Aftersale> {
 
     int countByMemberId(Long memberId);
 
+    OrderAndAftersaleStatisticsVO statPendingAndProcessing();
 }

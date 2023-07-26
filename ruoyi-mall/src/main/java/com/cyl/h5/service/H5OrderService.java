@@ -426,7 +426,7 @@ public class H5OrderService {
             OrderOperateHistory history = new OrderOperateHistory();
             history.setOrderId(item.getId());
             history.setOrderSn(item.getOrderSn());
-            history.setOperateMan("" + item.getMemberId());
+            history.setOperateMan(userId == null ? "后台管理员" : "" + item.getMemberId());
             history.setOrderStatus(Constants.H5OrderStatus.CLOSED);
             history.setCreateTime(optDate);
             history.setCreateBy(userId);
