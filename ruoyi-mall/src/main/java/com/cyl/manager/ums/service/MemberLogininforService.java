@@ -95,6 +95,7 @@ public class MemberLogininforService {
             qw.ge("login_time", query.getBeginTime());
             qw.lt("login_time", query.getEndTime());
         }
+        qw.orderByDesc("login_time");
         return memberLogininforMapper.selectList(qw);
     }
 
