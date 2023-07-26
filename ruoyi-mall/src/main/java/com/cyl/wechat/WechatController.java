@@ -31,6 +31,8 @@ public class WechatController {
         response.setAppId(appId);
         List<String> jsApiList = new ArrayList<>();
         jsApiList.add("chooseWXPay");
+        jsApiList.add("updateAppMessageShareData");
+        jsApiList.add("updateTimelineShareData");
         response.setJsApiList(jsApiList);
         response.setNonceStr(nonceStr);
         response.setTimeStamp(String.valueOf(timeStamp));
