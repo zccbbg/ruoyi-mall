@@ -66,7 +66,6 @@ public class H5MemberController {
     }
 
     @ApiOperation("新增会员登录记录")
-    @Log(title = "会员登录记录", businessType = BusinessType.INSERT)
     @GetMapping("/record/login")
     public void add(HttpServletRequest request) {
         LoginMember loginMember = tokenService.getLoginMember(request);
