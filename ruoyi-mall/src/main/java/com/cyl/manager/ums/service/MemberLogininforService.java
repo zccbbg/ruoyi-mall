@@ -4,16 +4,20 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.time.LocalDateTime;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyl.manager.ums.domain.Member;
 import com.cyl.manager.ums.mapper.MemberMapper;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.core.domain.model.LoginMember;
+import com.ruoyi.common.utils.AesCryptoUtils;
 import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.common.utils.ip.AddressUtils;
 import com.ruoyi.common.utils.ip.IpUtils;
 import eu.bitwalker.useragentutils.UserAgent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -35,6 +39,9 @@ public class MemberLogininforService {
     @Autowired
     private MemberMapper memberMapper;
 
+    @Value("${aes.key}")
+    private String aesKey;
+
     /**
      * 查询会员登录记录
      *
@@ -53,17 +60,20 @@ public class MemberLogininforService {
      * @return 会员登录记录
      */
     public List<MemberLogininfor> selectList(MemberLogininforQuery query, Pageable page) {
-        if (page != null) {
-            PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
-        }
         QueryWrapper<MemberLogininfor> qw = new QueryWrapper<>();
         String phone = query.getPhone();
         if (!StringUtils.isEmpty(phone)) {
-            qw.eq("phone", phone);
+            LambdaQueryWrapper<Member> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(Member::getPhoneEncrypted, AesCryptoUtils.encrypt(aesKey, phone));
+            Member member = memberMapper.selectOne(wrapper);
+            if (member != null){
+                qw.eq("phone", member.getPhoneEncrypted());
+            }else {
+                qw.eq("phone", "-1");
+            }
         }
-        Long memberId = query.getMemberId();
-        if (memberId != null) {
-            qw.eq("member_id", memberId);
+        if (page != null) {
+            PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
         String ipaddr = query.getIpaddr();
         if (!StringUtils.isEmpty(ipaddr)) {
@@ -81,10 +91,11 @@ public class MemberLogininforService {
         if (!StringUtils.isEmpty(os)) {
             qw.eq("os", os);
         }
-        LocalDateTime loginTime = query.getLoginTime();
-        if (loginTime != null) {
-            qw.eq("login_time", loginTime);
+        if (query.getBeginTime() != null && query.getEndTime() != null) {
+            qw.ge("login_time", query.getBeginTime());
+            qw.lt("login_time", query.getEndTime());
         }
+        qw.orderByDesc("login_time");
         return memberLogininforMapper.selectList(qw);
     }
 

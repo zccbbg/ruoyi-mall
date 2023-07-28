@@ -34,4 +34,8 @@ public class MemberLogininforQuery {
     @ApiModelProperty("登陆时间 精确匹配")
     private LocalDateTime loginTime;
 
+    private String beginTime;
+
+    private String endTime;
+
 }

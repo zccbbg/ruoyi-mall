@@ -176,7 +176,7 @@ public class OrderService {
             return new PageImpl<>(managerOrderVOList, page, 0);
         }
         long total = ((com.github.pagehelper.Page) managerOrderVOList).getTotal();
-        Map<Long, ManagerOrderVO> orderMap = managerOrderVOList.stream().collect(Collectors.toMap(ManagerOrderVO::getId, it -> it));
+        Map<Long, ManagerOrderVO> orderMap = managerOrderVOList.stream().collect(Collectors.toMap(ManagerOrderVO::getId, it -> it, (v1,v2) -> v2, LinkedHashMap::new));
         //查orderItem
         QueryWrapper<OrderItem> qw = new QueryWrapper<>();
         qw.in("order_id", orderMap.keySet());
