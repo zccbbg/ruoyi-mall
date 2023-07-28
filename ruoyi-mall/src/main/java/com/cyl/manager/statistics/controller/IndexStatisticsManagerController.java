@@ -2,6 +2,7 @@ package com.cyl.manager.statistics.controller;
 
 
 import com.cyl.manager.statistics.pojo.GoodsStatisticsQueryParam;
+import com.cyl.manager.statistics.pojo.OrderStatisticsQueryParam;
 import com.cyl.manager.statistics.pojo.vo.MemberAndCartStatisticsVO;
 import com.cyl.manager.statistics.pojo.vo.OrderAndAftersaleStatisticsVO;
 import com.cyl.manager.statistics.pojo.vo.OrderStatisticsVO;
@@ -14,9 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -46,10 +45,9 @@ public class IndexStatisticsManagerController {
     }
 
     @ApiOperation(value = "订单信息")
-    @GetMapping("/orderStatistics")
-    public ResponseEntity<List<OrderStatisticsVO>> orderStatistics() {
-
-        return ResponseEntity.ok(indexStatisticsService.orderStatistics());
+    @PostMapping("/orderStatistics")
+    public ResponseEntity<List<OrderStatisticsVO>> orderStatistics(@RequestBody OrderStatisticsQueryParam param) {
+        return ResponseEntity.ok(indexStatisticsService.orderStatistics(param));
     }
 
     @ApiOperation(value = "会员数，加购数")

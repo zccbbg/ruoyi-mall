@@ -36,6 +36,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SELECT date_sub( curdate( ), INTERVAL 28 DAY ) AS date UNION ALL
         SELECT date_sub( curdate( ), INTERVAL 29 DAY ) AS date
     </sql>
+    <sql id="dateRange2">
+        SELECT
+            curdate( ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 1 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 2 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 3 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 4 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 5 DAY ) AS date UNION ALL
+        SELECT date_sub( curdate( ), INTERVAL 6 DAY ) AS date
+    </sql>
     <resultMap id="topSalesResultMap" type="com.cyl.manager.statistics.pojo.vo.ProductTopVO">
         <result property="productName" column="product_name"/>
         <result property="totalSales" column="total_sales"/>
@@ -59,7 +69,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         IFNULL(b.order_amount,0)  orderAmount
         from
         (
-        <include refid="dateRange"></include>
+            <choose>
+                <when test="type == 1">
+                    <include refid="dateRange2"></include>
+                </when>
+                <when test="type == 2">
+                    <include refid="dateRange"></include>
+                </when>
+            </choose>
         ) a
         left join (
                 SELECT DATE_FORMAT(create_time, '%Y-%m-%d') as date,
