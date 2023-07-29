@@ -44,7 +44,8 @@ public class AddressUtils
                 JSONObject obj = JSONObject.parseObject(rspStr);
                 String region = obj.getString("pro");
                 String city = obj.getString("city");
-                return String.format("%s %s", region, city);
+                String operator = ((String)obj.get("addr")).split(" ")[1];
+                return String.format("%s|%s|%s", region, city, operator);
             }
             catch (Exception e)
             {
@@ -52,5 +53,9 @@ public class AddressUtils
             }
         }
         return address;
+    }
+
+    public static void main(String[] args) {
+        System.out.println("地址：" + getRealAddressByIP("14.125.8.236"));
     }
 }

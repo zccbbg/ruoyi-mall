@@ -566,7 +566,7 @@ public class H5OrderService {
                 OrderOperateHistory optHistory = new OrderOperateHistory();
                 optHistory.setOrderId(order.getId());
                 optHistory.setOrderSn(order.getOrderSn());
-                optHistory.setOperateMan("系统");
+                optHistory.setOperateMan("" + order.getMemberId());
                 optHistory.setOrderStatus(OrderStatus.NOT_DELIVERED.getType());
                 optHistory.setCreateTime(optDate);
                 optHistory.setCreateBy(order.getMemberId());

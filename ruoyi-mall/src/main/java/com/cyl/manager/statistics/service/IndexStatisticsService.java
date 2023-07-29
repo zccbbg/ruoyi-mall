@@ -7,6 +7,7 @@ import com.cyl.manager.oms.service.OrderDeliveryHistoryService;
 import com.cyl.manager.oms.service.OrderService;
 import com.cyl.manager.statistics.mapper.IndexStatisticsMapper;
 import com.cyl.manager.statistics.pojo.GoodsStatisticsQueryParam;
+import com.cyl.manager.statistics.pojo.OrderStatisticsQueryParam;
 import com.cyl.manager.statistics.pojo.vo.MemberAndCartStatisticsVO;
 import com.cyl.manager.statistics.pojo.vo.OrderAndAftersaleStatisticsVO;
 import com.cyl.manager.statistics.pojo.vo.OrderStatisticsVO;
@@ -51,8 +52,8 @@ public class IndexStatisticsService {
         }
     }
 
-    public List<OrderStatisticsVO> orderStatistics() {
-        return indexStatisticsMapper.orderStatistics();
+    public List<OrderStatisticsVO> orderStatistics(OrderStatisticsQueryParam param) {
+        return indexStatisticsMapper.orderStatistics(param);
     }
 
     public MemberAndCartStatisticsVO statMemberAndCart() {

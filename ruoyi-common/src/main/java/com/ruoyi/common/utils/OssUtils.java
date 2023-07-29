@@ -39,7 +39,7 @@ public class OssUtils {
             // 创建PutObject请求。
             ossClient.putObject(bucketName, fileName, file.getInputStream());
 
-            String url = "http://" + bucketName + "." + endPoint + "/" + fileName;
+            String url = "https://" + bucketName + "." + endPoint + "/" + fileName;
             return url;
         } catch (Exception e) {
             e.printStackTrace();

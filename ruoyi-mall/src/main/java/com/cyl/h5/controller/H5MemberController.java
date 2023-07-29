@@ -8,10 +8,16 @@ import com.cyl.h5.service.H5MemberService;
 import com.cyl.manager.ums.pojo.vo.MemberVO;
 import com.cyl.wechat.WechatAuthService;
 import com.cyl.wechat.response.WechatUserAuth;
+import com.ruoyi.common.annotation.Log;
+import com.ruoyi.common.core.domain.model.LoginMember;
+import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.framework.web.service.TokenService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/h5")
@@ -19,6 +25,8 @@ public class H5MemberController {
 
     @Autowired
     private H5MemberService service;
+    @Autowired
+    private TokenService tokenService;
 
 
     @ApiOperation("会员注册")
@@ -55,5 +63,14 @@ public class H5MemberController {
     @PostMapping("/member/setWechatInfo")
     public void setWechatInfo(@RequestBody String data){
         service.setWechatInfo(data);
+    }
+
+    @ApiOperation("新增会员登录记录")
+    @GetMapping("/record/login")
+    public void add(HttpServletRequest request) {
+        LoginMember loginMember = tokenService.getLoginMember(request);
+        if (loginMember != null){
+            service.insert(loginMember.getMemberId());
+        }
     }
 }
