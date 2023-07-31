@@ -1,28 +1,28 @@
 package com.cyl.manager.ums.service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.cyl.manager.oms.domain.Order;
 import com.cyl.manager.oms.mapper.AftersaleMapper;
 import com.cyl.manager.oms.mapper.OrderMapper;
+import com.cyl.manager.ums.domain.Member;
 import com.cyl.manager.ums.domain.MemberCart;
 import com.cyl.manager.ums.mapper.MemberCartMapper;
+import com.cyl.manager.ums.mapper.MemberMapper;
 import com.cyl.manager.ums.pojo.dto.ChangeMemberStatusDTO;
+import com.cyl.manager.ums.pojo.query.MemberQuery;
 import com.cyl.manager.ums.pojo.vo.MemberDataStatisticsVO;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.utils.AesCryptoUtils;
+import com.ruoyi.common.utils.SortUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import com.cyl.manager.ums.mapper.MemberMapper;
-import com.cyl.manager.ums.domain.Member;
-import com.cyl.manager.ums.pojo.query.MemberQuery;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 会员信息Service业务层处理
@@ -65,7 +65,7 @@ public class MemberService {
      */
     public List<Member> selectList(MemberQuery query, Pageable page) {
         if (page != null) {
-            PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
+            PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize(), SortUtil.sort2string(page.getSort(),"id desc"));
         }
         QueryWrapper<Member> qw = new QueryWrapper<>();
         String nicknameLike = query.getNickname();
