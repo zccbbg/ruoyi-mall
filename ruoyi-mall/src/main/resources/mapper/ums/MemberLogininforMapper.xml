@@ -31,4 +31,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="loginTime != null "> and login_time = #{loginTime}</if>
         </where>
     </select>
+    <select id="statLoginMember" resultType="int">
+        select
+            IFNULL(count(distinct member_id), 0)
+        from ums_member_logininfor
+        where login_time between  #{startTime} and #{endTime}
+    </select>
 </mapper>

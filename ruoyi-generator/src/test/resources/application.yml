@@ -5,9 +5,9 @@ spring:
     #    schema: classpath*:sql/init.sql
     #    data: classpath:sql/data.sql
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/ry?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-    username: root
-    password: password
+    url: jdbc:mysql://rm-wz987gwxg397qojlao.mysql.rds.aliyuncs.com:3638/ry_mall?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&allowMultiQueries=true
+    username: mall_cyl
+    password: asdfpCC_sodpfjoDD_piuPOi
   jpa:
     properties:
       hibernate:
@@ -27,11 +27,11 @@ gen:
   # 作者
   author: zcc
   # 默认生成包路径 system 需改成自己的模块名称 如 system monitor tool
-  packageName: com.cyl.manager.pms
+  packageName: com.cyl.manager.aws
   # 自动去除表前缀，默认是false
   autoRemovePre: true
   # 表前缀（生成类名不会包含表前缀，多个用逗号分隔）
-  tablePrefix: pms_
+  tablePrefix: aws_
   # 一级权限名
   rootPermission: mall
   # 模板根路径
@@ -39,17 +39,17 @@ gen:
   # 路径
   path:
     # 后端根目录
-    backPath: C:\Users\zccbbg\ichengle\ruoyi-mall\
+    backPath: D:\workspace\RuoYi-Mall\
     # 后端 service 模块名
     serviceModule: ruoyi-mall
     # 后端 api 模块名, 默认与 service 一致
     apiModule: ruoyi-mall
     # 前端根目录
-    frontPath: C:\Users\zccbbg\ichengle\ruoyi-mall-vue\
+    frontPath: D:\workspace\ruoyi-mall-vue\
     # 前端 api 目录
-    frontApiPath: src/api/pms
+    frontApiPath: src/api/aws
     # 前端 view 目录
-    frontViewPath: src/views/pms
+    frontViewPath: src/views/aws
     # sql 目录
     sql: sql
   # 环境变量

@@ -65,4 +65,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
         order by a.create_time desc
     </select>
+    <select id="statAddCount" resultType="java.lang.Integer">
+        select
+            IFNULL(count(distinct member_id), 0)
+        from ums_member_cart
+        where create_time between #{startTime} and #{endTime}
+    </select>
 </mapper>

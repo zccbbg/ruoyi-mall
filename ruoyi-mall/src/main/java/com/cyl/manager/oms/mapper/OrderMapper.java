@@ -5,6 +5,7 @@ import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyl.h5.pojo.vo.CountOrderVO;
 import com.cyl.h5.pojo.vo.H5OrderVO;
+import com.cyl.manager.aws.domain.SystemStatistics;
 import com.cyl.manager.oms.domain.Order;
 import com.cyl.manager.oms.pojo.request.ManagerOrderQueryRequest;
 import com.cyl.manager.oms.pojo.vo.ManagerOrderVO;
@@ -42,4 +43,8 @@ public interface OrderMapper extends BaseMapper<Order> {
     Integer statWaitDelivered();
 
     OrderAndAftersaleStatisticsVO statTodayData(@Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
+
+    SystemStatistics statNewAndDeal(@Param("startTime") LocalDateTime startTime,@Param("endTime") LocalDateTime endTime);
+
+    int statDealMember(@Param("startTime") LocalDateTime startTime,@Param("endTime") LocalDateTime endTime);
 }

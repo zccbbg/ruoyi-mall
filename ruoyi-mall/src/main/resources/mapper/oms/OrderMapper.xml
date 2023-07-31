@@ -243,5 +243,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from oms_order
         where create_time between #{startTime} and #{endTime}
     </select>
+    <select id="statNewAndDeal" resultType="com.cyl.manager.aws.domain.SystemStatistics">
+        select
+            IFNULL(count(distinct member_id), 0) createOrderMemberCount,
+            IFNULL(count(id), 0) orderCount,
+            IFNULL(sum(case when status in (1,2,3) then 1 else 0 end), 0) dealCount,
+            IFNULL(sum(case when status in (1,2,3) then pay_amount else 0 end), 0) dealAmount
+        from oms_order
+        where create_time between #{startTime} and #{endTime}
+    </select>
+    <select id="statDealMember" resultType="java.lang.Integer">
+        select
+            IFNULL(count(distinct member_id), 0)
+        from oms_order
+        where status in (1,2,3) and create_time between #{startTime} and #{endTime}
+    </select>
 
 </mapper>
