@@ -7,6 +7,9 @@ import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.symmetric.AES;
 import com.cyl.h5.pojo.dto.PayNotifyMessageDTO;
 import com.cyl.h5.service.H5OrderService;
+import com.cyl.manager.aws.domain.SystemStatistics;
+import com.cyl.manager.aws.mapper.SystemStatisticsMapper;
+import com.cyl.manager.aws.service.SystemStatisticsService;
 import com.cyl.manager.ums.service.MemberCartService;
 import com.cyl.wechat.WechatAuthService;
 import com.cyl.wechat.WechatPayService;
@@ -25,6 +28,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +49,12 @@ public class ServiceTest {
 
     @Value("${aes.key}")
     private String key;
+
+    @Autowired
+    private SystemStatisticsService systemStatisticsService;
+
+    @Autowired
+    private SystemStatisticsMapper systemStatisticsMapper;
 
     @Test
     public void test1() {
@@ -109,5 +121,13 @@ public class ServiceTest {
         messageDTO.setTradeNo("");
         ResponseEntity<String> stringResponseEntity = h5OrderService.payCallBack(messageDTO);
         System.out.println(stringResponseEntity.getBody());
+    }
+
+    @Test
+    public void test7(){
+        LocalDateTime startTime = LocalDateTime.of(LocalDate.now(), LocalTime.MIN).plusDays(-1);
+        LocalDateTime endTime = LocalDateTime.of(LocalDate.now(), LocalTime.MAX).plusDays(-1);
+        SystemStatistics data = systemStatisticsService.stat(startTime, endTime);
+        systemStatisticsMapper.insert(data);
     }
 }

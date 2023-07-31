@@ -33,12 +33,13 @@ public class ApplicationTest {
 //                "ums_member_address",
 //                "ums_member_wechat",
 //                "ums_member_cart"
-                "oms_order",
+//                "oms_order",
 //                "oms_order_delivery_history",
 //                "oms_order_item",
 //                "oms_order_operate_history",
-                "oms_aftersale",
-                "oms_aftersale_item"
+//                "oms_aftersale",
+//                "oms_aftersale_item"
+                "aws_system_statistics"
         );
         // 查询表信息
         List<GenTable> tableList = genTableService.selectGenTableByName(tableNames);

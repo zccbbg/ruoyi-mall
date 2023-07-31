@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.manager.aws.mapper.SystemStatisticsMapper">
+    
+    <resultMap type="SystemStatistics" id="SystemStatisticsResult">
+        <result property="id" column="id"/>
+        <result property="date" column="date"/>
+        <result property="loginMemberCount" column="login_member_count"/>
+        <result property="registerMemberCount" column="register_member_count"/>
+        <result property="addCartMemberCount" column="add_cart_member_count"/>
+        <result property="createOrderMemberCount" column="create_order_member_count"/>
+        <result property="dealMemberCount" column="deal_member_count"/>
+        <result property="orderCount" column="order_count"/>
+        <result property="dealCount" column="deal_count"/>
+        <result property="dealAmount" column="deal_amount"/>
+        <result property="aftersaleCount" column="aftersale_count"/>
+        <result property="aftersaleAmount" column="aftersale_amount"/>
+    </resultMap>
+
+    <sql id="selectSystemStatisticsVo">
+        select id, date, login_member_count, register_member_count, add_cart_member_count, create_order_member_count, deal_member_count, order_count, deal_count, deal_amount, aftersale_count, aftersale_amount  from aws_system_statistics
+    </sql>
+
+    <select id="selectByEntity" parameterType="SystemStatistics" resultMap="SystemStatisticsResult">
+        <include refid="selectSystemStatisticsVo"/>
+        <where>  
+            <if test="date != null "> and date = #{date}</if>
+            <if test="loginMemberCount != null "> and login_member_count = #{loginMemberCount}</if>
+            <if test="registerMemberCount != null "> and register_member_count = #{registerMemberCount}</if>
+            <if test="addCartMemberCount != null "> and add_cart_member_count = #{addCartMemberCount}</if>
+            <if test="createOrderMemberCount != null "> and create_order_member_count = #{createOrderMemberCount}</if>
+            <if test="dealMemberCount != null "> and deal_member_count = #{dealMemberCount}</if>
+            <if test="orderCount != null "> and order_count = #{orderCount}</if>
+            <if test="dealCount != null "> and deal_count = #{dealCount}</if>
+            <if test="dealAmount != null "> and deal_amount = #{dealAmount}</if>
+            <if test="aftersaleCount != null "> and aftersale_count = #{aftersaleCount}</if>
+            <if test="aftersaleAmount != null "> and aftersale_amount = #{aftersaleAmount}</if>
+        </where>
+    </select>
+</mapper>
