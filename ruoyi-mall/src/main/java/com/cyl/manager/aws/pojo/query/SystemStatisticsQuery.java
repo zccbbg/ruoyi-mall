@@ -2,6 +2,8 @@ package com.cyl.manager.aws.pojo.query;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -14,8 +16,13 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(description="系统数据统计 查询 对象")
 @Data
 public class SystemStatisticsQuery {
-    @ApiModelProperty("统计日期 精确匹配")
-    private LocalDateTime date;
+    @ApiModelProperty("统计开始日期")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime beginTime;
+
+    @ApiModelProperty("统计结束日期")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime endTime;
 
     @ApiModelProperty("登录用户数 精确匹配")
     private Integer loginMemberCount;

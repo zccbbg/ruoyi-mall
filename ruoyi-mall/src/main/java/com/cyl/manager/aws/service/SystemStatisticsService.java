@@ -1,8 +1,11 @@
 package com.cyl.manager.aws.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -19,8 +22,10 @@ import com.cyl.manager.ums.domain.MemberCart;
 import com.cyl.manager.ums.mapper.MemberCartMapper;
 import com.cyl.manager.ums.mapper.MemberLogininforMapper;
 import com.cyl.manager.ums.mapper.MemberMapper;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -70,56 +75,24 @@ public class SystemStatisticsService {
      * @param page  分页条件
      * @return 系统数据统计
      */
-    public List<SystemStatistics> selectList(SystemStatisticsQuery query, Pageable page) {
+    public PageImpl<SystemStatistics> selectList(SystemStatisticsQuery query, Pageable page) {
         if (page != null) {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
-        QueryWrapper<SystemStatistics> qw = new QueryWrapper<>();
-        LocalDateTime date = query.getDate();
-        if (date != null) {
-            qw.eq("date", date);
+        LambdaQueryWrapper<SystemStatistics> qw = new LambdaQueryWrapper<>();
+        if (query.getBeginTime() != null && query.getEndTime() != null){
+            qw.ge(SystemStatistics::getDate, query.getBeginTime());
+            qw.lt(SystemStatistics::getDate, query.getEndTime());
         }
-        Integer loginMemberCount = query.getLoginMemberCount();
-        if (loginMemberCount != null) {
-            qw.eq("login_member_count", loginMemberCount);
+        qw.orderByDesc(SystemStatistics::getDate);
+        List<SystemStatistics> statList = systemStatisticsMapper.selectList(qw);
+        long total = ((Page)statList).getTotal();
+        if ((query.getBeginTime() == null && query.getEndTime() == null) || (query.getEndTime() != null && query.getEndTime().isAfter(LocalDateTime.now()))){
+            SystemStatistics stat = this.stat(LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX));
+            statList.add(0, stat);
+            return new PageImpl<>(statList, page, total);
         }
-        Integer registerMemberCount = query.getRegisterMemberCount();
-        if (registerMemberCount != null) {
-            qw.eq("register_member_count", registerMemberCount);
-        }
-        Integer addCartMemberCount = query.getAddCartMemberCount();
-        if (addCartMemberCount != null) {
-            qw.eq("add_cart_member_count", addCartMemberCount);
-        }
-        Integer createOrderMemberCount = query.getCreateOrderMemberCount();
-        if (createOrderMemberCount != null) {
-            qw.eq("create_order_member_count", createOrderMemberCount);
-        }
-        Integer dealMemberCount = query.getDealMemberCount();
-        if (dealMemberCount != null) {
-            qw.eq("deal_member_count", dealMemberCount);
-        }
-        Integer orderCount = query.getOrderCount();
-        if (orderCount != null) {
-            qw.eq("order_count", orderCount);
-        }
-        Integer dealCount = query.getDealCount();
-        if (dealCount != null) {
-            qw.eq("deal_count", dealCount);
-        }
-        BigDecimal dealAmount = query.getDealAmount();
-        if (dealAmount != null) {
-            qw.eq("deal_amount", dealAmount);
-        }
-        Integer aftersaleCount = query.getAftersaleCount();
-        if (aftersaleCount != null) {
-            qw.eq("aftersale_count", aftersaleCount);
-        }
-        BigDecimal aftersaleAmount = query.getAftersaleAmount();
-        if (aftersaleAmount != null) {
-            qw.eq("aftersale_amount", aftersaleAmount);
-        }
-        return systemStatisticsMapper.selectList(qw);
+        return new PageImpl<>(statList, page, total);
     }
 
     /**
@@ -160,12 +133,13 @@ public class SystemStatisticsService {
         //统计售后
         LambdaQueryWrapper<Aftersale> wrapper = new LambdaQueryWrapper<>();
         wrapper.between(Aftersale::getCreateTime, startTime, endTime);
+        wrapper.orderByDesc(Aftersale::getCreateTime);
         List<Aftersale> aftersaleList = aftersaleMapper.selectList(wrapper);
         if (CollectionUtil.isEmpty(aftersaleList)) {
             systemStatistics.setAftersaleCount(0);
             systemStatistics.setAftersaleAmount(BigDecimal.ZERO);
         } else {
-            Map<Long, BigDecimal> map = aftersaleList.stream().collect(Collectors.toMap(Aftersale::getOrderId, Aftersale::getReturnAmount));
+            Map<Long, BigDecimal> map = aftersaleList.stream().collect(Collectors.toMap(Aftersale::getOrderId, Aftersale::getReturnAmount, (v1, v2) -> v1, LinkedHashMap::new));
             systemStatistics.setAftersaleCount(map.values().size());
             systemStatistics.setAftersaleAmount(map.values().stream().reduce(BigDecimal::add).get());
         }

@@ -26,7 +26,7 @@ public class StatisticsJob {
 
     @Async
     @Scheduled(cron = "00 00 3 * * ?")
-    public void cancelOrder(){
+    public void cancelOrder() {
         log.info("【统计昨日系统数据任务开始】");
         LocalDateTime startTime = LocalDateTime.of(LocalDate.now(), LocalTime.MIN).plusDays(-1);
         LocalDateTime endTime = LocalDateTime.of(LocalDate.now(), LocalTime.MAX).plusDays(-1);

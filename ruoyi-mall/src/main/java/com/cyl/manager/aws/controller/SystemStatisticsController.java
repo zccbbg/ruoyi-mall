@@ -46,8 +46,7 @@ public class SystemStatisticsController extends BaseController {
     @PreAuthorize("@ss.hasPermi('aws:systemStatistics:list')")
     @PostMapping("/list")
     public ResponseEntity<Page<SystemStatistics>> list(@RequestBody SystemStatisticsQuery query, Pageable page) {
-        List<SystemStatistics> list = service.selectList(query, page);
-        return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
+        return ResponseEntity.ok(service.selectList(query, page));
     }
 
     @ApiOperation("导出系统数据统计列表")
@@ -55,9 +54,10 @@ public class SystemStatisticsController extends BaseController {
     @Log(title = "系统数据统计", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public ResponseEntity<String> export(SystemStatisticsQuery query) {
-        List<SystemStatistics> list = service.selectList(query, null);
-        ExcelUtil<SystemStatisticsVO> util = new ExcelUtil<>(SystemStatisticsVO.class);
-        return ResponseEntity.ok(util.writeExcel(convert.dos2vos(list), "系统数据统计数据"));
+//        List<SystemStatistics> list = service.selectList(query, null);
+//        ExcelUtil<SystemStatisticsVO> util = new ExcelUtil<>(SystemStatisticsVO.class);
+//        return ResponseEntity.ok(util.writeExcel(convert.dos2vos(list), "系统数据统计数据"));
+        return null;
     }
 
     @ApiOperation("获取系统数据统计详细信息")
