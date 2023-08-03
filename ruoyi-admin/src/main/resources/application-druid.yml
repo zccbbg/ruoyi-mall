@@ -51,6 +51,8 @@ wechat:
     merchantSerialNumber: 微信支付密钥对应的序列号
     apiV3key: 微信支付apiV3key
     notifyUrl: 微信支付回调地址
+    miniProgramAppId: 小程序apppid
+    miniProgramSecret:
 sms:
   enabled: true
   # 阿里云 dysmsapi.aliyuncs.com

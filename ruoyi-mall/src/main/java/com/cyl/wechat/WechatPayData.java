@@ -21,6 +21,9 @@ public class WechatPayData {
     public static String apiV3key;
     public static String notifyUrl;
 
+    public static String miniProgramAppId;
+    public static String miniProgramSecret;
+
     public void setAppId(String appId) {
         WechatPayData.appId = appId;
     }
@@ -47,5 +50,13 @@ public class WechatPayData {
 
     public void setNotifyUrl(String notifyUrl) {
         WechatPayData.notifyUrl = notifyUrl;
+    }
+
+    public void setMiniProgramAppId(String miniProgramAppId) {
+        WechatPayData.miniProgramAppId = miniProgramAppId;
+    }
+
+    public void setMiniProgramSecret(String miniProgramSecret) {
+        WechatPayData.miniProgramSecret = miniProgramSecret;
     }
 }

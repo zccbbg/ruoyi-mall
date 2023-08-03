@@ -6,13 +6,16 @@ import java.util.List;
 
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cyl.config.WechatConfig;
 import com.cyl.external.WechatUtil;
 import com.cyl.external.resp.AccessTokenResp;
 import com.cyl.external.resp.UserInfoResp;
 import com.cyl.h5.pojo.vo.form.WechatLoginForm;
 import com.cyl.manager.ums.convert.MemberWechatConvert;
+import com.cyl.wechat.WechatPayData;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.domain.model.ExtraUserBody;
@@ -23,10 +26,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.cyl.manager.ums.mapper.MemberWechatMapper;
 import com.cyl.manager.ums.domain.MemberWechat;
 import com.cyl.manager.ums.pojo.query.MemberWechatQuery;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * 用户微信信息Service业务层处理
@@ -47,6 +52,10 @@ public class MemberWechatService {
     private ISysUserService userService;
     @Autowired
     private SysLoginService loginService;
+    @Autowired
+    private RestTemplate restTemplate;
+    private static String LOGIN_URL = "https://api.weixin.qq.com/sns/jscode2session?appid=#{APPID}&secret=#{SECRET}&js_code=#{JSCODE}&grant_type=authorization_code";
+
 
     /**
      * 查询用户微信信息
@@ -202,5 +211,23 @@ public class MemberWechatService {
         }
         // 4. 生成token
         return loginService.createToken(u);
+    }
+
+    public JSONObject getSessionId(String code) {
+        String url = LOGIN_URL.replace("#{APPID}", WechatPayData.miniProgramAppId)
+                .replace("#{SECRET}", WechatPayData.miniProgramSecret)
+                .replace("#{JSCODE}", code);
+        log.info("获取openid，url：{}", url);
+        try {
+            ResponseEntity<String> res = restTemplate.getForEntity(url, String.class);
+            String body = res.getBody();
+            if (com.ruoyi.common.utils.StringUtils.isEmpty(body)) {
+                throw new Exception("获取openid出错");
+            }
+            return JSONObject.parseObject(body);
+        } catch (Exception e) {
+            log.error("获取openid报错", e);
+            return null;
+        }
     }
 }
