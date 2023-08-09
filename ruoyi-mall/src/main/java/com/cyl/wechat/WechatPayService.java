@@ -7,12 +7,12 @@ import com.wechat.pay.java.service.payments.jsapi.model.PrepayRequest;
 import com.wechat.pay.java.service.payments.jsapi.model.PrepayResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import org.springframework.stereotype.Service;
+
 
 @Service
 @Slf4j
-@ConditionalOnProperty(prefix = "wechat", name = "enabled", havingValue = "true")
 public class WechatPayService {
 
     @Autowired
@@ -26,9 +26,9 @@ public class WechatPayService {
      * @param openId   用户openid
      * @return  prepay_id
      */
-    public String jsapiPay(String orderNo,String desc,Integer totalAmount,String openId, Long memberId){
+    public String jsapiPay(String orderNo,String desc,Integer totalAmount,String openId, Long memberId,String appId){
         PrepayRequest prepayRequest = new PrepayRequest();
-        prepayRequest.setAppid(WechatPayData.appId);
+        prepayRequest.setAppid(appId);
         prepayRequest.setMchid(WechatPayData.merchantId);
         prepayRequest.setDescription(desc);
         prepayRequest.setOutTradeNo(orderNo);

@@ -192,6 +192,9 @@ public class H5MemberService {
                 memberWechat.setExpiresIn(request.getAuthInfo().getExpires_in());
                 memberWechat.setRefreshToken(request.getAuthInfo().getRefresh_token());
             }
+            if (StringUtils.isNotEmpty(request.getMpOpenId())){
+                memberWechat.setRoutineOpenid(request.getMpOpenId());
+            }
             memberWechat.setCreateTime(optDate);
             memberWechat.setCreateBy(member.getId());
             rows = memberWechatMapper.insert(memberWechat);
@@ -201,6 +204,27 @@ public class H5MemberService {
         }else {
             //校验会员状态
             validateMemberStatus(member);
+            //判断小程序openid是否插入
+            if (StringUtils.isNotEmpty(request.getMpOpenId()) || request.getAuthInfo() != null){
+                QueryWrapper<MemberWechat> queryWrapper = new QueryWrapper();
+                queryWrapper.eq("member_id",member.getId());
+                MemberWechat memberWechat = memberWechatMapper.selectOne(queryWrapper);
+                Boolean update = false;
+                if (StringUtils.isNotEmpty(request.getMpOpenId()) && StringUtils.isEmpty(memberWechat.getRoutineOpenid())) {
+                    memberWechat.setRoutineOpenid(request.getMpOpenId());
+                    update = true;
+                }
+                if (request.getAuthInfo() != null && StringUtils.isEmpty(memberWechat.getOpenid())) {
+                    memberWechat.setOpenid(request.getAuthInfo().getOpenid());
+                    memberWechat.setAccessToken(request.getAuthInfo().getAccess_token());
+                    memberWechat.setExpiresIn(request.getAuthInfo().getExpires_in());
+                    memberWechat.setRefreshToken(request.getAuthInfo().getRefresh_token());
+                    update = true;
+                }
+                if (update){
+                    memberWechatMapper.updateById(memberWechat);
+                }
+            }
         }
 
         return getLoginResponse(member.getId());

@@ -15,4 +15,7 @@ public class OrderPayRequest {
 
     @ApiModelProperty(value = "用户id", hidden = true)
     private Long memberId;
+
+    @ApiModelProperty(value = "微信支付方式 1：公众号  2：小程序")
+    private Integer wechatType = 1;
 }

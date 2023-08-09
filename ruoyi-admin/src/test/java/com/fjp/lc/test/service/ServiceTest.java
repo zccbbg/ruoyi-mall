@@ -12,6 +12,7 @@ import com.cyl.manager.aws.mapper.SystemStatisticsMapper;
 import com.cyl.manager.aws.service.SystemStatisticsService;
 import com.cyl.manager.ums.service.MemberCartService;
 import com.cyl.wechat.WechatAuthService;
+import com.cyl.wechat.WechatPayData;
 import com.cyl.wechat.WechatPayService;
 import com.ruoyi.RuoYiApplication;
 import com.ruoyi.common.config.properties.SmsProperties;
@@ -103,7 +104,7 @@ public class ServiceTest {
 //        String code = "0611P2Ga1D8QCF0CVuJa1qNUJa11P2GL";
 //        WechatUserAuth userToken = wechatAuthService.getUserToken(code);
         String openId="oUA8I6lDdwSfz-EwR4284dU3KOYw";
-        String res = wechatPayService.jsapiPay(UUID.randomUUID().toString().substring(0,30), "测试支付", 1, openId, 22L);
+        String res = wechatPayService.jsapiPay(UUID.randomUUID().toString().substring(0,30), "测试支付", 1, openId, 22L, WechatPayData.appId);
         System.out.println(res);
 
     }

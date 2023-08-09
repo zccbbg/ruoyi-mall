@@ -49,7 +49,7 @@ import com.wechat.pay.java.service.partnerpayments.jsapi.model.Transaction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -96,7 +96,6 @@ public class H5OrderService {
     private OrderOperateHistoryService orderOperateHistoryService;
 
     @Autowired
-    @Lazy
     private WechatPayService wechatPayService;
 
     @Autowired
@@ -496,17 +495,23 @@ public class H5OrderService {
         }
         //请开启微信支付 wechat.enabled=true
         //调用wx的jsapi拿prepayId，返回签名等信息
+        String openId = memberWechat.getOpenid();
+        String appId = WechatPayData.appId;
+        if (2 == req.getWechatType()) {
+            openId = memberWechat.getRoutineOpenid();
+            appId = WechatPayData.miniProgramAppId;
+        }
         String prepayId = wechatPayService.jsapiPay(
                 String.valueOf(req.getPayId()),
                 orderDesc,
                 Integer.valueOf(orderList.stream().map(Order::getPayAmount).
                         reduce(BigDecimal.ZERO, BigDecimal::add).multiply(new BigDecimal(100)).stripTrailingZeros().toPlainString()),
-                memberWechat.getOpenid(),
-                req.getMemberId()
+                openId,
+                req.getMemberId(),
+                appId
         );
         OrderPayResponse response = new OrderPayResponse();
         response.setPayType(2);
-        String appId = WechatPayData.appId;
         String nonceStr = WechatPayUtil.generateNonceStr();
         long timeStamp = WechatPayUtil.getCurrentTimestamp();
         prepayId = "prepay_id=" + prepayId;

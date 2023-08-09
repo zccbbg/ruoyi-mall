@@ -11,4 +11,6 @@ public class H5SmsLoginRequest extends H5LoginRequest {
     private String uuid;
     /** 微信授权信息 */
     private WechatUserAuth authInfo;
+    /** 小程序openid **/
+    private String mpOpenId;
 }
