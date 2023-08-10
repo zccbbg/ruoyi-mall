@@ -1,20 +1,20 @@
 package com.cyl.h5.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.cyl.h5.pojo.dto.H5LoginDTO;
 import com.cyl.h5.pojo.request.RegisterRequest;
 import com.cyl.h5.pojo.response.RegisterResponse;
 import com.cyl.h5.pojo.response.ValidatePhoneResponse;
 import com.cyl.h5.pojo.response.H5LoginResponse;
 import com.cyl.h5.service.H5MemberService;
 import com.cyl.manager.ums.pojo.vo.MemberVO;
-import com.cyl.wechat.WechatAuthService;
-import com.cyl.wechat.response.WechatUserAuth;
-import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.domain.model.LoginMember;
-import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.framework.web.service.TokenService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Base64Utils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +45,15 @@ public class H5MemberController {
     @PostMapping("/account/login")
     public ResponseEntity<H5LoginResponse> accountLogin(@RequestBody String data){
         return ResponseEntity.ok(service.accountLogin(data));
+    }
+
+    @PostMapping("/wechat/login")
+    public ResponseEntity<H5LoginResponse> wechatLogin(String data) throws Exception {
+        if (StringUtils.isEmpty(data)) {
+            return ResponseEntity.ok(null);
+        }
+        H5LoginDTO params = JSON.parseObject(new String(Base64Utils.decodeFromString(data)), H5LoginDTO.class);
+        return ResponseEntity.ok(service.wechatLogin(params));
     }
 
     @ApiOperation("sms登录")

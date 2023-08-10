@@ -3,8 +3,11 @@ package com.cyl.h5.service;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.cyl.config.AESForWeixinGetPhoneNumber;
+import com.cyl.h5.pojo.dto.H5LoginDTO;
 import com.cyl.h5.pojo.request.BindOpenIdRequest;
 import com.cyl.h5.pojo.request.H5AccountLoginRequest;
 import com.cyl.h5.pojo.request.H5SmsLoginRequest;
@@ -328,5 +331,57 @@ public class H5MemberService {
         memberLogininfor.setLoginLocation(AddressUtils.getRealAddressByIP(memberLogininfor.getIpaddr()));
         memberLogininfor.setLoginTime(LocalDateTime.now());
         memberLogininforMapper.insert(memberLogininfor);
+    }
+
+    public H5LoginResponse wechatLogin(H5LoginDTO params) throws Exception {
+        String openId = params.getOpenId();
+        String sessionKey = params.getSessionKey();
+        //解密手机号
+        String mobile = getMobile(sessionKey, params.getKey(), params.getData());
+        if(StringUtils.isEmpty(mobile)) {
+            throw new Exception("登录异常");
+        }
+        Member member = createOrUpdateMember(openId,mobile);
+        return getLoginResponse(member.getId());
+    }
+
+    private Member createOrUpdateMember(String openId,String mobile){
+        //查会员
+        QueryWrapper<Member> qw = new QueryWrapper<>();
+        qw.eq("phone_encrypted", AesCryptoUtils.encrypt(aesKey, mobile));
+        Member member = memberMapper.selectOne(qw);
+        if (member == null){
+            //新会员，注册并登录
+            member = new Member();
+            member.setPhoneEncrypted(AesCryptoUtils.encrypt(aesKey, mobile));
+            member.setPhoneHidden(PhoneUtils.hidePhone(mobile));
+            member.setNickname("用户" + mobile.substring(7,11));
+            member.setStatus(Constants.MEMBER_ACCOUNT_STATUS.NORMAL);
+            member.setGender(0);
+            member.setCreateTime(LocalDateTime.now());
+            int rows = memberMapper.insert(member);
+            if (rows < 1){
+                throw new RuntimeException("注册失败，请重试");
+            }
+            MemberWechat memberWechat = new MemberWechat();
+            memberWechat.setMemberId(member.getId());
+            memberWechat.setRoutineOpenid(openId);
+            memberWechat.setCreateTime(LocalDateTime.now());
+            memberWechat.setCreateBy(member.getId());
+            rows = memberWechatMapper.insert(memberWechat);
+            if (rows < 1){
+                throw new RuntimeException("注册失败，请重试");
+            }
+        }
+        return member;
+    }
+
+    private String getMobile(String sessionKey, String key, String data) {
+        AESForWeixinGetPhoneNumber aes = new AESForWeixinGetPhoneNumber(data, sessionKey, key);
+        JSONObject decrypt = aes.decrypt();
+        if (decrypt != null) {
+            return decrypt.getString("phoneNumber");
+        }
+        return null;
     }
 }

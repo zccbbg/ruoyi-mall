@@ -472,7 +472,7 @@ public class H5OrderService {
         //保存微信支付历史
         LocalDateTime optDate = LocalDateTime.now();
         QueryWrapper<WechatPaymentHistory> wxPaymentQw = new QueryWrapper<>();
-        wxPaymentQw.eq("order_id", orderList.get(0).getId());
+        wxPaymentQw.eq("order_id", orderList.get(0).getPayId());
         wxPaymentQw.eq("op_type", Constants.PaymentOpType.PAY);
         WechatPaymentHistory wechatPaymentHistory = wechatPaymentHistoryMapper.selectOne(wxPaymentQw);
         if (wechatPaymentHistory == null){

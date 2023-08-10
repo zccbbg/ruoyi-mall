@@ -25,6 +25,7 @@ public class H5MemberInterceptor extends HandlerInterceptorAdapter {
 
   private static String[] WHITE_PATHS = {
           "/h5/sms/login",
+          "/h5/wechat/login",
           "/h5/account/login",
           "/h5/register",
           "/h5/validate"

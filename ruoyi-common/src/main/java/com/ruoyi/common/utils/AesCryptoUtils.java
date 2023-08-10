@@ -10,6 +10,7 @@ import cn.hutool.crypto.symmetric.AES;
 public class AesCryptoUtils {
 
     public static String encrypt(String key, String content){
+        SecureUtil.disableBouncyCastle();
         if (StringUtils.isBlank(key) || StringUtils.isBlank(content)){
             throw new RuntimeException("错误");
         }
@@ -19,6 +20,7 @@ public class AesCryptoUtils {
     }
 
     public static String decrypt(String key, String content){
+        SecureUtil.disableBouncyCastle();
         if (StringUtils.isBlank(key) || StringUtils.isBlank(content)){
             throw new RuntimeException("错误");
         }
