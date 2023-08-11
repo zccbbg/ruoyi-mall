@@ -17,7 +17,7 @@
 ## 在线体验
 ## 在线体验
 ### 管理后台演示地址
-mall.ichengle.top
+http://mall.ichengle.top
 ### 小程序和h5
 <img src="doc/小程序演示.jpg" width="200px">
 <img src="doc/h5演示.png" width="200px">
