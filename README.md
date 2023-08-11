@@ -15,10 +15,13 @@
 |   h5 uniapp    | https://gitee.com/zccbbg/ruoyi-mall-uniapp | https://github.com/zccbbg/ruoyi-mall-uniapp  |
 
 ## 在线体验
-- 演示地址：http://mall.ichengle.top/
-- 目前商品模块基本完成，其他模块正在开发中。
-- 陆陆续续收到一些打赏，为了更好的体验已用于演示服务器升级。谢谢各位小伙伴。
-  ![img.png](doc/微信h5演示.png)
+## 在线体验
+### 管理后台演示地址
+http://mall.ichengle.top
+### 小程序和h5
+<img src="doc/小程序演示.jpg" width="200px">
+<img src="doc/h5演示.png" width="200px">
+
 
 ## 若依技术专栏
 - 常见问题：https://blog.csdn.net/qq_27575627/category_12336113.html
