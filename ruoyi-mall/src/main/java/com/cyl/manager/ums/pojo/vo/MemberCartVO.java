@@ -22,6 +22,8 @@ public class MemberCartVO extends BaseAudit {
    /** 用户ID */
     @Excel(name = "用户ID")
     private Long memberId;
+    private String nickname;
+    private String mark;
    /** 商品ID */
     @Excel(name = "商品ID")
     private Long productId;

@@ -80,6 +80,18 @@ public class MemberService {
             qw.ge("create_time", query.getBeginTime());
             qw.lt("create_time", query.getEndTime());
         }
+        if (query.getHasMark() != null) {
+            switch (query.getHasMark()) {
+                case 0:
+                    qw.isNull("mark").or().eq("mark","");
+                    break;
+                case 1:
+                    qw.isNotNull("mark").ne("mark","");
+                    break;
+                default:
+                    break;
+            }
+        }
         if (query.getStatus() != null){
             qw.eq("status", query.getStatus());
         }
@@ -105,6 +117,14 @@ public class MemberService {
      */
     public int update(Member member) {
         return memberMapper.updateById(member);
+    }
+
+    public int updateMark(Member member) {
+        UpdateWrapper<Member> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.set("mark",member.getMark())
+                .set("update_time",LocalDateTime.now())
+                .eq("id",member.getId());
+        return memberMapper.update(null,updateWrapper);
     }
 
     /**

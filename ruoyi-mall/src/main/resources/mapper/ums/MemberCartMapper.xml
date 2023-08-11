@@ -52,7 +52,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.sp_data,
         a.quantity,
         a.create_time,
-        b.phone_hidden
+        b.phone_hidden,
+        b.nickname,
+        b.mark
         from ums_member_cart a
         inner join ums_member b on a.member_id=b.id
         <where>

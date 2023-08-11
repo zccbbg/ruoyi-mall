@@ -64,7 +64,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.handle_note   note,
         a.handle_man,
         c.nickname      nickName,
-        c.phone_hidden         phone
+        c.phone_hidden         phone,
+        c.mark
         FROM oms_aftersale a
         left join ums_member c on a.member_id = c.id
         <where>

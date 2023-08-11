@@ -24,6 +24,9 @@ public class MemberQuery {
     @ApiModelProperty("手机号码 精确匹配")
     private String phone;
 
+    @ApiModelProperty("有无备注 1：有备注  0：无备注")
+    private Integer hasMark;
+
     @ApiModelProperty("用户备注 精确匹配")
     private String mark;
 

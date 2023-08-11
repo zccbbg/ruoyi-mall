@@ -92,4 +92,6 @@ public class ManagerOrderVO {
     private String receiverDistrict;
 
     private String receiverDetailAddress;
+
+    private String mark;
 }

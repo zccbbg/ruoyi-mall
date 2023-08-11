@@ -75,4 +75,6 @@ import java.util.List;
 
      @ApiModelProperty(name = "handleMan", value = "处理人员")
      private String handleMan;
+
+     private String mark;
  }

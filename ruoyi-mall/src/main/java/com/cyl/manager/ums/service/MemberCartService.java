@@ -14,6 +14,7 @@ import com.cyl.manager.ums.convert.MemberCartConvert;
 import com.cyl.manager.ums.domain.Member;
 import com.cyl.manager.ums.domain.MemberCart;
 import com.cyl.manager.ums.mapper.MemberCartMapper;
+import com.cyl.manager.ums.mapper.MemberMapper;
 import com.cyl.manager.ums.pojo.query.MemberCartQuery;
 import com.cyl.manager.ums.pojo.vo.MemberCartVO;
 import com.cyl.manager.ums.pojo.vo.form.UpdateMemberCartForm;
@@ -48,6 +49,8 @@ public class MemberCartService {
     private MemberCartMapper memberCartMapper;
     @Autowired
     private SkuMapper skuMapper;
+    @Autowired
+    private MemberMapper memberMapper;
     @Autowired
     private ProductMapper productMapper;
     @Autowired

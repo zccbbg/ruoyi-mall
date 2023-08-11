@@ -78,6 +78,14 @@ public class MemberController extends BaseController {
         return ResponseEntity.ok(service.update(member));
     }
 
+    @ApiOperation("修改会员备注信息")
+    @PreAuthorize("@ss.hasPermi('ums:member:edit')")
+    @Log(title = "会员备注信息", businessType = BusinessType.UPDATE)
+    @PostMapping("/mark/update")
+    public ResponseEntity<Integer> editMark(@RequestBody Member member) {
+        return ResponseEntity.ok(service.updateMark(member));
+    }
+
     @ApiOperation("删除会员信息")
     @PreAuthorize("@ss.hasPermi('ums:member:remove')")
     @Log(title = "会员信息", businessType = BusinessType.DELETE)

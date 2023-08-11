@@ -120,7 +120,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 --         b.product_id       productId,
 --         b.product_name     productName,
         c.phone_hidden            userPhone,
-        c.nickname         nickName
+        c.nickname         nickName,
+        c.mark
         from oms_order a
 --         left join oms_order_item b on a.id = b.order_id
         left join ums_member c on a.member_id = c.id
