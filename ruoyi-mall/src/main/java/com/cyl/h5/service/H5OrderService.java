@@ -50,6 +50,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -96,6 +97,7 @@ public class H5OrderService {
     private OrderOperateHistoryService orderOperateHistoryService;
 
     @Autowired
+    @Lazy
     private WechatPayService wechatPayService;
 
     @Autowired

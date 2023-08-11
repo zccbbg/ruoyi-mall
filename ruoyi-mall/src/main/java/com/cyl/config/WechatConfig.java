@@ -9,6 +9,7 @@ import org.springframework.context.annotation.DependsOn;
 
 @Configuration
 @DependsOn("WechatPayData")
+@ConditionalOnProperty(prefix = "wechat", name = "enabled", havingValue = "true")
 public class WechatConfig {
 
     @Bean
