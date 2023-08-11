@@ -372,6 +372,14 @@ public class H5MemberService {
             if (rows < 1){
                 throw new RuntimeException("注册失败，请重试");
             }
+        } else {
+            QueryWrapper<MemberWechat> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("member_id", member.getId());
+            MemberWechat memberWechat = memberWechatMapper.selectOne(queryWrapper);
+            if (StringUtils.isEmpty(memberWechat.getRoutineOpenid())) {
+                memberWechat.setRoutineOpenid(openId);
+                memberWechatMapper.updateById(memberWechat);
+            }
         }
         return member;
     }
