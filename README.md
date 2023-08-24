@@ -8,13 +8,17 @@
 * 支持加载动态权限菜单，多方式轻松权限控制。
 * 高效率开发，使用代码生成器可以一键生成前后端代码。
 
+## 本地运行文档
+https://docs.ichengle.top/mall/run.html
+## 系统部署文档
+https://docs.ichengle.top/mall/ops.html
+
 ## 项目地址
 |                | gitee                                   | github                                       |
 |:--------------:|:----------------------------------------|:---------------------------------------------|
 | 管理端vue element | https://gitee.com/zccbbg/ruoyi-mall-vue | https://github.com/zccbbg/ruoyi-mall-vue     |
 |   h5 uniapp    | https://gitee.com/zccbbg/ruoyi-mall-uniapp | https://github.com/zccbbg/ruoyi-mall-uniapp  |
 
-## 在线体验
 ## 在线体验
 ### 管理后台演示地址
 http://mall.ichengle.top
@@ -36,28 +40,6 @@ http://mall.ichengle.top
 4. OMS订单管理：
 5. SMS营销管理：
 6. CMS内容管理：
-
-## 本地安装
-### 基本环境
-1、JDK：8+
-2、Redis 3.0+
-3、Maven 3.0+
-4、MYSQL 5.7+
-5、Node v8+
-
-### 后台系统工程（JAVA端）
-1. 导入数据库，配置开发环境数据库信息及其redis信息，我设置了git ignore，请自行创建application-dev.yml文件，文件路径如下：  
-   ![img.png](doc/img.png)  
-   ![img.png](doc/img2.png)  
-   ![img.png](doc/img3.png)  
-2. 在父级pom.xml输入命令 mvn clean install 或者用idea工具操作  
-   ![img.png](doc/img4.png)  
-3.启动程序，启动程序路径如下  
-   ![img.png](doc/img5.png)  
-
-## 关于我们
-* 开发团队成立5年，我们前端开发、后端架构，有一颗热爱开源的心，致力于打造企业级的通用产品设计UI体系让项目 或者更直观，更高效、更简单，未来将持续关注UI交互，持续推出高质量的交互产品。
-* 这五年我主要做isv对接淘宝、拼多多、抖音、美团等平台的订单处理应用，日处理订单300w条，因为要熟悉业务也开过淘宝和拼多多店铺运营了一个网易严选的品牌。我们的公众号会陆续更新一些我一边撸代码一边做客服的经历。也会更新一些我的读书笔记以及编程、创业、生活中踩坑的文章。另外还会开放一些米哈游、博世、企查查、同程、阿里、京东、拼多多等大厂、中厂或外企的内推岗位！
 
 ## 交流群/技术支持
 |                    公众号                     |
