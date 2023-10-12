@@ -28,4 +28,6 @@ public class SkuVO extends BaseAudit {
    /** 商品销售属性，json格式 */
     @Excel(name = "商品销售属性，json格式")
     private String spData;
+    @Excel(name = "库存数")
+    private Integer stock;
 }
