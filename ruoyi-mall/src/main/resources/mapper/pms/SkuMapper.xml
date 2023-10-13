@@ -24,6 +24,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <sql id="selectSkuVo">
         select id, product_id, out_sku_id, price, pic, sp_data, create_by, create_time, update_by, update_time   from pms_sku
     </sql>
+    <update id="updateStockById">
+        update
+            pms_sku
+        set
+            stock = stock - #{quantity},
+            update_time = #{optDate}
+        where id = #{skuId}
+    </update>
 
     <select id="selectByEntity" parameterType="Sku" resultMap="SkuResult">
         <include refid="selectSkuVo"/>

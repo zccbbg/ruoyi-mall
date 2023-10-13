@@ -19,6 +19,7 @@ import com.cyl.manager.oms.mapper.OrderOperateHistoryMapper;
 import com.cyl.manager.oms.pojo.request.DealWithAftersaleRequest;
 import com.cyl.manager.oms.pojo.request.ManagerAftersaleOrderRequest;
 import com.cyl.manager.oms.pojo.vo.*;
+import com.cyl.manager.pms.mapper.SkuMapper;
 import com.cyl.manager.ums.domain.Member;
 import com.cyl.manager.ums.mapper.MemberMapper;
 import com.github.pagehelper.PageHelper;
@@ -58,6 +59,8 @@ public class AftersaleService {
 
     @Autowired
     private OrderOperateHistoryConvert historyConvert;
+    @Autowired
+    private SkuMapper skuMapper;
 
     /**
      * 查询订单售后
@@ -274,8 +277,17 @@ public class AftersaleService {
             orderWrapper.set("aftersale_status", OrderRefundStatus.NO_REFUND.getType());
             optHistory.setOrderStatus(14);
         }else if (ifAgree){
-            aftersaleWrapper.set("status", AftersaleStatus.WAIT.getType());
-            orderWrapper.set("aftersale_status", OrderRefundStatus.WAIT.getType());
+            //如果是未发货的情况下，直接增加库存
+            if (order.getStatus() == 1) {
+                OrderItem orderItem = orderItemMapper.selectOne(new QueryWrapper<OrderItem>().eq("order_id", order.getId()));
+                skuMapper.updateStockById(orderItem.getSkuId(),LocalDateTime.now(),-1*orderItem.getQuantity());
+                //todo 微信直接退款
+                aftersaleWrapper.set("status", AftersaleStatus.SUCCESS.getType());
+                orderWrapper.set("aftersale_status", OrderRefundStatus.SUCCESS.getType());
+            } else {
+                aftersaleWrapper.set("status", AftersaleStatus.WAIT.getType());
+                orderWrapper.set("aftersale_status", OrderRefundStatus.WAIT.getType());
+            }
             optHistory.setOrderStatus(12);
         }
         int rows = aftersaleMapper.update(null, aftersaleWrapper);
