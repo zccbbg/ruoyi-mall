@@ -2,7 +2,10 @@ package com.cyl.manager.pms.service;
 
 import java.util.*;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyl.h5.pojo.vo.ProductDetail;
@@ -12,6 +15,8 @@ import com.cyl.manager.pms.mapper.BrandMapper;
 import com.cyl.manager.pms.mapper.SkuMapper;
 import com.cyl.manager.pms.pojo.vo.ProductVO;
 import com.github.pagehelper.PageHelper;
+import com.ruoyi.common.utils.SecurityUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author zcc
  */
 @Service
+@Slf4j
 public class ProductService {
     @Autowired
     private ProductMapper productMapper;
@@ -123,18 +129,52 @@ public class ProductService {
      */
     @Transactional
     public int update(ProductVO productVO) {
+        Product dbProduct = productMapper.selectById(productVO.getId());
+        List<Long> idList = productVO.getSkuList().stream().filter(it -> it.getId() != null).map(it -> it.getId()).collect(Collectors.toList());
+        if (dbProduct == null) {
+            return 0;
+        }
+        Long userId = SecurityUtils.getUserId();
         Product product = convert.vo2do(productVO);
         List<Sku> skuList = productVO.getSkuList();
+        product.setUpdateBy(userId);
+        product.setUpdateTime(LocalDateTime.now());
         productMapper.updateById(product);
+        //查找库中所有的sku
         Map<String,Object> map = new HashMap<>();
         map.put("product_id", product.getId());
-        skuMapper.deleteByMap(map);
-        if(skuList!=null){
-            skuList.forEach(sku -> {
+        Map<Long, Sku> skuMap = skuMapper.selectByMap(map).stream().collect(Collectors.toMap(it -> it.getId(), it -> it));
+        //针对已有的进行编辑
+        List<Sku> updateList = productVO.getSkuList().stream().filter(it -> it.getId() != null).collect(Collectors.toList());
+        if (!CollectionUtil.isEmpty(updateList)) {
+            log.info("共有{}个sku需要修改，{}，productId：{}",updateList.size(), JSONUtil.toJsonStr(updateList),productVO.getId());
+            updateList.forEach(it->{
+                Sku sku = skuMap.get(it.getId());
+                sku.setUpdateBy(SecurityUtils.getUserId());
+                sku.setUpdateTime(LocalDateTime.now());
+                sku.setPrice(it.getPrice());
+                sku.setSpData(it.getSpData());
+                sku.setPic(it.getPic());
+                sku.setOutSkuId(it.getOutSkuId());
+                sku.setStock(it.getStock());
+                skuMapper.updateById(sku);
+            });
+        }
+        //针对没有的进行新增
+        List<Sku> addList = productVO.getSkuList().stream().filter(it -> it.getId() == null).collect(Collectors.toList());
+        if (!CollectionUtil.isEmpty(addList)) {
+            log.info("共有{}个sku需要新增，{}，productId：{}",addList.size(), JSONUtil.toJsonStr(addList),productVO.getId());
+            addList.forEach(sku -> {
                 sku.setProductId(product.getId());
                 sku.setCreateTime(LocalDateTime.now());
                 skuMapper.insert(sku);
             });
+        }
+        //删除
+        List<Long> deleteIds = skuMap.keySet().stream().filter(it -> !idList.contains(it)).collect(Collectors.toList());
+        if (!CollectionUtil.isEmpty(deleteIds)) {
+            log.info("共有{}个sku需要删除，{}，productId：{}",deleteIds.size(), JSONUtil.toJsonStr(deleteIds),productVO.getId());
+            skuMapper.deleteBatchIds(deleteIds);
         }
         return 1;
     }

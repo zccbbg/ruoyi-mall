@@ -62,6 +62,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -159,6 +160,9 @@ public class H5OrderService {
             if (Constants.PublishStatus.UNDERCARRIAGE.equals(product.getPublishStatus())){
                 throw new RuntimeException("商品" + product.getName() + "已下架");
             }
+            if (sku.getStock() < skuQuantityMap.get(sku.getId())) {
+                throw new RuntimeException("库存不足");
+            }
             productTotalAmount = productTotalAmount.add(sku.getPrice().multiply(BigDecimal.valueOf(skuQuantityMap.get(sku.getId()))));
             orderTotalAmount = orderTotalAmount.add(sku.getPrice().multiply(BigDecimal.valueOf(skuQuantityMap.get(sku.getId()))));
             dto.setSku(sku);
@@ -206,6 +210,10 @@ public class H5OrderService {
         }
         // 保存orderItem
         orderItemService.saveOrderItem(member, optTime, orderId, skuList);
+        skuList.forEach(item -> {
+            //减少sku的库存
+            skuMapper.updateStockById(item.getSkuId(),LocalDateTime.now(),item.getQuantity());
+        });
         // 保存订单操作记录
         OrderOperateHistory orderOperateHistory = new OrderOperateHistory();
         orderOperateHistory.setOrderId(orderId);
@@ -261,6 +269,9 @@ public class H5OrderService {
             }
             if (Constants.PublishStatus.UNDERCARRIAGE.equals(product.getPublishStatus())){
                 throw new RuntimeException("商品" + product.getName() + "已下架");
+            }
+            if (sku.getStock() < quantityMap.get(sku.getId())) {
+                throw new RuntimeException("库存不足");
             }
             BigDecimal addAmount = sku.getPrice().multiply(BigDecimal.valueOf(dto.getQuantity()));
             //由于目前没有运费等数据，暂时订单总金额=商品总金额了
@@ -415,6 +426,13 @@ public class H5OrderService {
         if (orderList.size() < request.getIdList().size()){
             throw new RuntimeException("未查询到订单信息");
         }
+        //查orderItem
+        QueryWrapper<OrderItem> qw = new QueryWrapper<>();
+        qw.in("order_id", request.getIdList());
+        List<OrderItem> orderItem = orderItemMapper.selectList(qw);
+        if (CollectionUtil.isEmpty(orderItem)) {
+            throw new RuntimeException("未查询到订单信息");
+        }
         long count = orderList.stream().filter(it -> !Constants.H5OrderStatus.UN_PAY.equals(it.getStatus())).count();
         if (count > 0){
             throw new RuntimeException("订单状态已更新，请刷新页面");
@@ -434,12 +452,19 @@ public class H5OrderService {
             history.setUpdateBy(userId);
             history.setUpdateTime(optDate);
             addHistoryList.add(history);
+
         });
         //取消订单
         int rows = orderMapper.cancelBatch(orderList);
         if (rows < 1){
             throw new RuntimeException("更改订单状态失败");
         }
+        orderItem.stream().collect(Collectors.groupingBy(it->it.getSkuId())).forEach((k,v)->{
+            AtomicReference<Integer> totalCount = new AtomicReference<>(0);
+            v.forEach(it-> totalCount.updateAndGet(v1 -> v1 + it.getQuantity()));
+            skuMapper.updateStockById(k, optDate, -1 * totalCount.get());
+        });
+
         //创建订单操作记录
         boolean flag = orderOperateHistoryService.saveBatch(addHistoryList);
         if (!flag){

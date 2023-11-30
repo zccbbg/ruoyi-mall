@@ -1,8 +1,10 @@
 package com.cyl.manager.pms.mapper;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyl.manager.pms.domain.Sku;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * sku信息Mapper接口
@@ -17,4 +19,6 @@ public interface SkuMapper extends BaseMapper<Sku> {
      * @return sku信息集合
      */
     List<Sku> selectByEntity(Sku sku);
+
+    int updateStockById(@Param("skuId")Long skuId, @Param("optDate")LocalDateTime optDate, @Param("quantity")Integer quantity);
 }

@@ -41,4 +41,8 @@ public class Sku extends BaseAudit {
     @Excel(name = "商品销售属性，json格式")
     private String spData;
 
+    @ApiModelProperty("库存数")
+    @Excel(name = "库存数")
+    private Integer stock;
+
 }

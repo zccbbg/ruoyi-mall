@@ -16950,6 +16950,8 @@ CREATE TABLE `pms_sku`  (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 399 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'sku信息' ROW_FORMAT = Dynamic;
 
+ALTER TABLE `pms_sku`
+    ADD COLUMN `stock` int(11) NULL COMMENT '库存' AFTER `pic`;
 -- ----------------------------
 -- Table structure for pms_sku_snapshot
 -- ----------------------------
