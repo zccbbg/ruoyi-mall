@@ -8,6 +8,8 @@
 * 支持加载动态权限菜单，多方式轻松权限控制。
 * 高效率开发，使用代码生成器可以一键生成前后端代码。
 
+## B站讲解视频
+https://www.bilibili.com/video/BV16N4y1d7MM
 ## 本地运行文档
 https://docs.ichengle.top/mall/run.html
 ## 系统部署文档
