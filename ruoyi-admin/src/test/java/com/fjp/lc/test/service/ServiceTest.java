@@ -8,8 +8,6 @@ import cn.hutool.crypto.symmetric.AES;
 import com.cyl.h5.pojo.dto.PayNotifyMessageDTO;
 import com.cyl.h5.service.H5OrderService;
 import com.cyl.manager.ums.service.MemberCartService;
-import com.cyl.wechat.WechatAuthService;
-import com.cyl.wechat.WechatPayService;
 import com.ruoyi.RuoYiApplication;
 import com.ruoyi.common.config.properties.SmsProperties;
 import com.ruoyi.common.core.sms.AliyunSmsTemplate;
@@ -90,11 +88,6 @@ public class ServiceTest {
         long id = snowflake.nextId();
         System.out.println("id:" + id);
     }
-
-    @Autowired
-    private WechatPayService wechatPayService;
-    @Autowired
-    private WechatAuthService wechatAuthService;
 
     @Autowired
     private H5OrderService h5OrderService;
