@@ -7,17 +7,14 @@ import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.symmetric.AES;
 import com.cyl.h5.pojo.dto.PayNotifyMessageDTO;
 import com.cyl.h5.service.H5OrderService;
-import com.cyl.manager.aws.domain.SystemStatistics;
-import com.cyl.manager.aws.mapper.SystemStatisticsMapper;
-import com.cyl.manager.aws.service.SystemStatisticsService;
 import com.cyl.manager.ums.service.MemberCartService;
 import com.cyl.wechat.WechatAuthService;
-import com.cyl.wechat.WechatPayData;
 import com.cyl.wechat.WechatPayService;
 import com.ruoyi.RuoYiApplication;
 import com.ruoyi.common.config.properties.SmsProperties;
 import com.ruoyi.common.core.sms.AliyunSmsTemplate;
 import com.ruoyi.common.core.sms.SmsTemplate;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.wechat.pay.java.service.partnerpayments.jsapi.model.Transaction;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -29,19 +26,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = RuoYiApplication.class)
 @ActiveProfiles("dev")
 @Slf4j
 public class ServiceTest {
+
     @Autowired
     private MemberCartService memberCartService;
 
@@ -51,16 +45,18 @@ public class ServiceTest {
     @Value("${aes.key}")
     private String key;
 
-    @Autowired
-    private SystemStatisticsService systemStatisticsService;
-
-    @Autowired
-    private SystemStatisticsMapper systemStatisticsMapper;
 
     @Test
     public void test1() {
         memberCartService.mineCartNum();
     }
+
+    @Test
+    public void encryptPassword() {
+        String newPwd = "admin123";
+        System.out.println("新密码："+ SecurityUtils.encryptPassword(newPwd));
+    }
+
     @Test
     public void test2(){
         System.out.println(smsProperties);
@@ -99,15 +95,6 @@ public class ServiceTest {
     private WechatPayService wechatPayService;
     @Autowired
     private WechatAuthService wechatAuthService;
-    @Test
-    public void test5(){
-//        String code = "0611P2Ga1D8QCF0CVuJa1qNUJa11P2GL";
-//        WechatUserAuth userToken = wechatAuthService.getUserToken(code);
-        String openId="oUA8I6lDdwSfz-EwR4284dU3KOYw";
-        String res = wechatPayService.jsapiPay(UUID.randomUUID().toString().substring(0,30), "测试支付", 1, openId, 22L, WechatPayData.appId);
-        System.out.println(res);
-
-    }
 
     @Autowired
     private H5OrderService h5OrderService;
@@ -122,13 +109,5 @@ public class ServiceTest {
         messageDTO.setTradeNo("");
         ResponseEntity<String> stringResponseEntity = h5OrderService.payCallBack(messageDTO);
         System.out.println(stringResponseEntity.getBody());
-    }
-
-    @Test
-    public void test7(){
-        LocalDateTime startTime = LocalDateTime.of(LocalDate.now(), LocalTime.MIN).plusDays(-1);
-        LocalDateTime endTime = LocalDateTime.of(LocalDate.now(), LocalTime.MAX).plusDays(-1);
-        SystemStatistics data = systemStatisticsService.stat(startTime, endTime);
-        systemStatisticsMapper.insert(data);
     }
 }
