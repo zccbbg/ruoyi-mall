@@ -14,6 +14,8 @@ https://www.bilibili.com/video/BV16N4y1d7MM
 https://docs.ichengle.top/mall/run.html
 ## 系统部署文档
 https://docs.ichengle.top/mall/ops.html
+## 特别注意
+jdk请选择1.8~11之间的，不然mybaties会报错
 
 ## 项目地址
 |                | gitee                                   | github                                       |

@@ -17747,10 +17747,10 @@ CREATE TABLE `sys_user`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 125 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of sys_user
+-- Records of sys_user admin用户密码：admin123
 -- ----------------------------
-INSERT INTO `sys_user` VALUES (1, 103, 'admin', '若依', '00', 'ry@163.com', '15888888888', '1', '', '$2a$10$h0bEO.284nSspPALeMTFv.j9JbWd25nCHkNzOyFLBnXsW1HMukp2a', '0', '0', '153.37.195.162', '2023-08-16 02:16:35', 1, '2022-06-17 17:20:19.000', NULL, '2023-08-16 10:16:35.000', '管理员');
-INSERT INTO `sys_user` VALUES (115, 100, 'cyl', 'mall', '00', '', '', '0', '', '$2a$10$h0bEO.284nSspPALeMTFv.j9JbWd25nCHkNzOyFLBnXsW1HMukp2a', '0', '2', '127.0.0.1', '2022-11-17 10:18:24', 1, '2022-11-04 17:06:20.000', 1, '2023-01-09 14:08:29.000', NULL);
+INSERT INTO `sys_user` VALUES (1, 103, 'admin', '若依', '00', 'ry@163.com', '15888888888', '1', '', '$2a$10$QuYyT7spyaC5gXaYNoHtMOu/51WRLHnQSXRsK0kgipTudLgh2MI.K', '0', '0', '153.37.195.162', '2023-08-16 02:16:35', 1, '2022-06-17 17:20:19.000', NULL, '2023-08-16 10:16:35.000', '管理员');
+INSERT INTO `sys_user` VALUES (115, 100, 'cyl', 'mall', '00', '', '', '0', '', '$2a$10$QuYyT7spyaC5gXaYNoHtMOu/51WRLHnQSXRsK0kgipTudLgh2MI.K', '0', '2', '127.0.0.1', '2022-11-17 10:18:24', 1, '2022-11-04 17:06:20.000', 1, '2023-01-09 14:08:29.000', NULL);
 -- ----------------------------
 -- Table structure for sys_user_post
 -- ----------------------------
