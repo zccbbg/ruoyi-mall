@@ -10,6 +10,7 @@
 
 ## B站讲解视频
 https://www.bilibili.com/video/BV16N4y1d7MM
+对若依框架不了解，不知道怎么部署、修改密码等操作的，请参考：https://www.bilibili.com/video/BV1Fi4y1q74p/
 ## 本地运行文档
 https://docs.ichengle.top/mall/run.html
 ## 系统部署文档
