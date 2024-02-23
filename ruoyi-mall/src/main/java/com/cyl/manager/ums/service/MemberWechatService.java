@@ -14,7 +14,10 @@ import com.cyl.external.WechatUtil;
 import com.cyl.external.resp.AccessTokenResp;
 import com.cyl.external.resp.UserInfoResp;
 import com.cyl.h5.pojo.vo.form.WechatLoginForm;
+import com.cyl.h5.service.H5MemberService;
 import com.cyl.manager.ums.convert.MemberWechatConvert;
+import com.cyl.manager.ums.domain.Member;
+import com.cyl.manager.ums.mapper.MemberMapper;
 import com.cyl.wechat.WechatPayData;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.core.domain.entity.SysUser;
@@ -54,6 +57,8 @@ public class MemberWechatService {
     private SysLoginService loginService;
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private H5MemberService memberService;
     private static String LOGIN_URL = "https://api.weixin.qq.com/sns/jscode2session?appid=#{APPID}&secret=#{SECRET}&js_code=#{JSCODE}&grant_type=authorization_code";
 
 
@@ -229,5 +234,17 @@ public class MemberWechatService {
             log.error("获取openid报错", e);
             return null;
         }
+    }
+
+    public String getToken(String openId) {
+        //判断openid是否存在
+        QueryWrapper<MemberWechat> qw = new QueryWrapper<>();
+        qw.eq("routine_openid", openId);
+        MemberWechat memberWechat = memberWechatMapper.selectOne(qw);
+        if (memberWechat == null) {
+            return null;
+        }
+        Member member = memberService.selectById(memberWechat.getMemberId());
+        return memberService.getLoginResponse(member.getId()).getToken();
     }
 }

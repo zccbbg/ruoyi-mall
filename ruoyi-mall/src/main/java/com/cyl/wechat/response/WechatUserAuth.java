@@ -10,4 +10,6 @@ public class WechatUserAuth {
   private String refresh_token;
   private String openid;
   private String scope;
+  //登录的token
+  private String token;
 }

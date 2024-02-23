@@ -55,10 +55,13 @@ public class WechatController2 {
         if (object != null) {
             String openId = object.getString("openid");
             String sessionId = object.getString("session_key");
+            JSONObject obj = new JSONObject();
+            obj.put("openId", openId);
+            obj.put("sessionId", sessionId);
             Map map = new HashMap();
-            map.put("openId", openId);
-            map.put("sessionId", sessionId);
-            return AjaxResult.successData(Base64Utils.encodeToString(JSON.toJSONString(map).getBytes()));
+            map.put("data", Base64Utils.encodeToString(JSON.toJSONString(obj).getBytes()));
+            map.put("token", memberWechatService.getToken(openId));
+            return AjaxResult.successData(map);
         }
         return AjaxResult.success(null);
     }

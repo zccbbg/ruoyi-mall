@@ -266,7 +266,7 @@ public class H5MemberService {
      * @param memberId 登录会员id
      * @return 结果
      */
-    private H5LoginResponse getLoginResponse(Long memberId){
+    public H5LoginResponse getLoginResponse(Long memberId){
         LoginMember loginMember = new LoginMember();
         loginMember.setMemberId(memberId);
         String token = tokenService.createMemberToken(loginMember);
@@ -296,6 +296,15 @@ public class H5MemberService {
             log.error("微信授权失败");
             throw new RuntimeException("授权失败，请重试");
         }
+        //判断openid是否存在
+        QueryWrapper<MemberWechat> qw = new QueryWrapper<>();
+        qw.eq("openid", userToken.getOpenid());
+        MemberWechat memberWechat = memberWechatMapper.selectOne(qw);
+        if (memberWechat == null) {
+            return userToken;
+        }
+        Member member = memberMapper.selectById(memberWechat.getMemberId());
+        userToken.setToken(getLoginResponse(member.getId()).getToken());
         return userToken;
     }
 
@@ -391,5 +400,9 @@ public class H5MemberService {
             return decrypt.getString("phoneNumber");
         }
         return null;
+    }
+
+    public Member selectById(Long memberId) {
+        return memberMapper.selectById(memberId);
     }
 }
