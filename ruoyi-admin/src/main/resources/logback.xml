@@ -27,7 +27,7 @@
 		</encoder>
 		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <!-- 过滤的级别 -->
-            <level>INFO</level>
+            <level>DEBUG</level>
         </filter>
 	</appender>
 	
