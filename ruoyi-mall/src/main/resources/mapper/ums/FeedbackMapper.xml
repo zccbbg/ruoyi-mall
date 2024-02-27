@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.manager.ums.mapper.FeedbackMapper">
+    
+    <resultMap type="Feedback" id="FeedbackResult">
+        <result property="id" column="id"/>
+        <result property="type" column="type"/>
+        <result property="content" column="content"/>
+        <result property="images" column="images"/>
+        <result property="phone" column="phone"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="handleStatus" column="handle_status"/>
+        <result property="remark" column="remark"/>
+        <result property="handleTime" column="handle_time"/>
+    </resultMap>
+
+    <sql id="selectFeedbackVo">
+        select id, type, content, images, phone, create_by, create_time, handle_status, remark, handle_time  from ums_feedback
+    </sql>
+
+    <select id="selectByEntity" parameterType="Feedback" resultMap="FeedbackResult">
+        <include refid="selectFeedbackVo"/>
+        <where>  
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="images != null  and images != ''"> and images = #{images}</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="handleStatus != null "> and handle_status = #{handleStatus}</if>
+            <if test="handleTime != null "> and handle_time = #{handleTime}</if>
+        </where>
+    </select>
+</mapper>
