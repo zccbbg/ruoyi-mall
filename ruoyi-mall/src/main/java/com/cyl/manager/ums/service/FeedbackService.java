@@ -79,6 +79,7 @@ public class FeedbackService {
             qw.ge("create_time", query.getBeginTime());
             qw.lt("create_time", query.getEndTime());
         }
+        qw.orderByDesc("id");
         return feedbackMapper.selectList(qw);
     }
 
