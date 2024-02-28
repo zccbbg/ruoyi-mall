@@ -6,11 +6,9 @@ import com.cyl.h5.pojo.request.CancelOrderRequest;
 import com.cyl.h5.service.H5OrderService;
 import com.cyl.manager.oms.domain.Order;
 import com.cyl.manager.oms.mapper.OrderMapper;
-import com.cyl.manager.oms.service.OrderService;
 import com.ruoyi.common.constant.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +26,9 @@ public class OrderJob {
     @Autowired
     private OrderMapper orderMapper;
 
-    @Async
+    /**
+     * 每天的1点20分20秒执行任务
+     */
     @Scheduled(cron = "20 20 1 * * ?")
     public void cancelOrder(){
         log.info("【取消订单任务开始】");
