@@ -12,6 +12,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisService;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.OssUtils;
+import com.ruoyi.system.service.ISysConfigService;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/h5")
+@RequestMapping
 public class H5CommonController {
 
   @Autowired
@@ -35,16 +36,18 @@ public class H5CommonController {
   private RedisService redisService;
   @Autowired
   private FeedbackService feedbackService;
+  @Autowired
+  private ISysConfigService sysConfigService;
 
   @ApiOperation("新增意见反馈")
   @Log(title = "意见反馈", businessType = BusinessType.INSERT)
-  @PostMapping("/feedback/create")
+  @PostMapping("/h5/feedback/create")
   public ResponseEntity<Integer> add(@RequestBody Feedback feedback) {
     return ResponseEntity.ok(feedbackService.insert(feedback));
   }
 
 
-  @GetMapping("/area")
+  @GetMapping("/h5/area")
   public AjaxResult getAddressList() {
     String addresses = redisService.getAddressList();
     if (StringUtils.isNotEmpty(addresses)) {
@@ -90,10 +93,16 @@ public class H5CommonController {
     return AjaxResult.success(result);
   }
 
-  @PostMapping("/file/upload")
+  @PostMapping("/h5/file/upload")
   public AjaxResult uploadFile(MultipartFile file) {
     String url = ossUtils.uploadOneFile(file);
     return AjaxResult.successData(url);
+  }
+
+  @GetMapping("/no-auth/config/get")
+  public AjaxResult getSysConfig(String configKey) {
+    String s = sysConfigService.selectConfigByKey(configKey);
+    return AjaxResult.successData(s);
   }
 
 }
