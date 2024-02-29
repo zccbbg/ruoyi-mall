@@ -56,7 +56,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SELECT product_id ,
                product_name,
                pic,
-               SUM(quantity) as total_sales
+               IFNULL(SUM(quantity), 0) as total_sales
         FROM oms_order_item item right join oms_order o on o.id=item.order_id
         WHERE DATE(item.create_time) between DATE(#{startDate}) AND DATE(#{endDate}) AND o.status in(1,2,3)
         GROUP BY product_id, product_name
@@ -94,7 +94,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                product_name,
                pic,
                sp_data,
-               SUM(quantity) as total_sales
+               IFNULL(SUM(quantity), 0) as total_sales
         FROM oms_order_item item right join oms_order o on o.id=item.order_id
         WHERE DATE(item.create_time) between DATE(#{startDate}) AND DATE(#{endDate}) AND o.status in(1,2,3)
         GROUP BY sku_id
