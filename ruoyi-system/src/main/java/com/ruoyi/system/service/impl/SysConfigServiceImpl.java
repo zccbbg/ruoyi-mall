@@ -145,6 +145,7 @@ public class SysConfigServiceImpl implements ISysConfigService {
         if (row > 0) {
             if ("N".equals(config.getConfigType())){
                 redisCache.setCacheObject(getCacheKey2(config.getConfigKey()), config);
+                redisCache.setCacheObject(getCacheKey(config.getConfigKey()), config.getConfigValue());
             } else {
                 redisCache.setCacheObject(getCacheKey(config.getConfigKey()), config.getConfigValue());
             }
