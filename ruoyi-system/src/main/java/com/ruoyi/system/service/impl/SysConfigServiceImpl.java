@@ -126,9 +126,7 @@ public class SysConfigServiceImpl implements ISysConfigService {
     public int insertConfig(SysConfig config) {
         int row = configMapper.insertConfig(config);
         if (row > 0) {
-            if ("N".equals(config.getConfigType())){
-                redisCache.setCacheObject(getCacheKey2(config.getConfigKey()), config);
-            } else {
+            if ("Y".equals(config.getConfigType())){
                 redisCache.setCacheObject(getCacheKey(config.getConfigKey()), config.getConfigValue());
             }
         }
@@ -147,6 +145,7 @@ public class SysConfigServiceImpl implements ISysConfigService {
         if (row > 0) {
             if ("N".equals(config.getConfigType())){
                 redisCache.setCacheObject(getCacheKey2(config.getConfigKey()), config);
+                redisCache.setCacheObject(getCacheKey(config.getConfigKey()), config.getConfigValue());
             } else {
                 redisCache.setCacheObject(getCacheKey(config.getConfigKey()), config.getConfigValue());
             }
