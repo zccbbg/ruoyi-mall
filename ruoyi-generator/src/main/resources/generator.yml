@@ -1,12 +1,13 @@
-# 代码生成
-gen: 
+gen:
   # 作者
   author: zcc
   # 默认生成包路径 system 需改成自己的模块名称 如 system monitor tool
   packageName: com.cyl.mall
   # 自动去除表前缀，默认是false
-  autoRemovePre: false
+  autoRemovePre: true
   # 表前缀（生成类名不会包含表前缀，多个用逗号分隔）
-  tablePrefix: mall_
+  tablePrefix: ums_
   # 一级权限名
   rootPermission: mall
+  # 模板根路径
+  templateRootPath: vm
