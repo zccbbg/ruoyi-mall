@@ -33520,7 +33520,7 @@ CREATE TABLE `pms_sku`
 ) ENGINE = InnoDB AUTO_INCREMENT = 399 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'sku信息' ROW_FORMAT = Dynamic;
 
 ALTER TABLE `pms_sku`
-    ADD COLUMN `stock` int(11) NULL COMMENT '库存' AFTER `pic`;
+    ADD COLUMN `stock` int(11) DEFAULT 0 COMMENT '库存' AFTER `pic`;
 -- ----------------------------
 -- Table structure for pms_sku_snapshot
 -- ----------------------------
@@ -35095,8 +35095,7 @@ CREATE TABLE `ums_member`
     `create_time`     datetime(3) NULL DEFAULT NULL COMMENT '创建时间',
     `update_by`       bigint(20) NULL DEFAULT NULL COMMENT '修改人',
     `update_time`     datetime(3) NULL DEFAULT NULL COMMENT '修改时间',
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `idx_username`(`nickname`) USING BTREE
+    PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 47 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '会员信息' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
