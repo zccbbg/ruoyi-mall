@@ -66,6 +66,14 @@
     <root level="info">
 		<appender-ref ref="console" />
 	</root>
+
+    <logger name="org.springframework" level="warn" />
+    <logger name="com.cyl.manager.aws.mapper" level="debug" />
+    <logger name="com.cyl.manager.act.mapper" level="debug" />
+    <logger name="com.cyl.manager.oms.mapper" level="debug" />
+    <logger name="com.cyl.manager.pms.mapper" level="debug" />
+    <logger name="com.cyl.manager.ums.mapper" level="debug" />
+    <logger name="com.ruoyi.framework.aspectj.LoggingAspect" level="info" />
 	
 	<!--系统操作日志-->
     <root level="info">

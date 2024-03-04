@@ -3,9 +3,14 @@ package com.ruoyi.common.utils;
 import java.lang.management.ManagementFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 /**
@@ -163,5 +168,17 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
      */
     public static Long betweenDay(LocalDateTime beginTime, LocalDateTime endTime){
         return ChronoUnit.DAYS.between(beginTime.toLocalDate().atStartOfDay(),endTime.toLocalDate().atStartOfDay());
+    }
+
+    public static List<LocalDateTime> getTimeDiff(int days){
+        // 获取当前日期
+        LocalDate current = LocalDate.now();
+
+        // 获取第一天
+        LocalDate firstDayOfLastMonth = current.minusMonths(days).withDayOfMonth(1);
+        // 获取上个月最后一天
+        LocalDate lastDayOfLastMonth = firstDayOfLastMonth.plusMonths(1).withDayOfMonth(1).minusDays(1);
+
+        return Arrays.asList(LocalDateTime.of(firstDayOfLastMonth, LocalTime.MIN),LocalDateTime.of(lastDayOfLastMonth, LocalTime.MAX));
     }
 }

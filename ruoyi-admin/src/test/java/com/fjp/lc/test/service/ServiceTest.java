@@ -7,6 +7,7 @@ import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.symmetric.AES;
 import com.cyl.h5.pojo.dto.PayNotifyMessageDTO;
 import com.cyl.h5.service.H5OrderService;
+import com.cyl.manager.act.service.IntegralHistoryService;
 import com.cyl.manager.ums.service.MemberCartService;
 import com.ruoyi.RuoYiApplication;
 import com.ruoyi.common.config.properties.SmsProperties;
@@ -24,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +44,14 @@ public class ServiceTest {
 
     @Value("${aes.key}")
     private String key;
+
+    @Autowired
+    private IntegralHistoryService integralHistoryService;
+
+    @Test
+    public void test12(){
+        integralHistoryService.handleIntegral(5405053175810048L,new BigDecimal("2.89"),29L);
+    }
 
 
     @Test

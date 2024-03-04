@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.manager.ums.mapper.MemberAccountMapper">
+    
+    <resultMap type="MemberAccount" id="MemberAccountResult">
+        <result property="memberId" column="member_id"/>
+        <result property="integralBalance" column="integral_balance"/>
+        <result property="totalIntegralBalance" column="total_integral_balance"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <sql id="selectMemberAccountVo">
+        select member_id, integral_balance, total_integral_balance, update_time, create_time  from ums_member_account
+    </sql>
+    <update id="updateIntegralBalance">
+        update ums_member_account set integral_balance = integral_balance + #{amount},total_integral_balance = total_integral_balance + #{amount},update_time = now()
+        where member_id = #{memberId}
+    </update>
+
+    <select id="selectByEntity" parameterType="MemberAccount" resultMap="MemberAccountResult">
+        <include refid="selectMemberAccountVo"/>
+        <where>  
+            <if test="integralBalance != null "> and integral_balance = #{integralBalance}</if>
+            <if test="totalIntegralBalance != null "> and total_integral_balance = #{totalIntegralBalance}</if>
+        </where>
+    </select>
+</mapper>

@@ -16,6 +16,7 @@ import com.cyl.h5.pojo.request.OrderPayRequest;
 import com.cyl.h5.pojo.response.OrderPayResponse;
 import com.cyl.h5.pojo.vo.*;
 import com.cyl.h5.pojo.vo.form.OrderSubmitForm;
+import com.cyl.manager.act.service.IntegralHistoryService;
 import com.cyl.manager.oms.convert.AftersaleItemConvert;
 import com.cyl.manager.oms.convert.OrderItemConvert;
 import com.cyl.manager.oms.domain.*;
@@ -118,6 +119,9 @@ public class H5OrderService {
 
     @Autowired
     private OrderItemConvert orderItemConvert;
+
+    @Autowired
+    private IntegralHistoryService integralHistoryService;
 
     @Transactional
     public Long submit(OrderSubmitForm form) {
@@ -602,6 +606,9 @@ public class H5OrderService {
                 optHistory.setUpdateBy(order.getMemberId());
                 optHistory.setUpdateTime(optDate);
                 orderOperateHistoryMapper.insert(optHistory);
+
+                //处理积分
+                integralHistoryService.handleIntegral(order.getId(),order.getPayAmount(),order.getMemberId());
             });
             UpdateWrapper<WechatPaymentHistory> paymentHistoryUpdateWrapper = new UpdateWrapper<>();
             paymentHistoryUpdateWrapper.eq("order_id", messageDTO.getOutTradeNo()).set("payment_id", messageDTO.getTradeNo())

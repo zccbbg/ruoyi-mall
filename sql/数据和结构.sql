@@ -35213,3 +35213,26 @@ CREATE TABLE `ums_feedback`
     `handle_time`   datetime(3) DEFAULT NULL COMMENT '处理时间',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='意见反馈';
+
+CREATE TABLE `act_integral_history`
+(
+    `id`           bigint(20) NOT NULL AUTO_INCREMENT,
+    `member_id`    bigint(20) NOT NULL,
+    `amount`       decimal(10, 2) NOT NULL COMMENT '变动金额',
+    `op_type`      int(11) NOT NULL COMMENT '类型 1：收入 2：支出  3：其他',
+    `sub_op_type`  int(11) DEFAULT NULL COMMENT '子类型：11签到  12消费获得  21退款扣除积分',
+    `order_amount` decimal(10, 2) DEFAULT NULL COMMENT '订单金额',
+    `order_id`     bigint(20) DEFAULT NULL COMMENT '订单id',
+    `create_time`  datetime(3) DEFAULT NULL COMMENT '创建时间',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='积分流水表';
+
+CREATE TABLE `ums_member_account`
+(
+    `member_id`              bigint(20) NOT NULL,
+    `integral_balance`       decimal(10, 2) DEFAULT '0.00' COMMENT '积分余额',
+    `total_integral_balance` decimal(10, 2) DEFAULT NULL COMMENT '历史总共积分',
+    `update_time`            datetime(3) DEFAULT NULL COMMENT '修改时间',
+    `create_time`            datetime(3) DEFAULT NULL COMMENT '创建时间',
+    PRIMARY KEY (`member_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='会员账户表';

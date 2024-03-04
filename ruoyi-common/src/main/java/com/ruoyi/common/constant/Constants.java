@@ -132,6 +132,8 @@ public class Constants
      */
     public static final String SYS_CONFIG_KEY = "sys_config:";
 
+    public static final String INTEGRAL_RULE_KEY = "activity-integral-income-set-key";
+
     /**
      * 字典管理 cache key
      */

@@ -39,7 +39,7 @@ public class ApplicationTest {
 //                "oms_order_operate_history",
 //                "oms_aftersale",
 //                "oms_aftersale_item"
-                "aws_system_statistics"
+                "act_integral_history"
         );
         // 查询表信息
         List<GenTable> tableList = genTableService.selectGenTableByName(tableNames);

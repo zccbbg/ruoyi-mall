@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.manager.act.mapper.IntegralHistoryMapper">
+    
+    <resultMap type="IntegralHistory" id="IntegralHistoryResult">
+        <result property="id" column="id"/>
+        <result property="memberId" column="member_id"/>
+        <result property="amount" column="amount"/>
+        <result property="opType" column="op_type"/>
+        <result property="subOpType" column="sub_op_type"/>
+        <result property="orderAmount" column="order_amount"/>
+        <result property="orderId" column="order_id"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <sql id="selectIntegralHistoryVo">
+        select id, member_id, amount, op_type, sub_op_type, order_amount, order_id, create_time  from act_integral_history
+    </sql>
+
+    <select id="selectByEntity" parameterType="IntegralHistory" resultMap="IntegralHistoryResult">
+        <include refid="selectIntegralHistoryVo"/>
+        <where>  
+            <if test="memberId != null "> and member_id = #{memberId}</if>
+            <if test="amount != null "> and amount = #{amount}</if>
+            <if test="opType != null "> and op_type = #{opType}</if>
+            <if test="subOpType != null "> and sub_op_type = #{subOpType}</if>
+            <if test="orderAmount != null "> and order_amount = #{orderAmount}</if>
+            <if test="orderId != null "> and order_id = #{orderId}</if>
+        </where>
+    </select>
+    <select id="statIntegral" resultType="com.cyl.manager.act.pojo.vo.IntegralStatVO">
+        select sum(case when op_type = 1 then amount else 0 end) as income,
+               sum(case when op_type = 2 then amount else 0 end) as expenditure
+        from act_integral_history
+        where member_id = #{param3}
+          and create_time >= #{param1}
+          and create_time <![CDATA[ <= ]]> #{param2}
+    </select>
+</mapper>
