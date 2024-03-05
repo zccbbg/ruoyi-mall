@@ -46,4 +46,19 @@ public class OrderJob {
         log.info("【取消订单任务结束】");
     }
 
+    /**
+     * 每天的2点20分20秒执行任务
+     */
+    @Scheduled(cron = "20 20 2 * * ?")
+    public void batchCompleteOrder(){
+        log.info("【订单完成任务开始】");
+        QueryWrapper<Order> qw = new QueryWrapper<>();
+        qw.eq("status", Constants.OrderStatus.GET);
+        qw.eq("aftersale_status", 1);
+        qw.le("delivery_time", LocalDateTime.now().minusDays(15));
+        List<Order> orderList = orderMapper.selectList(qw);
+        h5OrderService.orderCompleteByJob(orderList);
+        log.info("【订单完成任务结束】,处理了：{}个订单",orderList.size());
+    }
+
 }

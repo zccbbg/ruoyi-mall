@@ -7,6 +7,7 @@ import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.symmetric.AES;
 import com.cyl.h5.pojo.dto.PayNotifyMessageDTO;
 import com.cyl.h5.service.H5OrderService;
+import com.cyl.job.OrderJob;
 import com.cyl.manager.act.service.IntegralHistoryService;
 import com.cyl.manager.ums.service.MemberCartService;
 import com.ruoyi.RuoYiApplication;
@@ -47,6 +48,13 @@ public class ServiceTest {
 
     @Autowired
     private IntegralHistoryService integralHistoryService;
+    @Autowired
+    private OrderJob orderJob;
+
+    @Test
+    public void testOrderJob(){
+        orderJob.batchCompleteOrder();
+    }
 
     @Test
     public void test12(){

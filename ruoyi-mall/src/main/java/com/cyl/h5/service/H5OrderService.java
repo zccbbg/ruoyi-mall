@@ -366,6 +366,29 @@ public class H5OrderService {
     }
 
     @Transactional
+    public void orderCompleteByJob(List<Order> idList) {
+        idList.forEach(order-> {
+            LocalDateTime optDate = LocalDateTime.now();
+            OrderItem queryOrderItem = new OrderItem();
+            queryOrderItem.setOrderId(order.getId());
+            //更新订单
+            UpdateWrapper<Order> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.eq("id", order.getId());
+            updateWrapper.set("status", Constants.H5OrderStatus.COMPLETED);
+            updateWrapper.set("confirm_status", 1);
+            orderMapper.update(null, updateWrapper);
+            //创建订单操作记录
+            OrderOperateHistory optHistory = new OrderOperateHistory();
+            optHistory.setOrderId(order.getId());
+            optHistory.setOrderSn(order.getOrderSn());
+            optHistory.setOperateMan("后台管理员" );
+            optHistory.setOrderStatus(Constants.H5OrderStatus.COMPLETED);
+            optHistory.setCreateTime(optDate);
+            optHistory.setUpdateTime(optDate);
+            orderOperateHistoryMapper.insert(optHistory);
+        });
+    }
+    @Transactional
     public String orderComplete(Long orderId) {
         LocalDateTime optDate = LocalDateTime.now();
         Order order = orderMapper.selectById(orderId);
@@ -385,10 +408,7 @@ public class H5OrderService {
         updateWrapper.set("status", Constants.H5OrderStatus.COMPLETED);
         updateWrapper.set("confirm_status", 1);
         updateWrapper.set("receive_time", optDate);
-        int rows = orderMapper.update(null, updateWrapper);
-        if (rows < 1){
-            throw new RuntimeException("更新订单状态失败");
-        }
+        orderMapper.update(null, updateWrapper);
         //创建订单操作记录
         OrderOperateHistory optHistory = new OrderOperateHistory();
         optHistory.setOrderId(order.getId());
@@ -399,10 +419,7 @@ public class H5OrderService {
         optHistory.setCreateBy(order.getMemberId());
         optHistory.setUpdateBy(order.getMemberId());
         optHistory.setUpdateTime(optDate);
-        rows = orderOperateHistoryMapper.insert(optHistory);
-        if (rows < 1){
-            throw new RuntimeException("创建订单操作记录失败");
-        }
+        orderOperateHistoryMapper.insert(optHistory);
         return order.getOrderSn();
     }
 
