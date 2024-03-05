@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.cyl.h5.config.SecurityUtil;
 import com.cyl.h5.pojo.dto.ApplyRefundDTO;
 import com.cyl.h5.pojo.dto.OrderCreateDTO;
 import com.cyl.h5.pojo.dto.OrderProductListDTO;
@@ -372,11 +373,12 @@ public class H5OrderService {
             OrderItem queryOrderItem = new OrderItem();
             queryOrderItem.setOrderId(order.getId());
             //更新订单
-            UpdateWrapper<Order> updateWrapper = new UpdateWrapper<>();
-            updateWrapper.eq("id", order.getId());
-            updateWrapper.set("status", Constants.H5OrderStatus.COMPLETED);
-            updateWrapper.set("confirm_status", 1);
-            orderMapper.update(null, updateWrapper);
+            order.setStatus(Constants.H5OrderStatus.COMPLETED);
+            order.setReceiveTime(optDate);
+            order.setConfirmStatus(1);
+            order.setUpdateTime(optDate);
+            order.setUpdateBy(null);
+            orderMapper.updateById(order);
             //创建订单操作记录
             OrderOperateHistory optHistory = new OrderOperateHistory();
             optHistory.setOrderId(order.getId());
@@ -402,13 +404,12 @@ public class H5OrderService {
         if(!order.getStatus().equals(Constants.H5OrderStatus.DELIVERED)){
             throw new RuntimeException("订单状态已改变，请刷新");
         }
-        //更新订单
-        UpdateWrapper<Order> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("id", order.getId());
-        updateWrapper.set("status", Constants.H5OrderStatus.COMPLETED);
-        updateWrapper.set("confirm_status", 1);
-        updateWrapper.set("receive_time", optDate);
-        orderMapper.update(null, updateWrapper);
+        order.setStatus(Constants.H5OrderStatus.COMPLETED);
+        order.setReceiveTime(optDate);
+        order.setConfirmStatus(1);
+        order.setUpdateTime(optDate);
+        order.setUpdateBy(SecurityUtil.getLocalMember().getId());
+        orderMapper.updateById(order);
         //创建订单操作记录
         OrderOperateHistory optHistory = new OrderOperateHistory();
         optHistory.setOrderId(order.getId());
