@@ -1,65 +1,48 @@
 package com.cyl.manager.oms.service;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.cyl.h5.pojo.dto.OrderCreateDTO;
-import com.cyl.h5.pojo.dto.OrderProductListDTO;
-import com.cyl.h5.pojo.vo.OrderCalcVO;
-import com.cyl.h5.pojo.vo.SkuViewDTO;
-import com.cyl.h5.pojo.vo.form.OrderSubmitForm;
 import com.cyl.h5.pojo.vo.query.OrderH5Query;
 import com.cyl.manager.oms.convert.OrderConvert;
 import com.cyl.manager.oms.convert.OrderOperateHistoryConvert;
+import com.cyl.manager.oms.domain.Order;
 import com.cyl.manager.oms.domain.OrderDeliveryHistory;
 import com.cyl.manager.oms.domain.OrderItem;
 import com.cyl.manager.oms.domain.OrderOperateHistory;
 import com.cyl.manager.oms.mapper.OrderDeliveryHistoryMapper;
 import com.cyl.manager.oms.mapper.OrderItemMapper;
+import com.cyl.manager.oms.mapper.OrderMapper;
 import com.cyl.manager.oms.mapper.OrderOperateHistoryMapper;
 import com.cyl.manager.oms.pojo.request.DeliverProductRequest;
 import com.cyl.manager.oms.pojo.request.ManagerOrderQueryRequest;
 import com.cyl.manager.oms.pojo.vo.*;
 import com.cyl.manager.pms.convert.SkuConvert;
-import com.cyl.manager.pms.domain.Product;
-import com.cyl.manager.pms.domain.Sku;
 import com.cyl.manager.pms.mapper.ProductMapper;
 import com.cyl.manager.pms.mapper.SkuMapper;
 import com.cyl.manager.ums.domain.Member;
-import com.cyl.manager.ums.domain.MemberAddress;
-import com.cyl.manager.ums.domain.MemberCart;
 import com.cyl.manager.ums.mapper.MemberAddressMapper;
 import com.cyl.manager.ums.mapper.MemberCartMapper;
 import com.cyl.manager.ums.mapper.MemberMapper;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.utils.AesCryptoUtils;
-import com.ruoyi.common.utils.IDGenerator;
 import com.ruoyi.common.utils.SecurityUtils;
-import com.ruoyi.framework.config.LocalDataUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import com.cyl.manager.oms.mapper.OrderMapper;
-import com.cyl.manager.oms.domain.Order;
-import com.cyl.manager.oms.pojo.query.OrderQuery;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 订单表Service业务层处理
@@ -317,18 +300,13 @@ public class OrderService {
                 Constants.OrderStatus.SEND.equals(order.getStatus()) ? Constants.OrderStatus.GET : order.getStatus();
         //更新订单
         LocalDateTime optDate = LocalDateTime.now();
-        UpdateWrapper<Order> orderQw = new UpdateWrapper();
-        orderQw.eq("id", order.getId())
-                .set("status", orderStatus)
-                .set("delivery_company", request.getExpressName())
-                .set("delivery_sn", request.getExpressSn())
-                .set("update_time", optDate)
-                .set("update_by", userId)
-                .set("delivery_time", optDate);
-        int rows = orderMapper.update(null, orderQw);
-        if (rows < 1){
-            throw new RuntimeException("更新订单发货信息失败");
-        }
+        order.setUpdateBy(null);
+        order.setStatus(orderStatus);
+        order.setDeliveryTime(optDate);
+        order.setUpdateTime(optDate);
+        order.setDeliveryCompany(request.getExpressName());
+        order.setDeliverySn(request.getExpressSn());
+        orderMapper.updateById(order);
         //创建新的发货记录
         this.createDeliveryHistory(request, userId, optDate);
         //创建订单操作记录
@@ -366,7 +344,7 @@ public class OrderService {
         OrderOperateHistory optHistory = new OrderOperateHistory();
         optHistory.setOrderId(orderId);
         optHistory.setOrderSn(orderSn);
-        optHistory.setOperateMan("后台管理员");
+        optHistory.setOperateMan(SecurityUtils.getUsername());
         optHistory.setOrderStatus(orderStatus);
         optHistory.setCreateTime(optDate);
         optHistory.setCreateBy(userId);
