@@ -1,6 +1,5 @@
 package com.cyl.h5.controller;
 
-import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.cyl.h5.pojo.dto.ApplyRefundDTO;
 import com.cyl.h5.pojo.dto.OrderCreateDTO;
@@ -13,10 +12,8 @@ import com.cyl.h5.pojo.vo.H5OrderVO;
 import com.cyl.h5.pojo.vo.OrderCalcVO;
 import com.cyl.h5.pojo.vo.form.OrderSubmitForm;
 import com.cyl.h5.service.H5OrderService;
-import com.cyl.manager.oms.domain.Order;
 import com.cyl.manager.ums.domain.Member;
 import com.ruoyi.common.constant.Constants;
-import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisService;
 import com.ruoyi.framework.config.LocalDataUtil;
 import io.swagger.annotations.ApiOperation;
@@ -26,8 +23,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/h5/order")
@@ -59,10 +54,6 @@ public class H5OrderController {
             }
         }
     }
-//    @PostMapping("orders")
-//    public ResponseEntity<Page<OrderVO>> queryOrderPage(@RequestBody OrderH5Query query, Pageable pageReq) {
-//        return ResponseEntity.ok(service.queryOrderPage(query, pageReq));
-//    }
 
     @ApiOperation("下单前校验")
     @PostMapping("/addOrderCheck")

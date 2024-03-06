@@ -220,7 +220,7 @@ public class H5OrderService {
         OrderOperateHistory orderOperateHistory = new OrderOperateHistory();
         orderOperateHistory.setOrderId(orderId);
         orderOperateHistory.setOrderSn(order.getOrderSn());
-        orderOperateHistory.setOperateMan(member.getId() + "");
+        orderOperateHistory.setOperateMan(member.getNickname());
         orderOperateHistory.setOrderStatus(Constants.OrderStatus.NOTPAID);
         orderOperateHistory.setCreateTime(optTime);
         orderOperateHistory.setCreateBy(member.getId());
