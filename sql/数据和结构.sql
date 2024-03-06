@@ -2128,3 +2128,29 @@ CREATE TABLE `ums_member_account`
     `create_time`            datetime(3) DEFAULT NULL COMMENT '创建时间',
     PRIMARY KEY (`member_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='会员账户表';
+
+INSERT INTO `sys_config`(`config_id`, `config_name`, `config_key`, `config_value`, `config_type`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (104, '客服配置', 'mall.contact', '<p></p>', 'N', 1, '2024-02-28 15:07:33', 1, '2024-02-29 11:44:17.000', NULL);
+
+INSERT INTO `sys_config`(`config_id`, `config_name`, `config_key`, `config_value`, `config_type`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (106, '隐私协议', 'mall.privacyAgreement', '<p></p><p>&nbsp;</p>', 'N', 1, '2024-02-28 15:53:35', NULL, NULL, NULL);
+
+INSERT INTO `sys_config`(`config_id`, `config_name`, `config_key`, `config_value`, `config_type`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (107, '常见问题', 'mall.question', '<p>暂无</p>', 'N', 1, '2024-02-28 15:55:10', NULL, NULL, NULL);
+
+INSERT INTO `sys_config`(`config_id`, `config_name`, `config_key`, `config_value`, `config_type`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (108, '关于我们', 'mall.aboutUs', '<p></p>', 'N', 1, '2024-02-29 11:44:55', NULL, NULL, NULL);
+
+INSERT INTO `sys_config`(`config_id`, `config_name`, `config_key`, `config_value`, `config_type`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (114, '积分配置', 'activity-integral-income-set-key', '{\"signStatus\":1,\"signCount\":1,\"orderAmount\":\"1\",\"orderCount\":1}', 'N', 1, '2024-03-01 14:44:13', 116, '2024-03-06 16:04:08.000', NULL);
+
+UPDATE `sys_config` SET `config_name` = '账号自助-验证码开关', `config_key` = 'sys.account.captchaOnOff', `config_value` = 'true', `config_type` = 'Y', `create_by` = 1, `create_time` = '2022-06-17 17:20:29', `update_by` = 1, `update_time` = '2023-12-18 18:08:30.000', `remark` = '是否开启验证码功能（true开启，false关闭）' WHERE `config_id` = 4;
+
+INSERT INTO `sys_menu`(`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2341, '意见反馈', 2342, 5, 'feedback', 'ums/feedback/index', NULL, 1, 0, 'C', '0', '0', 'ums:feedback:list', 'list', 1, '2024-02-26 15:50:59.000', 1, '2024-02-27 15:40:59.000', '');
+
+INSERT INTO `sys_menu`(`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2342, '消息管理', 0, 6, 'notice', NULL, NULL, 1, 0, 'M', '0', '0', NULL, 'message', 1, '2024-02-27 15:40:35.000', NULL, NULL, '');
+
+INSERT INTO `sys_menu`(`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2343, '内容配置', 2342, 2, 'contentSet', 'set/setting', NULL, 1, 0, 'C', '0', '0', 'sys:content:set', 'system', 1, '2024-02-28 13:32:01.000', 1, '2024-02-28 13:33:45.000', '');
+
+INSERT INTO `sys_menu`(`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2344, '缓存列表', 2, 6, 'cacheList', 'monitor/cache/list', NULL, 1, 0, 'C', '0', '0', 'monitor:cache:list', 'list', 1, '2024-02-29 17:46:30.000', NULL, NULL, '');
+
+INSERT INTO `sys_menu`(`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2345, '营销管理', 0, 5, 'activity', NULL, NULL, 1, 0, 'M', '0', '0', NULL, 'money', 1, '2024-03-01 13:25:02.000', NULL, NULL, '');
+
+INSERT INTO `sys_menu`(`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2346, '积分设置', 2345, 1, 'integralSetting', 'set/integralSetting', NULL, 1, 0, 'C', '0', '0', 'sys:integral:set', '#', 1, '2024-03-01 13:25:52.000', 1, '2024-03-01 13:37:12.000', '');
+
+INSERT INTO `sys_menu`(`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2347, '保存', 2346, 1, '', NULL, NULL, 1, 0, 'F', '0', '0', 'sys:integral:save', '#', 1, '2024-03-01 13:27:01.000', 1, '2024-03-01 13:37:26.000', '');
