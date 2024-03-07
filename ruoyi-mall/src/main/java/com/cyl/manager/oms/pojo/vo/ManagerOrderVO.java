@@ -1,11 +1,12 @@
 package com.cyl.manager.oms.pojo.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -52,16 +53,19 @@ public class ManagerOrderVO {
     private BigDecimal payAmount;
 
     @ApiModelProperty(name = "createTime",value = "下单时间",required = true,dataType = "Date")
-    private Date createTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createTime;
 
     @ApiModelProperty(name = "payTime",value = "支付时间",required = true,dataType = "Date")
-    private Date payTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime payTime;
 
     @ApiModelProperty(name = "payType",value = "支付方式 支付方式：0->未支付；1->支付宝；2->微信",required = true,dataType = "Integer")
     private Integer payType;
 
     @ApiModelProperty(name = "receiveTime",value = "确认收货时间",required = true,dataType = "Date")
-    private Date receiveTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime receiveTime;
 
     @ApiModelProperty(name = "note",value = "备注",required = true,dataType = "String")
     private String note;
@@ -76,7 +80,8 @@ public class ManagerOrderVO {
     private List<ManagerOrderProductVO> productList;
 
     @ApiModelProperty(name = "deliveryTime",value = "发货时间",required = true,dataType = "LocalDataTime")
-    private Date deliveryTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime deliveryTime;
 
     @ApiModelProperty(name = "deliverySn",value = "物流单号",required = true,dataType = "String")
     private String deliverySn;
