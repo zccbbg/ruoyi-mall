@@ -128,6 +128,7 @@ public class OrderController extends BaseController {
         return ResponseEntity.ok(service.log(orderId));
     }
 
+    @PreAuthorize("@ss.hasAnyRoles('admin')")
     @ApiOperation("订单解密")
     @GetMapping("/decryptPhone/{orderId}")
     public ResponseEntity<String> decryptPhone(@PathVariable Long orderId){
