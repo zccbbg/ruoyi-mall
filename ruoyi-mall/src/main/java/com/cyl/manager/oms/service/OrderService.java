@@ -369,4 +369,14 @@ public class OrderService {
         List<OrderOperateHistory> historyList = orderOperateHistoryMapper.selectList(wrapper);
         return historyConvert.dos2vos(historyList);
     }
+
+    public String decryptPhone(Long orderId) {
+        Order order = orderMapper.selectById(orderId);
+        String receiverPhoneEncrypted = order.getReceiverPhoneEncrypted();
+        if(receiverPhoneEncrypted!=null){
+            return AesCryptoUtils.decrypt(aesKey,receiverPhoneEncrypted);
+        }else {
+            return null;
+        }
+    }
 }

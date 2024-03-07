@@ -192,6 +192,7 @@ public class H5OrderService {
         order.setAftersaleStatus(1);
         order.setReceiverName(memberAddress.getName());
         order.setReceiverPhone(memberAddress.getPhoneHidden());
+        order.setReceiverPhoneEncrypted(memberAddress.getPhoneEncrypted());
         order.setReceiverPostCode(memberAddress.getPostCode());
         order.setReceiverProvince(memberAddress.getProvince());
         order.setReceiverCity(memberAddress.getCity());

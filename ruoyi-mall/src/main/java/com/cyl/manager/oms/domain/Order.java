@@ -1,16 +1,16 @@
 package com.cyl.manager.oms.domain;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.core.domain.BaseAudit;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import com.ruoyi.common.core.domain.BaseAudit;
 import lombok.Data;
-import com.baomidou.mybatisplus.annotation.TableName;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 /**
  * 订单表对象 oms_order
  * 
@@ -88,6 +88,10 @@ public class Order extends BaseAudit {
     @ApiModelProperty("收货人电话")
     @Excel(name = "收货人电话")
     private String receiverPhone;
+
+    @ApiModelProperty("加密的手机号")
+    @Excel(name = "加密的手机号")
+    private String receiverPhoneEncrypted;
 
     @ApiModelProperty("收货人邮编")
     @Excel(name = "收货人邮编")
