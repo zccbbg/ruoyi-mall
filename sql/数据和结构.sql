@@ -2154,3 +2154,9 @@ INSERT INTO `sys_menu`(`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`,
 INSERT INTO `sys_menu`(`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2346, '积分设置', 2345, 1, 'integralSetting', 'set/integralSetting', NULL, 1, 0, 'C', '0', '0', 'sys:integral:set', '#', 1, '2024-03-01 13:25:52.000', 1, '2024-03-01 13:37:12.000', '');
 
 INSERT INTO `sys_menu`(`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2347, '保存', 2346, 1, '', NULL, NULL, 1, 0, 'F', '0', '0', 'sys:integral:save', '#', 1, '2024-03-01 13:27:01.000', 1, '2024-03-01 13:37:26.000', '');
+
+ALTER TABLE `oms_order`
+ADD COLUMN `receiver_phone_encrypted` varchar(255) NULL COMMENT '收件人手机号密文' AFTER `update_time`;
+
+ALTER TABLE `ums_member_address`
+MODIFY COLUMN `phone_encrypted` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '手机号密文' AFTER `phone_hidden`;
