@@ -1,6 +1,5 @@
 package com.cyl.h5.service;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -8,7 +7,6 @@ import com.cyl.h5.config.SecurityUtil;
 import com.cyl.manager.pms.domain.Sku;
 import com.cyl.manager.pms.mapper.ProductMapper;
 import com.cyl.manager.pms.mapper.SkuMapper;
-import com.cyl.manager.pms.pojo.dto.MemberCartDTO;
 import com.cyl.manager.ums.convert.MemberCartConvert;
 import com.cyl.manager.ums.domain.Member;
 import com.cyl.manager.ums.domain.MemberCart;
@@ -190,25 +188,6 @@ public class H5MemberCartService {
             return 0;
         }
         return c.getQuantity();
-    }
-
-    public void injectSku(List<MemberCartDTO> resList) {
-        List<Long> skuIds = resList.stream().map(MemberCartDTO::getSkuId).distinct().collect(Collectors.toList());
-        if (CollUtil.isEmpty(skuIds)) {
-            return;
-        }
-        List<Sku> skus = skuMapper.selectBatchIds(skuIds);
-        Map<Long, Sku> map = new HashMap<>();
-        skus.forEach(it -> {
-            map.put(it.getId(), it);
-        });
-        resList.forEach(it -> {
-            Sku s = map.get(it.getSkuId());
-            if (s == null) {
-                return;
-            }
-            it.setPrice(s.getPrice());
-        });
     }
 
     public List<Long> mineCartIds() {

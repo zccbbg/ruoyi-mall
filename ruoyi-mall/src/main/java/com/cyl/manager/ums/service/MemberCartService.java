@@ -1,6 +1,5 @@
 package com.cyl.manager.ums.service;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -9,7 +8,6 @@ import com.cyl.h5.config.SecurityUtil;
 import com.cyl.manager.pms.domain.Sku;
 import com.cyl.manager.pms.mapper.ProductMapper;
 import com.cyl.manager.pms.mapper.SkuMapper;
-import com.cyl.manager.pms.pojo.dto.MemberCartDTO;
 import com.cyl.manager.ums.convert.MemberCartConvert;
 import com.cyl.manager.ums.domain.Member;
 import com.cyl.manager.ums.domain.MemberCart;
@@ -18,7 +16,6 @@ import com.cyl.manager.ums.mapper.MemberMapper;
 import com.cyl.manager.ums.pojo.query.MemberCartQuery;
 import com.cyl.manager.ums.pojo.vo.MemberCartVO;
 import com.cyl.manager.ums.pojo.vo.form.UpdateMemberCartForm;
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.exception.base.BaseException;
@@ -26,7 +23,6 @@ import com.ruoyi.common.utils.AesCryptoUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.SortUtil;
 import com.ruoyi.framework.config.LocalDataUtil;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageImpl;
@@ -35,7 +31,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
