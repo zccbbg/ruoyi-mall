@@ -3,31 +3,26 @@ package com.cyl.manager.act.service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
-import java.time.LocalDateTime;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyl.h5.config.SecurityUtil;
-import com.cyl.manager.act.pojo.vo.IntegralRule;
-import com.cyl.manager.act.pojo.vo.IntegralStatVO;
-import com.cyl.manager.ums.domain.Member;
-import com.cyl.manager.ums.domain.MemberAccount;
+import com.cyl.manager.act.domain.vo.IntegralRule;
+import com.cyl.manager.act.domain.vo.IntegralStatVO;
+import com.cyl.manager.ums.domain.entity.MemberAccount;
 import com.cyl.manager.ums.mapper.MemberAccountMapper;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.constant.Constants;
-import com.ruoyi.framework.config.LocalDataUtil;
 import com.ruoyi.system.service.ISysConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.cyl.manager.act.mapper.IntegralHistoryMapper;
-import com.cyl.manager.act.domain.IntegralHistory;
-import com.cyl.manager.act.pojo.query.IntegralHistoryQuery;
+import com.cyl.manager.act.domain.entity.IntegralHistory;
+import com.cyl.manager.act.domain.query.IntegralHistoryQuery;
 import org.springframework.transaction.annotation.Transactional;
 
 /**

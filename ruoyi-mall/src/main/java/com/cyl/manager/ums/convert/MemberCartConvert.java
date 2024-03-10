@@ -1,11 +1,11 @@
 package com.cyl.manager.ums.convert;
 
-import com.cyl.manager.pms.domain.Product;
-import com.cyl.manager.pms.domain.Sku;
+import com.cyl.manager.pms.domain.entity.Product;
+import com.cyl.manager.pms.domain.entity.Sku;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
-import com.cyl.manager.ums.domain.MemberCart;
-import com.cyl.manager.ums.pojo.vo.MemberCartVO;
+import com.cyl.manager.ums.domain.entity.MemberCart;
+import com.cyl.manager.ums.domain.vo.MemberCartVO;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 

@@ -2,11 +2,11 @@ package com.cyl.manager.oms.controller;
 
 import java.util.List;
 
-import com.cyl.manager.oms.pojo.request.DealWithAftersaleRequest;
-import com.cyl.manager.oms.pojo.request.ManagerAftersaleOrderRequest;
-import com.cyl.manager.oms.pojo.vo.ManagerRefundOrderDetailVO;
-import com.cyl.manager.oms.pojo.vo.ManagerRefundOrderVO;
-import com.cyl.manager.oms.pojo.vo.OrderOperateHistoryVO;
+import com.cyl.manager.oms.domain.form.DealWithAftersaleRequest;
+import com.cyl.manager.oms.domain.form.ManagerAftersaleOrderRequest;
+import com.cyl.manager.oms.domain.vo.ManagerRefundOrderDetailVO;
+import com.cyl.manager.oms.domain.vo.ManagerRefundOrderVO;
+import com.cyl.manager.oms.domain.vo.OrderOperateHistoryVO;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.core.redis.RedisService;
 import com.ruoyi.common.utils.SecurityUtils;
@@ -31,8 +31,8 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.manager.oms.convert.AftersaleConvert;
-import com.cyl.manager.oms.domain.Aftersale;
-import com.cyl.manager.oms.pojo.query.AftersaleQuery;
+import com.cyl.manager.oms.domain.entity.Aftersale;
+import com.cyl.manager.oms.domain.query.AftersaleQuery;
 import com.cyl.manager.oms.service.AftersaleService;
 
 /**

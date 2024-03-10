@@ -2,9 +2,9 @@ package com.cyl.job;
 
 import cn.hutool.core.date.LocalDateTimeUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.cyl.h5.pojo.request.CancelOrderRequest;
+import com.cyl.h5.domain.form.CancelOrderRequest;
 import com.cyl.h5.service.H5OrderService;
-import com.cyl.manager.oms.domain.Order;
+import com.cyl.manager.oms.domain.entity.Order;
 import com.cyl.manager.oms.mapper.OrderMapper;
 import com.ruoyi.common.constant.Constants;
 import lombok.extern.slf4j.Slf4j;

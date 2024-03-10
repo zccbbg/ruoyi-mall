@@ -9,8 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.cyl.manager.pms.mapper.BrandMapper;
-import com.cyl.manager.pms.domain.Brand;
-import com.cyl.manager.pms.pojo.query.BrandQuery;
+import com.cyl.manager.pms.domain.entity.Brand;
+import com.cyl.manager.pms.domain.query.BrandQuery;
 
 /**
  * 品牌管理Service业务层处理

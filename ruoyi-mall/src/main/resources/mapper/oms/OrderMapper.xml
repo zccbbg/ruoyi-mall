@@ -91,7 +91,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="receiveTime != null "> and receive_time = #{receiveTime}</if>
         </where>
     </select>
-    <select id="selectManagerOrderPage" resultType="com.cyl.manager.oms.pojo.vo.ManagerOrderVO">
+    <select id="selectManagerOrderPage" resultType="com.cyl.manager.oms.domain.vo.ManagerOrderVO">
         select
         a.id,
         a.order_sn orderSn,
@@ -156,7 +156,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         order by a.create_time desc
     </select>
 
-    <select id="orderPage" resultType="com.cyl.h5.pojo.vo.H5OrderVO">
+    <select id="orderPage" resultType="com.cyl.h5.domain.vo.H5OrderVO">
         select
         id orderId,
         pay_id,
@@ -192,7 +192,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
         order by create_time desc
     </select>
-    <select id="selectOrderDetail" resultType="com.cyl.h5.pojo.vo.H5OrderVO">
+    <select id="selectOrderDetail" resultType="com.cyl.h5.domain.vo.H5OrderVO">
         select
         id orderId,
         pay_id,
@@ -217,7 +217,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         delete_status=0
         and id=#{orderId}
     </select>
-    <select id="countByStatusAndMemberId" resultType="com.cyl.h5.pojo.vo.CountOrderVO">
+    <select id="countByStatusAndMemberId" resultType="com.cyl.h5.domain.vo.CountOrderVO">
         select
             IFNULL(sum(case when status=0 and aftersale_status=1 then 1 else 0 end),0) unpaid,
             IFNULL(sum(case when status=1 and aftersale_status=1 then 1 else 0 end),0) nosend,
@@ -226,7 +226,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from oms_order
         where member_id=#{memberId} and delete_status=0
     </select>
-    <select id="statOrderCountAndAmount" resultType="com.cyl.manager.ums.pojo.vo.MemberDataStatisticsVO">
+    <select id="statOrderCountAndAmount" resultType="com.cyl.manager.ums.domain.vo.MemberDataStatisticsVO">
         select
             IFNULL(count(id), 0) orderCount,
             IFNULL(sum(pay_amount), 0) orderAmount
@@ -236,7 +236,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="statWaitDelivered" resultType="java.lang.Integer">
         select IFNULL(count(id), 0) from oms_order where status=1 and aftersale_status=1
     </select>
-    <select id="statTodayData" resultType="com.cyl.manager.statistics.pojo.vo.OrderAndAftersaleStatisticsVO">
+    <select id="statTodayData" resultType="com.cyl.manager.statistics.domain.vo.OrderAndAftersaleStatisticsVO">
         select
             IFNULL(sum(case when status in (2,3) then 1 else 0 end), 0) todayHasDeliveredCount,
             IFNULL(count(id), 0) todayOrderCount,
@@ -244,7 +244,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from oms_order
         where create_time between #{startTime} and #{endTime}
     </select>
-    <select id="statNewAndDeal" resultType="com.cyl.manager.aws.domain.SystemStatistics">
+    <select id="statNewAndDeal" resultType="com.cyl.manager.aws.domain.entity.SystemStatistics">
         select
             IFNULL(count(distinct member_id), 0) createOrderMemberCount,
             IFNULL(count(id), 0) orderCount,

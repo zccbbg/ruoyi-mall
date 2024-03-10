@@ -49,7 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="handleMan != null  and handleMan != ''"> and handle_man = #{handleMan}</if>
         </where>
     </select>
-    <select id="selectManagerRefundOrder" resultType="com.cyl.manager.oms.pojo.vo.ManagerRefundOrderVO">
+    <select id="selectManagerRefundOrder" resultType="com.cyl.manager.oms.domain.vo.ManagerRefundOrderVO">
         SELECT a.id            id,
         a.return_amount applyReturnAmount,
         a.quantity      refundNum,
@@ -97,7 +97,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where member_id=#{memberId}
     </select>
     <select id="statPendingAndProcessing"
-            resultType="com.cyl.manager.statistics.pojo.vo.OrderAndAftersaleStatisticsVO">
+            resultType="com.cyl.manager.statistics.domain.vo.OrderAndAftersaleStatisticsVO">
         select
             IFNULL(sum(case when status=0 then 1 else 0 end), 0) pendingAftersaleCount,
             IFNULL(sum(case when status=1 then 1 else 0 end), 0) processingAftersaleCount

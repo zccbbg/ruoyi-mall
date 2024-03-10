@@ -3,7 +3,7 @@ package com.cyl.manager.pms.mapper;
 import java.time.LocalDateTime;
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyl.manager.pms.domain.Sku;
+import com.cyl.manager.pms.domain.entity.Sku;
 import org.apache.ibatis.annotations.Param;
 
 /**

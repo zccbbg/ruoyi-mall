@@ -6,8 +6,8 @@ import java.util.List;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyl.h5.pojo.dto.OrderProductListDTO;
-import com.cyl.manager.ums.domain.Member;
+import com.cyl.h5.domain.dto.OrderProductListDTO;
+import com.cyl.manager.ums.domain.entity.Member;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.utils.IDGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.cyl.manager.oms.mapper.OrderItemMapper;
-import com.cyl.manager.oms.domain.OrderItem;
-import com.cyl.manager.oms.pojo.query.OrderItemQuery;
+import com.cyl.manager.oms.domain.entity.OrderItem;
+import com.cyl.manager.oms.domain.query.OrderItemQuery;
 import org.springframework.transaction.annotation.Transactional;
 
 /**

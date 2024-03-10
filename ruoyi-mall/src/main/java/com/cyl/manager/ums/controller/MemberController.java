@@ -1,27 +1,27 @@
 package com.cyl.manager.ums.controller;
 
-import java.util.List;
-
-import com.cyl.manager.ums.pojo.dto.ChangeMemberStatusDTO;
-import com.cyl.manager.ums.pojo.vo.MemberDataStatisticsVO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import com.cyl.manager.ums.convert.MemberConvert;
+import com.cyl.manager.ums.domain.form.ChangeMemberStatusForm;
+import com.cyl.manager.ums.domain.entity.Member;
+import com.cyl.manager.ums.domain.query.MemberQuery;
+import com.cyl.manager.ums.domain.vo.MemberDataStatisticsVO;
+import com.cyl.manager.ums.domain.vo.MemberVO;
+import com.cyl.manager.ums.service.MemberService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
-import com.cyl.manager.ums.convert.MemberConvert;
-import com.cyl.manager.ums.domain.Member;
-import com.cyl.manager.ums.pojo.query.MemberQuery;
-import com.cyl.manager.ums.service.MemberService;
-import com.cyl.manager.ums.pojo.vo.MemberVO;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 /**
  * 会员信息Controller
  * 
@@ -97,8 +97,8 @@ public class MemberController extends BaseController {
     @ApiOperation(("修改会员账户状态"))
     @Log(title = "会员信息", businessType = BusinessType.UPDATE)
     @PostMapping("/status/change")
-    public ResponseEntity<Integer> changeStatus(@RequestBody ChangeMemberStatusDTO dto){
-        return ResponseEntity.ok(service.changeStatus(dto));
+    public ResponseEntity<Integer> changeStatus(@RequestBody ChangeMemberStatusForm form){
+        return ResponseEntity.ok(service.changeStatus(form));
     }
 
     @ApiOperation("会员手机号解密")

@@ -8,12 +8,12 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.cyl.h5.pojo.vo.ProductDetail;
+import com.cyl.h5.domain.vo.ProductDetail;
 import com.cyl.manager.pms.convert.ProductConvert;
-import com.cyl.manager.pms.domain.Sku;
+import com.cyl.manager.pms.domain.entity.Sku;
 import com.cyl.manager.pms.mapper.BrandMapper;
 import com.cyl.manager.pms.mapper.SkuMapper;
-import com.cyl.manager.pms.pojo.vo.ProductVO;
+import com.cyl.manager.pms.domain.vo.ProductVO;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.utils.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +22,8 @@ import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.cyl.manager.pms.mapper.ProductMapper;
-import com.cyl.manager.pms.domain.Product;
-import com.cyl.manager.pms.pojo.query.ProductQuery;
+import com.cyl.manager.pms.domain.entity.Product;
+import com.cyl.manager.pms.domain.query.ProductQuery;
 import org.springframework.transaction.annotation.Transactional;
 
 /**

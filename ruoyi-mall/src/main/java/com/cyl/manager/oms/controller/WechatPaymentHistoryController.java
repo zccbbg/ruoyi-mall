@@ -2,7 +2,7 @@ package com.cyl.manager.oms.controller;
 
 import java.util.List;
 
-import com.cyl.manager.oms.domain.WechatPaymentHistory;
+import com.cyl.manager.oms.domain.entity.WechatPaymentHistory;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageImpl;
@@ -23,9 +23,9 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.manager.oms.convert.WechatPaymentHistoryConvert;
-import com.cyl.manager.oms.pojo.query.WechatPaymentHistoryQuery;
+import com.cyl.manager.oms.domain.query.WechatPaymentHistoryQuery;
 import com.cyl.manager.oms.service.WechatPaymentHistoryService;
-import com.cyl.manager.oms.pojo.vo.WechatPaymentHistoryVO;
+import com.cyl.manager.oms.domain.vo.WechatPaymentHistoryVO;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 /**
  * 微信订单表Controller

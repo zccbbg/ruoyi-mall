@@ -1,8 +1,8 @@
 package com.cyl.h5.controller;
 
 import com.cyl.h5.service.H5MemberAddressService;
-import com.cyl.manager.ums.pojo.dto.MemberAddressDTO;
-import com.cyl.manager.ums.pojo.vo.MemberAddressVO;
+import com.cyl.manager.ums.domain.form.MemberAddressForm;
+import com.cyl.manager.ums.domain.vo.MemberAddressVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,13 +27,13 @@ public class H5MemberAddressController {
   }
 
   @PostMapping("/create")
-  public ResponseEntity<Integer> create(@RequestBody MemberAddressDTO memberAddressDTO){
-    return ResponseEntity.ok(h5MemberAddressService.insert(memberAddressDTO));
+  public ResponseEntity<Integer> create(@RequestBody MemberAddressForm memberAddressForm){
+    return ResponseEntity.ok(h5MemberAddressService.insert(memberAddressForm));
   }
 
   @PutMapping("/update")
-  public ResponseEntity<Integer> update(@RequestBody MemberAddressDTO memberAddressDTO){
-    return ResponseEntity.ok(h5MemberAddressService.update(memberAddressDTO));
+  public ResponseEntity<Integer> update(@RequestBody MemberAddressForm memberAddressForm){
+    return ResponseEntity.ok(h5MemberAddressService.update(memberAddressForm));
   }
 
   @GetMapping("/{id}")

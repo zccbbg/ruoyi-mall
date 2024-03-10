@@ -22,10 +22,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.manager.ums.convert.MemberAddressConvert;
-import com.cyl.manager.ums.domain.MemberAddress;
-import com.cyl.manager.ums.pojo.query.MemberAddressQuery;
+import com.cyl.manager.ums.domain.entity.MemberAddress;
+import com.cyl.manager.ums.domain.query.MemberAddressQuery;
 import com.cyl.manager.ums.service.MemberAddressService;
-import com.cyl.manager.ums.pojo.vo.MemberAddressVO;
+import com.cyl.manager.ums.domain.vo.MemberAddressVO;
 
 /**
  * 会员收货地址Controller

@@ -41,7 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="quantity != null "> and quantity = #{quantity}</if>
         </where>
     </select>
-    <select id="selectByPage" resultType="com.cyl.manager.ums.pojo.vo.MemberCartVO">
+    <select id="selectByPage" resultType="com.cyl.manager.ums.domain.vo.MemberCartVO">
         select
         a.id,
         a.member_id,

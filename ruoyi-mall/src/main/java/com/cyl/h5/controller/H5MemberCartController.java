@@ -2,10 +2,10 @@ package com.cyl.h5.controller;
 
 import com.cyl.h5.service.H5MemberCartService;
 import com.cyl.manager.ums.convert.MemberCartConvert;
-import com.cyl.manager.ums.domain.Member;
-import com.cyl.manager.ums.domain.MemberCart;
-import com.cyl.manager.ums.pojo.query.MemberCartQuery;
-import com.cyl.manager.ums.pojo.vo.MemberCartVO;
+import com.cyl.manager.ums.domain.entity.Member;
+import com.cyl.manager.ums.domain.entity.MemberCart;
+import com.cyl.manager.ums.domain.query.MemberCartQuery;
+import com.cyl.manager.ums.domain.vo.MemberCartVO;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.framework.config.LocalDataUtil;
 import org.springframework.beans.factory.annotation.Autowired;

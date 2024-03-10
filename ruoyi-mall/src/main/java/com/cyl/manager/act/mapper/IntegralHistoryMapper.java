@@ -3,9 +3,8 @@ package com.cyl.manager.act.mapper;
 import java.time.LocalDateTime;
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyl.manager.act.pojo.vo.IntegralStatVO;
-import org.apache.ibatis.annotations.Param;
-import com.cyl.manager.act.domain.IntegralHistory;
+import com.cyl.manager.act.domain.vo.IntegralStatVO;
+import com.cyl.manager.act.domain.entity.IntegralHistory;
 
 /**
  * 积分流水表Mapper接口

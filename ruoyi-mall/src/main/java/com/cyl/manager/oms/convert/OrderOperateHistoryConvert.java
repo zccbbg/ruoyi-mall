@@ -1,8 +1,8 @@
 package com.cyl.manager.oms.convert;
 
 import org.mapstruct.Mapper;
-import com.cyl.manager.oms.domain.OrderOperateHistory;
-import com.cyl.manager.oms.pojo.vo.OrderOperateHistoryVO;
+import com.cyl.manager.oms.domain.entity.OrderOperateHistory;
+import com.cyl.manager.oms.domain.vo.OrderOperateHistoryVO;
 import java.util.List;
 /**
  * 订单操作历史记录  DO <=> DTO <=> VO / BO / Query

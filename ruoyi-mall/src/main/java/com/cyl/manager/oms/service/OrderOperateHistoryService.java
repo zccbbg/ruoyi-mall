@@ -12,8 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.cyl.manager.oms.mapper.OrderOperateHistoryMapper;
-import com.cyl.manager.oms.domain.OrderOperateHistory;
-import com.cyl.manager.oms.pojo.query.OrderOperateHistoryQuery;
+import com.cyl.manager.oms.domain.entity.OrderOperateHistory;
+import com.cyl.manager.oms.domain.query.OrderOperateHistoryQuery;
 
 /**
  * 订单操作历史记录Service业务层处理

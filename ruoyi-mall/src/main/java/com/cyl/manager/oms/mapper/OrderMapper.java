@@ -3,14 +3,14 @@ package com.cyl.manager.oms.mapper;
 import java.time.LocalDateTime;
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyl.h5.pojo.vo.CountOrderVO;
-import com.cyl.h5.pojo.vo.H5OrderVO;
-import com.cyl.manager.aws.domain.SystemStatistics;
-import com.cyl.manager.oms.domain.Order;
-import com.cyl.manager.oms.pojo.request.ManagerOrderQueryRequest;
-import com.cyl.manager.oms.pojo.vo.ManagerOrderVO;
-import com.cyl.manager.statistics.pojo.vo.OrderAndAftersaleStatisticsVO;
-import com.cyl.manager.ums.pojo.vo.MemberDataStatisticsVO;
+import com.cyl.h5.domain.vo.CountOrderVO;
+import com.cyl.h5.domain.vo.H5OrderVO;
+import com.cyl.manager.aws.domain.entity.SystemStatistics;
+import com.cyl.manager.oms.domain.entity.Order;
+import com.cyl.manager.oms.domain.form.ManagerOrderQueryRequest;
+import com.cyl.manager.oms.domain.vo.ManagerOrderVO;
+import com.cyl.manager.statistics.domain.vo.OrderAndAftersaleStatisticsVO;
+import com.cyl.manager.ums.domain.vo.MemberDataStatisticsVO;
 import org.apache.ibatis.annotations.Param;
 
 /**

@@ -1,6 +1,6 @@
 package com.fjp.lc.test.service;
 
-import com.cyl.h5.pojo.vo.form.WechatLoginForm;
+import com.cyl.h5.domain.form.WechatLoginForm;
 import com.cyl.manager.ums.service.MemberWechatService;
 import com.ruoyi.RuoYiApplication;
 import org.junit.Test;

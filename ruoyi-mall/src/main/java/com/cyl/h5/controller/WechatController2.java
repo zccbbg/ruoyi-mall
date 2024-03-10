@@ -3,7 +3,7 @@ package com.cyl.h5.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cyl.external.WechatUtil;
-import com.cyl.h5.pojo.vo.form.WechatLoginForm;
+import com.cyl.h5.domain.form.WechatLoginForm;
 import com.cyl.manager.ums.service.MemberWechatService;
 import com.ruoyi.common.core.domain.AjaxResult;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -22,10 +22,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.manager.pms.convert.ProductConvert;
-import com.cyl.manager.pms.domain.Product;
-import com.cyl.manager.pms.pojo.query.ProductQuery;
+import com.cyl.manager.pms.domain.entity.Product;
+import com.cyl.manager.pms.domain.query.ProductQuery;
 import com.cyl.manager.pms.service.ProductService;
-import com.cyl.manager.pms.pojo.vo.ProductVO;
+import com.cyl.manager.pms.domain.vo.ProductVO;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 /**
  * 商品信息Controller

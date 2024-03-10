@@ -2,10 +2,10 @@ package com.cyl.h5.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.cyl.manager.ums.domain.Address;
-import com.cyl.manager.ums.domain.Feedback;
+import com.cyl.manager.ums.domain.entity.Address;
+import com.cyl.manager.ums.domain.entity.Feedback;
 import com.cyl.manager.ums.mapper.AddressMapper;
-import com.cyl.manager.ums.pojo.dto.AddressDTO;
+import com.cyl.manager.ums.domain.dto.AddressDTO;
 import com.cyl.manager.ums.service.FeedbackService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -17,7 +17,6 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 

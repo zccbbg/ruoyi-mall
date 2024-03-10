@@ -1,9 +1,10 @@
 package com.cyl.manager.pms.convert;
 
-import com.cyl.h5.pojo.dto.ProductDTO;
+import com.cyl.h5.domain.vo.H5ProductVO;
+import com.cyl.manager.pms.domain.entity.Product;
+import com.cyl.manager.pms.domain.vo.ProductVO;
 import org.mapstruct.Mapper;
-import com.cyl.manager.pms.domain.Product;
-import com.cyl.manager.pms.pojo.vo.ProductVO;
+
 import java.util.List;
 /**
  * 商品信息  DO <=> DTO <=> VO / BO / Query
@@ -17,5 +18,5 @@ public interface ProductConvert  {
     Product vo2do(ProductVO productVO);
     ProductVO do2vo(Product product);
 
-    List<ProductDTO> dos2dtos(List<Product> products);
+    List<H5ProductVO> dos2dtos(List<Product> products);
 }

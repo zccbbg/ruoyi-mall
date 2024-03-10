@@ -8,30 +8,30 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.cyl.h5.config.SecurityUtil;
-import com.cyl.h5.pojo.dto.ApplyRefundDTO;
-import com.cyl.h5.pojo.dto.OrderCreateDTO;
-import com.cyl.h5.pojo.dto.OrderProductListDTO;
-import com.cyl.h5.pojo.dto.PayNotifyMessageDTO;
-import com.cyl.h5.pojo.request.CancelOrderRequest;
-import com.cyl.h5.pojo.request.OrderPayRequest;
-import com.cyl.h5.pojo.response.OrderPayResponse;
-import com.cyl.h5.pojo.vo.*;
-import com.cyl.h5.pojo.vo.form.OrderSubmitForm;
+import com.cyl.h5.domain.form.ApplyRefundDTO;
+import com.cyl.h5.domain.form.OrderCreateForm;
+import com.cyl.h5.domain.dto.OrderProductListDTO;
+import com.cyl.h5.domain.dto.PayNotifyMessageDTO;
+import com.cyl.h5.domain.form.CancelOrderRequest;
+import com.cyl.h5.domain.form.OrderPayRequest;
+import com.cyl.h5.domain.vo.OrderPayResponse;
+import com.cyl.h5.domain.vo.*;
+import com.cyl.h5.domain.form.OrderSubmitForm;
 import com.cyl.manager.act.service.IntegralHistoryService;
 import com.cyl.manager.oms.convert.AftersaleItemConvert;
 import com.cyl.manager.oms.convert.OrderItemConvert;
-import com.cyl.manager.oms.domain.*;
 import com.cyl.manager.oms.mapper.*;
+import com.cyl.manager.oms.domain.entity.*;
 import com.cyl.manager.oms.service.OrderItemService;
 import com.cyl.manager.oms.service.OrderOperateHistoryService;
-import com.cyl.manager.pms.domain.Product;
-import com.cyl.manager.pms.domain.Sku;
+import com.cyl.manager.pms.domain.entity.Product;
+import com.cyl.manager.pms.domain.entity.Sku;
 import com.cyl.manager.pms.mapper.ProductMapper;
 import com.cyl.manager.pms.mapper.SkuMapper;
-import com.cyl.manager.ums.domain.Member;
-import com.cyl.manager.ums.domain.MemberAddress;
-import com.cyl.manager.ums.domain.MemberCart;
-import com.cyl.manager.ums.domain.MemberWechat;
+import com.cyl.manager.ums.domain.entity.Member;
+import com.cyl.manager.ums.domain.entity.MemberAddress;
+import com.cyl.manager.ums.domain.entity.MemberCart;
+import com.cyl.manager.ums.domain.entity.MemberWechat;
 import com.cyl.manager.ums.mapper.MemberAddressMapper;
 import com.cyl.manager.ums.mapper.MemberCartMapper;
 import com.cyl.manager.ums.mapper.MemberWechatMapper;
@@ -244,10 +244,10 @@ public class H5OrderService {
         return payId;
     }
 
-    public OrderCalcVO addOrderCheck(OrderCreateDTO orderCreateDTO) {
+    public OrderCalcVO addOrderCheck(OrderCreateForm orderCreateForm) {
         OrderCalcVO res = new OrderCalcVO();
         List<SkuViewDTO> skuList = new ArrayList<>();
-        List<OrderProductListDTO> list = orderCreateDTO.getSkuList();
+        List<OrderProductListDTO> list = orderCreateForm.getSkuList();
         if (CollectionUtil.isEmpty(list)){
             throw new RuntimeException("商品SKU信息不能为空");
         }

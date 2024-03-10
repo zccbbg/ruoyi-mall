@@ -22,10 +22,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.manager.ums.convert.MemberWechatConvert;
-import com.cyl.manager.ums.domain.MemberWechat;
-import com.cyl.manager.ums.pojo.query.MemberWechatQuery;
+import com.cyl.manager.ums.domain.entity.MemberWechat;
+import com.cyl.manager.ums.domain.query.MemberWechatQuery;
 import com.cyl.manager.ums.service.MemberWechatService;
-import com.cyl.manager.ums.pojo.vo.MemberWechatVO;
+import com.cyl.manager.ums.domain.vo.MemberWechatVO;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 /**
  * 用户微信信息Controller

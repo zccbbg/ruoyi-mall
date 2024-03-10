@@ -2,19 +2,15 @@ package com.cyl.manager.statistics.service;
 
 import com.cyl.manager.oms.mapper.AftersaleMapper;
 import com.cyl.manager.oms.mapper.OrderMapper;
-import com.cyl.manager.oms.service.AftersaleService;
-import com.cyl.manager.oms.service.OrderDeliveryHistoryService;
-import com.cyl.manager.oms.service.OrderService;
 import com.cyl.manager.statistics.mapper.IndexStatisticsMapper;
-import com.cyl.manager.statistics.pojo.GoodsStatisticsQueryParam;
-import com.cyl.manager.statistics.pojo.OrderStatisticsQueryParam;
-import com.cyl.manager.statistics.pojo.vo.MemberAndCartStatisticsVO;
-import com.cyl.manager.statistics.pojo.vo.OrderAndAftersaleStatisticsVO;
-import com.cyl.manager.statistics.pojo.vo.OrderStatisticsVO;
-import com.cyl.manager.statistics.pojo.vo.ProductTopVO;
+import com.cyl.manager.statistics.domain.query.GoodsStatisticsQuery;
+import com.cyl.manager.statistics.domain.query.OrderStatisticsQuery;
+import com.cyl.manager.statistics.domain.vo.MemberAndCartStatisticsVO;
+import com.cyl.manager.statistics.domain.vo.OrderAndAftersaleStatisticsVO;
+import com.cyl.manager.statistics.domain.vo.OrderStatisticsVO;
+import com.cyl.manager.statistics.domain.vo.ProductTopVO;
 import com.cyl.manager.ums.mapper.MemberCartMapper;
 import com.cyl.manager.ums.mapper.MemberMapper;
-import com.cyl.manager.ums.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +18,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * 管理端,首页统计数据Service业务层处理
@@ -44,15 +39,15 @@ public class IndexStatisticsService {
     private OrderMapper orderMapper;
 
 
-    public List<ProductTopVO> goodsStatistics(GoodsStatisticsQueryParam goodsStatisticsQueryParam) {
-        if (goodsStatisticsQueryParam.getStatType() == 1){
-            return indexStatisticsMapper.goodsSkuStatistics(goodsStatisticsQueryParam);
+    public List<ProductTopVO> goodsStatistics(GoodsStatisticsQuery goodsStatisticsQuery) {
+        if (goodsStatisticsQuery.getStatType() == 1){
+            return indexStatisticsMapper.goodsSkuStatistics(goodsStatisticsQuery);
         }else {
-            return indexStatisticsMapper.goodsStatistics(goodsStatisticsQueryParam);
+            return indexStatisticsMapper.goodsStatistics(goodsStatisticsQuery);
         }
     }
 
-    public List<OrderStatisticsVO> orderStatistics(OrderStatisticsQueryParam param) {
+    public List<OrderStatisticsVO> orderStatistics(OrderStatisticsQuery param) {
         return indexStatisticsMapper.orderStatistics(param);
     }
 

@@ -4,14 +4,14 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.cyl.manager.oms.domain.WechatPaymentHistory;
+import com.cyl.manager.oms.domain.entity.WechatPaymentHistory;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.cyl.manager.oms.mapper.WechatPaymentHistoryMapper;
-import com.cyl.manager.oms.pojo.query.WechatPaymentHistoryQuery;
+import com.cyl.manager.oms.domain.query.WechatPaymentHistoryQuery;
 
 /**
  * 微信订单表Service业务层处理

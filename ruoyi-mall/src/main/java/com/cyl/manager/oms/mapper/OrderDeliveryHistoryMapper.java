@@ -2,7 +2,7 @@ package com.cyl.manager.oms.mapper;
 
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyl.manager.oms.domain.OrderDeliveryHistory;
+import com.cyl.manager.oms.domain.entity.OrderDeliveryHistory;
 
 /**
  * 订单发货记录Mapper接口

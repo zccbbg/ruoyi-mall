@@ -2,7 +2,7 @@ package com.cyl.manager.pms.mapper;
 
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyl.manager.pms.domain.ProductCategory;
+import com.cyl.manager.pms.domain.entity.ProductCategory;
 
 /**
  * 商品分类Mapper接口

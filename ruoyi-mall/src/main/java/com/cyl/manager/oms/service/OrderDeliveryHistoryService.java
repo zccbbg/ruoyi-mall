@@ -9,8 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.cyl.manager.oms.mapper.OrderDeliveryHistoryMapper;
-import com.cyl.manager.oms.domain.OrderDeliveryHistory;
-import com.cyl.manager.oms.pojo.query.OrderDeliveryHistoryQuery;
+import com.cyl.manager.oms.domain.entity.OrderDeliveryHistory;
+import com.cyl.manager.oms.domain.query.OrderDeliveryHistoryQuery;
 
 /**
  * 订单发货记录Service业务层处理

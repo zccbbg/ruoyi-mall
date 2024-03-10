@@ -2,9 +2,9 @@ package com.ruoyi.web.controller.common;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.cyl.manager.ums.domain.Address;
+import com.cyl.manager.ums.domain.entity.Address;
 import com.cyl.manager.ums.mapper.AddressMapper;
-import com.cyl.manager.ums.pojo.dto.AddressDTO;
+import com.cyl.manager.ums.domain.dto.AddressDTO;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.domain.AjaxResult;

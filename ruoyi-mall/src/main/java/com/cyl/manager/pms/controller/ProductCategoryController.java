@@ -19,10 +19,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.manager.pms.convert.ProductCategoryConvert;
-import com.cyl.manager.pms.domain.ProductCategory;
-import com.cyl.manager.pms.pojo.query.ProductCategoryQuery;
+import com.cyl.manager.pms.domain.entity.ProductCategory;
+import com.cyl.manager.pms.domain.query.ProductCategoryQuery;
 import com.cyl.manager.pms.service.ProductCategoryService;
-import com.cyl.manager.pms.pojo.vo.ProductCategoryVO;
+import com.cyl.manager.pms.domain.vo.ProductCategoryVO;
 
 /**
  * 商品分类Controller

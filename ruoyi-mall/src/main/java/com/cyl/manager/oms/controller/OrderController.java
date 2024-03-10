@@ -1,13 +1,13 @@
 package com.cyl.manager.oms.controller;
 
 import com.cyl.manager.oms.convert.OrderConvert;
-import com.cyl.manager.oms.domain.Order;
-import com.cyl.manager.oms.pojo.query.OrderQuery;
-import com.cyl.manager.oms.pojo.request.DeliverProductRequest;
-import com.cyl.manager.oms.pojo.request.ManagerOrderQueryRequest;
-import com.cyl.manager.oms.pojo.vo.ManagerOrderDetailVO;
-import com.cyl.manager.oms.pojo.vo.ManagerOrderVO;
-import com.cyl.manager.oms.pojo.vo.OrderOperateHistoryVO;
+import com.cyl.manager.oms.domain.entity.Order;
+import com.cyl.manager.oms.domain.query.OrderQuery;
+import com.cyl.manager.oms.domain.form.DeliverProductRequest;
+import com.cyl.manager.oms.domain.form.ManagerOrderQueryRequest;
+import com.cyl.manager.oms.domain.vo.ManagerOrderDetailVO;
+import com.cyl.manager.oms.domain.vo.ManagerOrderVO;
+import com.cyl.manager.oms.domain.vo.OrderOperateHistoryVO;
 import com.cyl.manager.oms.service.OrderService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;

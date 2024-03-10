@@ -3,9 +3,9 @@ package com.cyl.manager.ums.mapper;
 import java.time.LocalDateTime;
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyl.manager.ums.domain.MemberCart;
-import com.cyl.manager.ums.pojo.query.MemberCartQuery;
-import com.cyl.manager.ums.pojo.vo.MemberCartVO;
+import com.cyl.manager.ums.domain.entity.MemberCart;
+import com.cyl.manager.ums.domain.query.MemberCartQuery;
+import com.cyl.manager.ums.domain.vo.MemberCartVO;
 import org.apache.ibatis.annotations.Param;
 
 /**

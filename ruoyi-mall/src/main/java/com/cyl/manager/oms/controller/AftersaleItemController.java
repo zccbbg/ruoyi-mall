@@ -22,10 +22,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.manager.oms.convert.AftersaleItemConvert;
-import com.cyl.manager.oms.domain.AftersaleItem;
-import com.cyl.manager.oms.pojo.query.AftersaleItemQuery;
+import com.cyl.manager.oms.domain.entity.AftersaleItem;
+import com.cyl.manager.oms.domain.query.AftersaleItemQuery;
 import com.cyl.manager.oms.service.AftersaleItemService;
-import com.cyl.manager.oms.pojo.vo.AftersaleItemVO;
+import com.cyl.manager.oms.domain.vo.AftersaleItemVO;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 /**
  * 订单售后Controller

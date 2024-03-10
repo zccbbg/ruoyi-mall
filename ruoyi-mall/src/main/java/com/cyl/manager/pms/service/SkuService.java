@@ -10,8 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.cyl.manager.pms.mapper.SkuMapper;
-import com.cyl.manager.pms.domain.Sku;
-import com.cyl.manager.pms.pojo.query.SkuQuery;
+import com.cyl.manager.pms.domain.entity.Sku;
+import com.cyl.manager.pms.domain.query.SkuQuery;
 
 /**
  * sku信息Service业务层处理

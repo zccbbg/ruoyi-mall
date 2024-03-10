@@ -1,10 +1,10 @@
 package com.cyl.h5.controller;
 
-import com.cyl.h5.pojo.dto.ProductDTO;
-import com.cyl.h5.pojo.vo.ProductDetail;
+import com.cyl.h5.domain.vo.H5ProductVO;
+import com.cyl.h5.domain.vo.ProductDetail;
 import com.cyl.manager.pms.convert.ProductConvert;
-import com.cyl.manager.pms.domain.Product;
-import com.cyl.manager.pms.pojo.query.ProductQuery;
+import com.cyl.manager.pms.domain.entity.Product;
+import com.cyl.manager.pms.domain.query.ProductQuery;
 import com.cyl.manager.pms.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,7 +24,7 @@ public class H5ProductController {
     private ProductConvert productConvert;
 
     @PostMapping("/list")
-    public ResponseEntity<Page<ProductDTO>> queryGoodByPage(@RequestBody ProductQuery query, Pageable page) {
+    public ResponseEntity<Page<H5ProductVO>> queryGoodByPage(@RequestBody ProductQuery query, Pageable page) {
         List<Product> pageRes = productService.selectList(query, page);
         return ResponseEntity.ok(new PageImpl<>(productConvert.dos2dtos(pageRes), page, ((com.github.pagehelper.Page) pageRes).getTotal()));
     }

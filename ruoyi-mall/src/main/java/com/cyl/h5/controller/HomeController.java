@@ -1,6 +1,6 @@
 package com.cyl.h5.controller;
 
-import com.cyl.h5.pojo.vo.HomeConfigVO;
+import com.cyl.h5.domain.vo.HomeConfigVO;
 import com.cyl.manager.pms.service.ProductCategoryService;
 import com.ruoyi.system.service.ISysConfigService;
 import org.springframework.beans.factory.annotation.Autowired;

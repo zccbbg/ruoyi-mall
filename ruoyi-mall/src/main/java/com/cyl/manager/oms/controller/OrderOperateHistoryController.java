@@ -22,10 +22,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.manager.oms.convert.OrderOperateHistoryConvert;
-import com.cyl.manager.oms.domain.OrderOperateHistory;
-import com.cyl.manager.oms.pojo.query.OrderOperateHistoryQuery;
+import com.cyl.manager.oms.domain.entity.OrderOperateHistory;
+import com.cyl.manager.oms.domain.query.OrderOperateHistoryQuery;
 import com.cyl.manager.oms.service.OrderOperateHistoryService;
-import com.cyl.manager.oms.pojo.vo.OrderOperateHistoryVO;
+import com.cyl.manager.oms.domain.vo.OrderOperateHistoryVO;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 /**
  * 订单操作历史记录Controller

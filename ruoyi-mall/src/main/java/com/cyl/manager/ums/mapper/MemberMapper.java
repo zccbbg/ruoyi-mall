@@ -2,7 +2,7 @@ package com.cyl.manager.ums.mapper;
 
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyl.manager.ums.domain.Member;
+import com.cyl.manager.ums.domain.entity.Member;
 
 /**
  * 会员信息Mapper接口

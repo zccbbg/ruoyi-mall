@@ -2,12 +2,10 @@ package com.cyl.manager.oms.mapper;
 
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyl.manager.oms.domain.Aftersale;
-import com.cyl.manager.oms.domain.AftersaleItem;
-import com.cyl.manager.oms.pojo.request.ManagerAftersaleOrderRequest;
-import com.cyl.manager.oms.pojo.vo.ManagerRefundOrderVO;
-import com.cyl.manager.statistics.pojo.vo.OrderAndAftersaleStatisticsVO;
-import org.apache.ibatis.annotations.Param;
+import com.cyl.manager.oms.domain.entity.Aftersale;
+import com.cyl.manager.oms.domain.form.ManagerAftersaleOrderRequest;
+import com.cyl.manager.oms.domain.vo.ManagerRefundOrderVO;
+import com.cyl.manager.statistics.domain.vo.OrderAndAftersaleStatisticsVO;
 
 /**
  * 订单售后Mapper接口

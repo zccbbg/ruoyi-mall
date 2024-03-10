@@ -5,7 +5,7 @@ import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.symmetric.AES;
-import com.cyl.h5.pojo.dto.PayNotifyMessageDTO;
+import com.cyl.h5.domain.dto.PayNotifyMessageDTO;
 import com.cyl.h5.service.H5OrderService;
 import com.cyl.job.OrderJob;
 import com.cyl.manager.act.service.IntegralHistoryService;

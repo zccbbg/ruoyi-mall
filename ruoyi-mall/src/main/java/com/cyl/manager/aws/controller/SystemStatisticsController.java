@@ -1,10 +1,7 @@
 package com.cyl.manager.aws.controller;
 
-import java.util.List;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +19,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.manager.aws.convert.SystemStatisticsConvert;
-import com.cyl.manager.aws.domain.SystemStatistics;
-import com.cyl.manager.aws.pojo.query.SystemStatisticsQuery;
+import com.cyl.manager.aws.domain.entity.SystemStatistics;
+import com.cyl.manager.aws.domain.query.SystemStatisticsQuery;
 import com.cyl.manager.aws.service.SystemStatisticsService;
-import com.cyl.manager.aws.pojo.vo.SystemStatisticsVO;
-import com.ruoyi.common.utils.poi.ExcelUtil;
+
 /**
  * 系统数据统计Controller
  * 

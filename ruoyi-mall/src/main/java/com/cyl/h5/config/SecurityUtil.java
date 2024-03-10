@@ -1,6 +1,6 @@
 package com.cyl.h5.config;
 
-import com.cyl.manager.ums.domain.Member;
+import com.cyl.manager.ums.domain.entity.Member;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.framework.config.LocalDataUtil;
 import org.springframework.stereotype.Service;

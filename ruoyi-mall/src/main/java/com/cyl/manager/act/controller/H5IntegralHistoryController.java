@@ -1,9 +1,9 @@
 package com.cyl.manager.act.controller;
 
 import com.cyl.h5.config.SecurityUtil;
-import com.cyl.manager.act.domain.IntegralHistory;
-import com.cyl.manager.act.pojo.query.IntegralHistoryQuery;
-import com.cyl.manager.act.pojo.vo.IntegralStatVO;
+import com.cyl.manager.act.domain.entity.IntegralHistory;
+import com.cyl.manager.act.domain.query.IntegralHistoryQuery;
+import com.cyl.manager.act.domain.vo.IntegralStatVO;
 import com.cyl.manager.act.service.IntegralHistoryService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;

@@ -1,11 +1,11 @@
 package com.cyl.h5.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.cyl.manager.ums.domain.Member;
-import com.cyl.manager.ums.domain.MemberAddress;
+import com.cyl.manager.ums.domain.entity.Member;
+import com.cyl.manager.ums.domain.entity.MemberAddress;
 import com.cyl.manager.ums.mapper.MemberAddressMapper;
-import com.cyl.manager.ums.pojo.dto.MemberAddressDTO;
-import com.cyl.manager.ums.pojo.vo.MemberAddressVO;
+import com.cyl.manager.ums.domain.form.MemberAddressForm;
+import com.cyl.manager.ums.domain.vo.MemberAddressVO;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.utils.AesCryptoUtils;
 import com.ruoyi.common.utils.PhoneUtils;
@@ -67,19 +67,19 @@ public class H5MemberAddressService {
     /**
      * 新增会员收货地址
      * 
-     * @param memberAddressDTO 会员收货地址
+     * @param memberAddressForm 会员收货地址
      * @return 结果
      */
-    public int insert(MemberAddressDTO memberAddressDTO) {
+    public int insert(MemberAddressForm memberAddressForm) {
         Member member = (Member) LocalDataUtil.getVar(Constants.MEMBER_INFO);
-        if (memberAddressDTO.getIsDefault() == 1) {
+        if (memberAddressForm.getIsDefault() == 1) {
             //将别的设置为0
             memberAddressMapper.updateDefault(0,member.getId());
         }
         MemberAddress memberAddress = new MemberAddress();
-        BeanUtils.copyProperties(memberAddressDTO, memberAddress);
-        memberAddress.setPhoneHidden(PhoneUtils.hidePhone(memberAddressDTO.getPhone()));
-        memberAddress.setPhoneEncrypted(AesCryptoUtils.encrypt(aesKey, memberAddressDTO.getPhone()));
+        BeanUtils.copyProperties(memberAddressForm, memberAddress);
+        memberAddress.setPhoneHidden(PhoneUtils.hidePhone(memberAddressForm.getPhone()));
+        memberAddress.setPhoneEncrypted(AesCryptoUtils.encrypt(aesKey, memberAddressForm.getPhone()));
         memberAddress.setMemberId(member.getId());
         memberAddress.setCreateTime(LocalDateTime.now());
         return memberAddressMapper.insert(memberAddress);
@@ -88,20 +88,20 @@ public class H5MemberAddressService {
     /**
      * 修改会员收货地址
      * 
-     * @param memberAddressDTO 会员收货地址
+     * @param memberAddressForm 会员收货地址
      * @return 结果
      */
    
-    public int update(MemberAddressDTO memberAddressDTO) {
+    public int update(MemberAddressForm memberAddressForm) {
         Member member = (Member) LocalDataUtil.getVar(Constants.MEMBER_INFO);
-        if (memberAddressDTO.getIsDefault() == 1) {
+        if (memberAddressForm.getIsDefault() == 1) {
             //将别的设置为0
             memberAddressMapper.updateDefault(0,member.getId());
         }
         MemberAddress memberAddress = new MemberAddress();
-        BeanUtils.copyProperties(memberAddressDTO, memberAddress);
-        memberAddress.setPhoneHidden(PhoneUtils.hidePhone(memberAddressDTO.getPhone()));
-        memberAddress.setPhoneEncrypted(AesCryptoUtils.encrypt(aesKey, memberAddressDTO.getPhone()));
+        BeanUtils.copyProperties(memberAddressForm, memberAddress);
+        memberAddress.setPhoneHidden(PhoneUtils.hidePhone(memberAddressForm.getPhone()));
+        memberAddress.setPhoneEncrypted(AesCryptoUtils.encrypt(aesKey, memberAddressForm.getPhone()));
         memberAddress.setUpdateTime(LocalDateTime.now());
         memberAddress.setUpdateBy(member.getId());
         return memberAddressMapper.updateById(memberAddress);

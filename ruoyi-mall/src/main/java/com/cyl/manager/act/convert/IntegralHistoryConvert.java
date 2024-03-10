@@ -1,8 +1,8 @@
 package com.cyl.manager.act.convert;
 
 import org.mapstruct.Mapper;
-import com.cyl.manager.act.domain.IntegralHistory;
-import com.cyl.manager.act.pojo.vo.IntegralHistoryVO;
+import com.cyl.manager.act.domain.entity.IntegralHistory;
+import com.cyl.manager.act.domain.vo.IntegralHistoryVO;
 import java.util.List;
 /**
  * 积分流水表  DO <=> DTO <=> VO / BO / Query

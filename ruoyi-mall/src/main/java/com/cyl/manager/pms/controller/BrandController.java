@@ -22,10 +22,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.manager.pms.convert.BrandConvert;
-import com.cyl.manager.pms.domain.Brand;
-import com.cyl.manager.pms.pojo.query.BrandQuery;
+import com.cyl.manager.pms.domain.entity.Brand;
+import com.cyl.manager.pms.domain.query.BrandQuery;
 import com.cyl.manager.pms.service.BrandService;
-import com.cyl.manager.pms.pojo.vo.BrandVO;
+import com.cyl.manager.pms.domain.vo.BrandVO;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 /**
  * 品牌管理Controller

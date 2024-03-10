@@ -9,15 +9,13 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.cyl.config.WechatConfig;
 import com.cyl.external.WechatUtil;
 import com.cyl.external.resp.AccessTokenResp;
 import com.cyl.external.resp.UserInfoResp;
-import com.cyl.h5.pojo.vo.form.WechatLoginForm;
+import com.cyl.h5.domain.form.WechatLoginForm;
 import com.cyl.h5.service.H5MemberService;
 import com.cyl.manager.ums.convert.MemberWechatConvert;
-import com.cyl.manager.ums.domain.Member;
-import com.cyl.manager.ums.mapper.MemberMapper;
+import com.cyl.manager.ums.domain.entity.Member;
 import com.cyl.wechat.WechatPayData;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.core.domain.entity.SysUser;
@@ -32,8 +30,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.cyl.manager.ums.mapper.MemberWechatMapper;
-import com.cyl.manager.ums.domain.MemberWechat;
-import com.cyl.manager.ums.pojo.query.MemberWechatQuery;
+import com.cyl.manager.ums.domain.entity.MemberWechat;
+import com.cyl.manager.ums.domain.query.MemberWechatQuery;
 import org.springframework.web.client.RestTemplate;
 
 /**

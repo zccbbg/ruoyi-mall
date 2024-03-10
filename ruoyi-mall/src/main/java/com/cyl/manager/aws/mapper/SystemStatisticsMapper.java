@@ -2,8 +2,7 @@ package com.cyl.manager.aws.mapper;
 
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Param;
-import com.cyl.manager.aws.domain.SystemStatistics;
+import com.cyl.manager.aws.domain.entity.SystemStatistics;
 
 /**
  * 系统数据统计Mapper接口

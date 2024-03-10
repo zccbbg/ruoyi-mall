@@ -1,8 +1,8 @@
 package com.cyl.manager.oms.convert;
 
 import org.mapstruct.Mapper;
-import com.cyl.manager.oms.domain.Order;
-import com.cyl.manager.oms.pojo.vo.OrderVO;
+import com.cyl.manager.oms.domain.entity.Order;
+import com.cyl.manager.oms.domain.vo.OrderVO;
 import java.util.List;
 /**
  * 订单表  DO <=> DTO <=> VO / BO / Query

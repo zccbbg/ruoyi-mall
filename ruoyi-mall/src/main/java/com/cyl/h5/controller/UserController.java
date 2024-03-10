@@ -1,7 +1,7 @@
 package com.cyl.h5.controller;
 
-import com.cyl.manager.ums.domain.MemberAddress;
-import com.cyl.manager.ums.pojo.query.MemberAddressQuery;
+import com.cyl.manager.ums.domain.entity.MemberAddress;
+import com.cyl.manager.ums.domain.query.MemberAddressQuery;
 import com.cyl.manager.ums.service.MemberAddressService;
 import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;

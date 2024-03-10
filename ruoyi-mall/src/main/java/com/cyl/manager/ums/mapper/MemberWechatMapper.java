@@ -2,7 +2,7 @@ package com.cyl.manager.ums.mapper;
 
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyl.manager.ums.domain.MemberWechat;
+import com.cyl.manager.ums.domain.entity.MemberWechat;
 
 /**
  * 用户微信信息Mapper接口

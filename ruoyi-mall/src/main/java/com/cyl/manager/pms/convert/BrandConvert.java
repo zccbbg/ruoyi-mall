@@ -1,8 +1,8 @@
 package com.cyl.manager.pms.convert;
 
 import org.mapstruct.Mapper;
-import com.cyl.manager.pms.domain.Brand;
-import com.cyl.manager.pms.pojo.vo.BrandVO;
+import com.cyl.manager.pms.domain.entity.Brand;
+import com.cyl.manager.pms.domain.vo.BrandVO;
 import java.util.List;
 /**
  * 品牌管理  DO <=> DTO <=> VO / BO / Query

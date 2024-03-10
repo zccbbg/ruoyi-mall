@@ -2,7 +2,7 @@ package com.cyl.manager.oms.mapper;
 
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyl.manager.oms.domain.AftersaleItem;
+import com.cyl.manager.oms.domain.entity.AftersaleItem;
 import org.apache.ibatis.annotations.Param;
 
 /**

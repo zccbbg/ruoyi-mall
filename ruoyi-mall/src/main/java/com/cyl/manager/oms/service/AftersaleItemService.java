@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.cyl.manager.oms.mapper.AftersaleItemMapper;
-import com.cyl.manager.oms.domain.AftersaleItem;
-import com.cyl.manager.oms.pojo.query.AftersaleItemQuery;
+import com.cyl.manager.oms.domain.entity.AftersaleItem;
+import com.cyl.manager.oms.domain.query.AftersaleItemQuery;
 
 /**
  * 订单售后Service业务层处理

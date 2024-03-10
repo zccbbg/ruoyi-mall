@@ -4,21 +4,17 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.cyl.manager.oms.domain.Aftersale;
+import com.cyl.manager.oms.domain.entity.Aftersale;
 import com.cyl.manager.oms.mapper.AftersaleMapper;
 import com.cyl.manager.oms.mapper.OrderMapper;
-import com.cyl.manager.ums.domain.Member;
-import com.cyl.manager.ums.domain.MemberCart;
+import com.cyl.manager.ums.domain.entity.Member;
 import com.cyl.manager.ums.mapper.MemberCartMapper;
 import com.cyl.manager.ums.mapper.MemberLogininforMapper;
 import com.cyl.manager.ums.mapper.MemberMapper;
@@ -27,11 +23,10 @@ import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.cyl.manager.aws.mapper.SystemStatisticsMapper;
-import com.cyl.manager.aws.domain.SystemStatistics;
-import com.cyl.manager.aws.pojo.query.SystemStatisticsQuery;
+import com.cyl.manager.aws.domain.entity.SystemStatistics;
+import com.cyl.manager.aws.domain.query.SystemStatisticsQuery;
 
 /**
  * 系统数据统计Service业务层处理

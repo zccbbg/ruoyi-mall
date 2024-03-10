@@ -1,11 +1,10 @@
 package com.cyl.manager.ums.controller;
 
-import com.cyl.manager.ums.pojo.vo.MemberCartVO;
+import com.cyl.manager.ums.domain.vo.MemberCartVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +20,9 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.manager.ums.convert.MemberCartConvert;
-import com.cyl.manager.ums.domain.MemberCart;
-import com.cyl.manager.ums.pojo.query.MemberCartQuery;
+import com.cyl.manager.ums.domain.entity.MemberCart;
+import com.cyl.manager.ums.domain.query.MemberCartQuery;
 import com.cyl.manager.ums.service.MemberCartService;
-
-import java.util.List;
 
 /**
  * 购物车Controller

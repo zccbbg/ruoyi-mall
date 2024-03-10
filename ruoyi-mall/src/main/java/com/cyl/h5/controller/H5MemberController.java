@@ -1,13 +1,13 @@
 package com.cyl.h5.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.cyl.h5.pojo.dto.H5LoginDTO;
-import com.cyl.h5.pojo.request.RegisterRequest;
-import com.cyl.h5.pojo.response.RegisterResponse;
-import com.cyl.h5.pojo.response.ValidatePhoneResponse;
-import com.cyl.h5.pojo.response.H5LoginResponse;
+import com.cyl.h5.domain.vo.H5LoginVO;
+import com.cyl.h5.domain.form.RegisterRequest;
+import com.cyl.h5.domain.vo.RegisterResponse;
+import com.cyl.h5.domain.vo.ValidatePhoneResponse;
+import com.cyl.h5.domain.vo.H5LoginResponse;
 import com.cyl.h5.service.H5MemberService;
-import com.cyl.manager.ums.pojo.vo.MemberVO;
+import com.cyl.manager.ums.domain.vo.MemberVO;
 import com.ruoyi.common.core.domain.model.LoginMember;
 import com.ruoyi.framework.web.service.TokenService;
 import io.swagger.annotations.ApiOperation;
@@ -52,7 +52,7 @@ public class H5MemberController {
         if (StringUtils.isEmpty(data)) {
             return ResponseEntity.ok(null);
         }
-        H5LoginDTO params = JSON.parseObject(new String(Base64Utils.decodeFromString(data)), H5LoginDTO.class);
+        H5LoginVO params = JSON.parseObject(new String(Base64Utils.decodeFromString(data)), H5LoginVO.class);
         return ResponseEntity.ok(service.wechatLogin(params));
     }
 

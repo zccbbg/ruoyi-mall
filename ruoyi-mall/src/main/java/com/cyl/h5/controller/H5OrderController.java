@@ -1,18 +1,18 @@
 package com.cyl.h5.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cyl.h5.pojo.dto.ApplyRefundDTO;
-import com.cyl.h5.pojo.dto.OrderCreateDTO;
-import com.cyl.h5.pojo.request.CancelOrderRequest;
-import com.cyl.h5.pojo.request.OrderPayRequest;
-import com.cyl.h5.pojo.response.OrderPayResponse;
-import com.cyl.h5.pojo.vo.AftersaleRefundInfoVO;
-import com.cyl.h5.pojo.vo.CountOrderVO;
-import com.cyl.h5.pojo.vo.H5OrderVO;
-import com.cyl.h5.pojo.vo.OrderCalcVO;
-import com.cyl.h5.pojo.vo.form.OrderSubmitForm;
+import com.cyl.h5.domain.form.ApplyRefundDTO;
+import com.cyl.h5.domain.form.OrderCreateForm;
+import com.cyl.h5.domain.form.CancelOrderRequest;
+import com.cyl.h5.domain.form.OrderPayRequest;
+import com.cyl.h5.domain.vo.OrderPayResponse;
+import com.cyl.h5.domain.vo.AftersaleRefundInfoVO;
+import com.cyl.h5.domain.vo.CountOrderVO;
+import com.cyl.h5.domain.vo.H5OrderVO;
+import com.cyl.h5.domain.vo.OrderCalcVO;
+import com.cyl.h5.domain.form.OrderSubmitForm;
 import com.cyl.h5.service.H5OrderService;
-import com.cyl.manager.ums.domain.Member;
+import com.cyl.manager.ums.domain.entity.Member;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.redis.RedisService;
 import com.ruoyi.framework.config.LocalDataUtil;
@@ -57,8 +57,8 @@ public class H5OrderController {
 
     @ApiOperation("下单前校验")
     @PostMapping("/addOrderCheck")
-    public ResponseEntity<OrderCalcVO> addOrderCheck(@RequestBody OrderCreateDTO orderCreateDTO){
-        return ResponseEntity.ok(service.addOrderCheck(orderCreateDTO));
+    public ResponseEntity<OrderCalcVO> addOrderCheck(@RequestBody OrderCreateForm orderCreateForm){
+        return ResponseEntity.ok(service.addOrderCheck(orderCreateForm));
     }
 
     @ApiOperation("订单列表")

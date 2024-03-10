@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
-import com.cyl.manager.ums.domain.MemberAccount;
+import com.cyl.manager.ums.domain.entity.MemberAccount;
 
 /**
  * 会员账户表Mapper接口

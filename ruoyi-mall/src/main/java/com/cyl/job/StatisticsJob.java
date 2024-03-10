@@ -1,6 +1,6 @@
 package com.cyl.job;
 
-import com.cyl.manager.aws.domain.SystemStatistics;
+import com.cyl.manager.aws.domain.entity.SystemStatistics;
 import com.cyl.manager.aws.mapper.SystemStatisticsMapper;
 import com.cyl.manager.aws.service.SystemStatisticsService;
 import lombok.extern.slf4j.Slf4j;

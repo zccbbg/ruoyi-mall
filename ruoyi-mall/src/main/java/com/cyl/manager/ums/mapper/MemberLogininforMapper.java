@@ -3,9 +3,8 @@ package com.cyl.manager.ums.mapper;
 import java.time.LocalDateTime;
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyl.manager.aws.domain.SystemStatistics;
 import org.apache.ibatis.annotations.Param;
-import com.cyl.manager.ums.domain.MemberLogininfor;
+import com.cyl.manager.ums.domain.entity.MemberLogininfor;
 
 /**
  * 会员登录记录Mapper接口

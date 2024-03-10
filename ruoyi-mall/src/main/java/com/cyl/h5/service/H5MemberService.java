@@ -1,27 +1,26 @@
 package com.cyl.h5.service;
 
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cyl.config.AESForWeixinGetPhoneNumber;
-import com.cyl.h5.pojo.dto.H5LoginDTO;
-import com.cyl.h5.pojo.request.BindOpenIdRequest;
-import com.cyl.h5.pojo.request.H5AccountLoginRequest;
-import com.cyl.h5.pojo.request.H5SmsLoginRequest;
-import com.cyl.h5.pojo.request.RegisterRequest;
-import com.cyl.h5.pojo.response.RegisterResponse;
-import com.cyl.h5.pojo.response.ValidatePhoneResponse;
-import com.cyl.h5.pojo.response.H5LoginResponse;
-import com.cyl.manager.ums.domain.Member;
-import com.cyl.manager.ums.domain.MemberLogininfor;
-import com.cyl.manager.ums.domain.MemberWechat;
+import com.cyl.h5.domain.vo.H5LoginVO;
+import com.cyl.h5.domain.form.BindOpenIdRequest;
+import com.cyl.h5.domain.form.H5AccountLoginRequest;
+import com.cyl.h5.domain.form.H5SmsLoginRequest;
+import com.cyl.h5.domain.form.RegisterRequest;
+import com.cyl.h5.domain.vo.RegisterResponse;
+import com.cyl.h5.domain.vo.ValidatePhoneResponse;
+import com.cyl.h5.domain.vo.H5LoginResponse;
+import com.cyl.manager.ums.domain.entity.Member;
+import com.cyl.manager.ums.domain.entity.MemberLogininfor;
+import com.cyl.manager.ums.domain.entity.MemberWechat;
 import com.cyl.manager.ums.mapper.MemberLogininforMapper;
 import com.cyl.manager.ums.mapper.MemberMapper;
 import com.cyl.manager.ums.mapper.MemberWechatMapper;
-import com.cyl.manager.ums.pojo.vo.MemberVO;
+import com.cyl.manager.ums.domain.vo.MemberVO;
 import com.cyl.manager.ums.service.MemberLogininforService;
 import com.cyl.wechat.WechatAuthService;
 import com.cyl.wechat.response.WechatUserAuth;
@@ -342,7 +341,7 @@ public class H5MemberService {
         memberLogininforMapper.insert(memberLogininfor);
     }
 
-    public H5LoginResponse wechatLogin(H5LoginDTO params) throws Exception {
+    public H5LoginResponse wechatLogin(H5LoginVO params) throws Exception {
         String openId = params.getOpenId();
         String sessionKey = params.getSessionKey();
         //解密手机号

@@ -46,13 +46,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SELECT date_sub( curdate( ), INTERVAL 5 DAY ) AS date UNION ALL
         SELECT date_sub( curdate( ), INTERVAL 6 DAY ) AS date
     </sql>
-    <resultMap id="topSalesResultMap" type="com.cyl.manager.statistics.pojo.vo.ProductTopVO">
+    <resultMap id="topSalesResultMap" type="com.cyl.manager.statistics.domain.vo.ProductTopVO">
         <result property="productName" column="product_name"/>
         <result property="totalSales" column="total_sales"/>
         <result property="pic" column="pic"/>
         <result property="spData" column="sp_data"/>
     </resultMap>
-     <select id="goodsStatistics" parameterType="com.cyl.manager.statistics.pojo.GoodsStatisticsQueryParam" resultMap="topSalesResultMap">
+     <select id="goodsStatistics" parameterType="com.cyl.manager.statistics.domain.query.GoodsStatisticsQuery" resultMap="topSalesResultMap">
         SELECT product_id ,
                product_name,
                pic,
@@ -63,7 +63,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ORDER BY total_sales DESC
         LIMIT #{size}
     </select>
-    <select id="orderStatistics" resultType="com.cyl.manager.statistics.pojo.vo.OrderStatisticsVO">
+    <select id="orderStatistics" resultType="com.cyl.manager.statistics.domain.vo.OrderStatisticsVO">
         select a.date,
         IFNULL(b.order_count,0)    orderCount,
         IFNULL(b.order_amount,0)  orderAmount

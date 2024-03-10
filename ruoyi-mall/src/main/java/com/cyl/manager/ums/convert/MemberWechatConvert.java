@@ -2,8 +2,8 @@ package com.cyl.manager.ums.convert;
 
 import com.cyl.external.resp.AccessTokenResp;
 import org.mapstruct.Mapper;
-import com.cyl.manager.ums.domain.MemberWechat;
-import com.cyl.manager.ums.pojo.vo.MemberWechatVO;
+import com.cyl.manager.ums.domain.entity.MemberWechat;
+import com.cyl.manager.ums.domain.vo.MemberWechatVO;
 import java.util.List;
 /**
  * 用户微信信息  DO <=> DTO <=> VO / BO / Query

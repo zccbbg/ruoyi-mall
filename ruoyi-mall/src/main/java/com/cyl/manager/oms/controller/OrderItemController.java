@@ -22,10 +22,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.manager.oms.convert.OrderItemConvert;
-import com.cyl.manager.oms.domain.OrderItem;
-import com.cyl.manager.oms.pojo.query.OrderItemQuery;
+import com.cyl.manager.oms.domain.entity.OrderItem;
+import com.cyl.manager.oms.domain.query.OrderItemQuery;
 import com.cyl.manager.oms.service.OrderItemService;
-import com.cyl.manager.oms.pojo.vo.OrderItemVO;
+import com.cyl.manager.oms.domain.vo.OrderItemVO;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 /**
  * 订单中所包含的商品Controller

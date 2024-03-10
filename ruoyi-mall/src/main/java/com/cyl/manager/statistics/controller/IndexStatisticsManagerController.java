@@ -1,14 +1,13 @@
 package com.cyl.manager.statistics.controller;
 
 
-import com.cyl.manager.statistics.pojo.GoodsStatisticsQueryParam;
-import com.cyl.manager.statistics.pojo.OrderStatisticsQueryParam;
-import com.cyl.manager.statistics.pojo.vo.MemberAndCartStatisticsVO;
-import com.cyl.manager.statistics.pojo.vo.OrderAndAftersaleStatisticsVO;
-import com.cyl.manager.statistics.pojo.vo.OrderStatisticsVO;
-import com.cyl.manager.statistics.pojo.vo.ProductTopVO;
+import com.cyl.manager.statistics.domain.query.GoodsStatisticsQuery;
+import com.cyl.manager.statistics.domain.query.OrderStatisticsQuery;
+import com.cyl.manager.statistics.domain.vo.MemberAndCartStatisticsVO;
+import com.cyl.manager.statistics.domain.vo.OrderAndAftersaleStatisticsVO;
+import com.cyl.manager.statistics.domain.vo.OrderStatisticsVO;
+import com.cyl.manager.statistics.domain.vo.ProductTopVO;
 import com.cyl.manager.statistics.service.IndexStatisticsService;
-import com.ruoyi.common.core.domain.AjaxResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -39,14 +38,14 @@ public class IndexStatisticsManagerController {
 
     @ApiOperation(value = "获取首页查询热卖商品TOP10")
     @GetMapping("/goodsStatistics")
-    public ResponseEntity<List<ProductTopVO>> goodsStatistics(@Validated GoodsStatisticsQueryParam goodsStatisticsQueryParam) {
+    public ResponseEntity<List<ProductTopVO>> goodsStatistics(@Validated GoodsStatisticsQuery goodsStatisticsQuery) {
 
-        return ResponseEntity.ok(indexStatisticsService.goodsStatistics(goodsStatisticsQueryParam));
+        return ResponseEntity.ok(indexStatisticsService.goodsStatistics(goodsStatisticsQuery));
     }
 
     @ApiOperation(value = "订单信息")
     @PostMapping("/orderStatistics")
-    public ResponseEntity<List<OrderStatisticsVO>> orderStatistics(@RequestBody OrderStatisticsQueryParam param) {
+    public ResponseEntity<List<OrderStatisticsVO>> orderStatistics(@RequestBody OrderStatisticsQuery param) {
         return ResponseEntity.ok(indexStatisticsService.orderStatistics(param));
     }
 

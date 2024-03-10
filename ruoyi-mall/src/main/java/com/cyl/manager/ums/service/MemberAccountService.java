@@ -2,18 +2,16 @@ package com.cyl.manager.ums.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
-import java.time.LocalDateTime;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.cyl.manager.ums.mapper.MemberAccountMapper;
-import com.cyl.manager.ums.domain.MemberAccount;
-import com.cyl.manager.ums.pojo.query.MemberAccountQuery;
+import com.cyl.manager.ums.domain.entity.MemberAccount;
+import com.cyl.manager.ums.domain.query.MemberAccountQuery;
 
 /**
  * 会员账户表Service业务层处理

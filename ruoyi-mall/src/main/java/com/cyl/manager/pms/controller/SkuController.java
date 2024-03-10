@@ -22,10 +22,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.manager.pms.convert.SkuConvert;
-import com.cyl.manager.pms.domain.Sku;
-import com.cyl.manager.pms.pojo.query.SkuQuery;
+import com.cyl.manager.pms.domain.entity.Sku;
+import com.cyl.manager.pms.domain.query.SkuQuery;
 import com.cyl.manager.pms.service.SkuService;
-import com.cyl.manager.pms.pojo.vo.SkuVO;
+import com.cyl.manager.pms.domain.vo.SkuVO;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 /**
  * sku信息Controller

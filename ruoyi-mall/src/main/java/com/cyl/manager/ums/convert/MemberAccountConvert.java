@@ -1,8 +1,8 @@
 package com.cyl.manager.ums.convert;
 
 import org.mapstruct.Mapper;
-import com.cyl.manager.ums.domain.MemberAccount;
-import com.cyl.manager.ums.pojo.vo.MemberAccountVO;
+import com.cyl.manager.ums.domain.entity.MemberAccount;
+import com.cyl.manager.ums.domain.vo.MemberAccountVO;
 import java.util.List;
 /**
  * 会员账户表  DO <=> DTO <=> VO / BO / Query

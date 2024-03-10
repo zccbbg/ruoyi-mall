@@ -22,10 +22,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.cyl.manager.ums.convert.MemberAccountConvert;
-import com.cyl.manager.ums.domain.MemberAccount;
-import com.cyl.manager.ums.pojo.query.MemberAccountQuery;
+import com.cyl.manager.ums.domain.entity.MemberAccount;
+import com.cyl.manager.ums.domain.query.MemberAccountQuery;
 import com.cyl.manager.ums.service.MemberAccountService;
-import com.cyl.manager.ums.pojo.vo.MemberAccountVO;
+import com.cyl.manager.ums.domain.vo.MemberAccountVO;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 /**
  * 会员账户表Controller

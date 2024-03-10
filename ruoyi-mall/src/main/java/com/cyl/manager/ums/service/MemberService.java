@@ -5,13 +5,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cyl.manager.oms.mapper.AftersaleMapper;
 import com.cyl.manager.oms.mapper.OrderMapper;
-import com.cyl.manager.ums.domain.Member;
-import com.cyl.manager.ums.domain.MemberCart;
+import com.cyl.manager.ums.domain.entity.Member;
+import com.cyl.manager.ums.domain.entity.MemberCart;
 import com.cyl.manager.ums.mapper.MemberCartMapper;
 import com.cyl.manager.ums.mapper.MemberMapper;
-import com.cyl.manager.ums.pojo.dto.ChangeMemberStatusDTO;
-import com.cyl.manager.ums.pojo.query.MemberQuery;
-import com.cyl.manager.ums.pojo.vo.MemberDataStatisticsVO;
+import com.cyl.manager.ums.domain.form.ChangeMemberStatusForm;
+import com.cyl.manager.ums.domain.query.MemberQuery;
+import com.cyl.manager.ums.domain.vo.MemberDataStatisticsVO;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.utils.AesCryptoUtils;
 import com.ruoyi.common.utils.SortUtil;
@@ -137,7 +137,7 @@ public class MemberService {
         return memberMapper.deleteById(id);
     }
 
-    public Integer changeStatus(ChangeMemberStatusDTO dto) {
+    public Integer changeStatus(ChangeMemberStatusForm dto) {
         UpdateWrapper<Member> wrapper = new UpdateWrapper<>();
         wrapper.eq("id", dto.getMemberId());
         wrapper.set("status", dto.getStatus());
