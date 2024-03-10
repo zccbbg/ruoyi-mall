@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
-public class DeliverProductRequest {
+public class DeliverProductForm {
     @ApiModelProperty("订单id")
     @NotBlank(message = "订单id不能为空")
     @Excel(name = "订单号")

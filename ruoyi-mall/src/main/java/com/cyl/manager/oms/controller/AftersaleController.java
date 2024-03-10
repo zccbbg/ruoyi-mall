@@ -2,8 +2,8 @@ package com.cyl.manager.oms.controller;
 
 import java.util.List;
 
-import com.cyl.manager.oms.domain.form.DealWithAftersaleRequest;
-import com.cyl.manager.oms.domain.form.ManagerAftersaleOrderRequest;
+import com.cyl.manager.oms.domain.form.DealWithAftersaleForm;
+import com.cyl.manager.oms.domain.form.ManagerAftersaleOrderForm;
 import com.cyl.manager.oms.domain.vo.ManagerRefundOrderDetailVO;
 import com.cyl.manager.oms.domain.vo.ManagerRefundOrderVO;
 import com.cyl.manager.oms.domain.vo.OrderOperateHistoryVO;
@@ -56,7 +56,7 @@ public class AftersaleController extends BaseController {
     @ApiOperation("查询订单售后列表")
     @PreAuthorize("@ss.hasPermi('oms:aftersale:list')")
     @PostMapping("/list")
-    public ResponseEntity<Page<ManagerRefundOrderVO>> list(@RequestBody ManagerAftersaleOrderRequest query, Pageable page) {
+    public ResponseEntity<Page<ManagerRefundOrderVO>> list(@RequestBody ManagerAftersaleOrderForm query, Pageable page) {
         List<ManagerRefundOrderVO> list = service.selectList(query, page);
         return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
     }
@@ -105,7 +105,7 @@ public class AftersaleController extends BaseController {
 
     @ApiOperation("售后订单操作")
     @PostMapping("/dealWith")
-    public ResponseEntity<String> updateStatus(@RequestBody DealWithAftersaleRequest request){
+    public ResponseEntity<String> updateStatus(@RequestBody DealWithAftersaleForm request){
         LoginUser user = SecurityUtils.getLoginUser();
         String redisKey = "manager_oms_order_updateOrderStatus_" + user.getUserId();
         String redisValue = user.getUserId() + "_" + System.currentTimeMillis();

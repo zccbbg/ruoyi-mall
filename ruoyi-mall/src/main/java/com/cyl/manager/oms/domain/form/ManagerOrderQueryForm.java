@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Data
 @ApiModel("后台订单查询请求体")
-public class ManagerOrderQueryRequest {
+public class ManagerOrderQueryForm {
     @ApiModelProperty(name = "orderId", value = "订单id", required = true, dataType = "Long")
     private Long orderId;
 

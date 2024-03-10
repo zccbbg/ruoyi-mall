@@ -8,12 +8,12 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.cyl.h5.config.SecurityUtil;
-import com.cyl.h5.domain.form.ApplyRefundDTO;
+import com.cyl.h5.domain.form.ApplyRefundForm;
 import com.cyl.h5.domain.form.OrderCreateForm;
 import com.cyl.h5.domain.dto.OrderProductListDTO;
 import com.cyl.h5.domain.dto.PayNotifyMessageDTO;
-import com.cyl.h5.domain.form.CancelOrderRequest;
-import com.cyl.h5.domain.form.OrderPayRequest;
+import com.cyl.h5.domain.form.CancelOrderForm;
+import com.cyl.h5.domain.form.OrderPayForm;
 import com.cyl.h5.domain.vo.OrderPayResponse;
 import com.cyl.h5.domain.vo.*;
 import com.cyl.h5.domain.form.OrderSubmitForm;
@@ -435,7 +435,7 @@ public class H5OrderService {
     }
 
     @Transactional
-    public String orderBatchCancel(CancelOrderRequest request, Long userId) {
+    public String orderBatchCancel(CancelOrderForm request, Long userId) {
         LocalDateTime optDate = LocalDateTime.now();
         if (CollectionUtil.isEmpty(request.getIdList())){
             throw new RuntimeException("未指定需要取消的订单号");
@@ -498,7 +498,7 @@ public class H5OrderService {
      * @param req 支付请求
      * @return
      */
-    public OrderPayResponse orderPay(OrderPayRequest req) {
+    public OrderPayResponse orderPay(OrderPayForm req) {
         QueryWrapper<Order> qw = new QueryWrapper<>();
         qw.eq("pay_id", req.getPayId());
         qw.eq("status", 0);
@@ -648,12 +648,12 @@ public class H5OrderService {
 
     /**
      * 申请售后
-     * @param applyRefundDTO
+     * @param applyRefundForm
      * @return
      */
     @Transactional
-    public String applyRefund(ApplyRefundDTO applyRefundDTO) {
-        Order order = orderMapper.selectById(applyRefundDTO.getOrderId());
+    public String applyRefund(ApplyRefundForm applyRefundForm) {
+        Order order = orderMapper.selectById(applyRefundForm.getOrderId());
         //是否符合售后条件
         this.checkIfCanApplyRefund(order);
         LocalDateTime optDate = LocalDateTime.now();
@@ -664,13 +664,13 @@ public class H5OrderService {
         addAftersale.setMemberId(order.getMemberId());
         addAftersale.setOrderId(order.getId());
         addAftersale.setReturnAmount(order.getPayAmount());
-        addAftersale.setType(applyRefundDTO.getApplyRefundType());
+        addAftersale.setType(applyRefundForm.getApplyRefundType());
         addAftersale.setStatus(AftersaleStatus.APPLY.getType());
-        addAftersale.setReason(applyRefundDTO.getReason());
-        addAftersale.setQuantity(applyRefundDTO.getQuantity());
-        addAftersale.setReason(applyRefundDTO.getReason());
-        addAftersale.setDescription(applyRefundDTO.getDescription());
-        addAftersale.setProofPics(applyRefundDTO.getProofPics());
+        addAftersale.setReason(applyRefundForm.getReason());
+        addAftersale.setQuantity(applyRefundForm.getQuantity());
+        addAftersale.setReason(applyRefundForm.getReason());
+        addAftersale.setDescription(applyRefundForm.getDescription());
+        addAftersale.setProofPics(applyRefundForm.getProofPics());
         addAftersale.setCreateTime(optDate);
         addAftersale.setCreateBy(memberId);
         addAftersale.setUpdateTime(optDate);

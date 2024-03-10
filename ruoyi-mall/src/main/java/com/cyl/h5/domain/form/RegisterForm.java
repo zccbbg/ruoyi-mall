@@ -6,7 +6,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 
 @Data
-public class RegisterRequest {
+public class RegisterForm {
 
     @ApiModelProperty("手机号")
     @NotBlank

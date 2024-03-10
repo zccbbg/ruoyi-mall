@@ -7,10 +7,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cyl.config.AESForWeixinGetPhoneNumber;
 import com.cyl.h5.domain.vo.H5LoginVO;
-import com.cyl.h5.domain.form.BindOpenIdRequest;
-import com.cyl.h5.domain.form.H5AccountLoginRequest;
-import com.cyl.h5.domain.form.H5SmsLoginRequest;
-import com.cyl.h5.domain.form.RegisterRequest;
+import com.cyl.h5.domain.form.BindOpenIDForm;
+import com.cyl.h5.domain.form.H5AccountLoginForm;
+import com.cyl.h5.domain.form.H5SmsLoginForm;
+import com.cyl.h5.domain.form.RegisterForm;
 import com.cyl.h5.domain.vo.RegisterResponse;
 import com.cyl.h5.domain.vo.ValidatePhoneResponse;
 import com.cyl.h5.domain.vo.H5LoginResponse;
@@ -79,7 +79,7 @@ public class H5MemberService {
      * @return 结果
      */
     @Transactional
-    public RegisterResponse register(RegisterRequest request){
+    public RegisterResponse register(RegisterForm request){
         LocalDateTime optDate = LocalDateTime.now();
         RegisterResponse response = new RegisterResponse();
         //校验验证码
@@ -145,7 +145,7 @@ public class H5MemberService {
             throw new RuntimeException(Constants.LOGIN_INFO.WRONG);
         }
         // 解码 转 对象
-        H5AccountLoginRequest request = JSON.parseObject(new String(Base64Utils.decodeFromString(data)), H5AccountLoginRequest.class);
+        H5AccountLoginForm request = JSON.parseObject(new String(Base64Utils.decodeFromString(data)), H5AccountLoginForm.class);
         log.info("account login request:{}", JSONUtil.toJsonStr(request));
         QueryWrapper<Member> qw = new QueryWrapper<>();
         qw.eq("phone_encrypted", AesCryptoUtils.encrypt(aesKey, request.getMobile()));
@@ -166,7 +166,7 @@ public class H5MemberService {
         if (StringUtils.isEmpty(data)){
             throw new RuntimeException(Constants.LOGIN_INFO.WRONG);
         }
-        H5SmsLoginRequest request = JSON.parseObject(new String(Base64Utils.decodeFromString(data)), H5SmsLoginRequest.class);
+        H5SmsLoginForm request = JSON.parseObject(new String(Base64Utils.decodeFromString(data)), H5SmsLoginForm.class);
         //校验验证码
         this.validateVerifyCode(request.getUuid(), request.getMobile(), request.getCode());
         //查会员
@@ -289,7 +289,7 @@ public class H5MemberService {
     }
 
     public WechatUserAuth getWechatUserAuth(String data) {
-        BindOpenIdRequest request = JSON.parseObject(new String(Base64Utils.decodeFromString(data)), BindOpenIdRequest.class);
+        BindOpenIDForm request = JSON.parseObject(new String(Base64Utils.decodeFromString(data)), BindOpenIDForm.class);
         WechatUserAuth userToken = wechatAuthService.getUserToken(request.getCode());
         if (userToken == null){
             log.error("微信授权失败");

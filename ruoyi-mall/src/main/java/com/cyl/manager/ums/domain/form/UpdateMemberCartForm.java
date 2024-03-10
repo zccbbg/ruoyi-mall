@@ -1,4 +1,4 @@
-package com.cyl.manager.ums.domain.vo.form;
+package com.cyl.manager.ums.domain.form;
 
 import lombok.Data;
 

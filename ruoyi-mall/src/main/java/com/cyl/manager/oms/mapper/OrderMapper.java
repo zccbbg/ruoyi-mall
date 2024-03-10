@@ -7,7 +7,7 @@ import com.cyl.h5.domain.vo.CountOrderVO;
 import com.cyl.h5.domain.vo.H5OrderVO;
 import com.cyl.manager.aws.domain.entity.SystemStatistics;
 import com.cyl.manager.oms.domain.entity.Order;
-import com.cyl.manager.oms.domain.form.ManagerOrderQueryRequest;
+import com.cyl.manager.oms.domain.form.ManagerOrderQueryForm;
 import com.cyl.manager.oms.domain.vo.ManagerOrderVO;
 import com.cyl.manager.statistics.domain.vo.OrderAndAftersaleStatisticsVO;
 import com.cyl.manager.ums.domain.vo.MemberDataStatisticsVO;
@@ -27,7 +27,7 @@ public interface OrderMapper extends BaseMapper<Order> {
      */
     List<Order> selectByEntity(Order order);
 
-    List<ManagerOrderVO> selectManagerOrderPage(ManagerOrderQueryRequest request);
+    List<ManagerOrderVO> selectManagerOrderPage(ManagerOrderQueryForm request);
 
     List<H5OrderVO> orderPage(@Param("status") Integer status, @Param("memberId")Long memberId);
 

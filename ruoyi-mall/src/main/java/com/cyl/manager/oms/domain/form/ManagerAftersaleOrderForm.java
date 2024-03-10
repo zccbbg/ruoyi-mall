@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Data
 @ApiModel(value = "商城订单请求体")
-public class ManagerAftersaleOrderRequest {
+public class ManagerAftersaleOrderForm {
 
   @ApiModelProperty(name = "id", value = "售后单号", required = true, dataType = "Long")
   private Long id;

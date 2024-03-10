@@ -4,7 +4,7 @@ import com.cyl.wechat.response.WechatUserAuth;
 import lombok.Data;
 
 @Data
-public class H5SmsLoginRequest extends H5LoginRequest {
+public class H5SmsLoginForm extends H5LoginForm {
     /** 验证码 */
     private String code;
     /** uuid */

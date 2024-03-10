@@ -13,7 +13,7 @@ import com.cyl.manager.ums.domain.entity.MemberCart;
 import com.cyl.manager.ums.mapper.MemberCartMapper;
 import com.cyl.manager.ums.domain.query.MemberCartQuery;
 import com.cyl.manager.ums.domain.vo.MemberCartVO;
-import com.cyl.manager.ums.domain.vo.form.UpdateMemberCartForm;
+import com.cyl.manager.ums.domain.form.UpdateMemberCartForm;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.exception.base.BaseException;

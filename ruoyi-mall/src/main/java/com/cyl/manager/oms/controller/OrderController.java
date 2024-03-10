@@ -3,8 +3,8 @@ package com.cyl.manager.oms.controller;
 import com.cyl.manager.oms.convert.OrderConvert;
 import com.cyl.manager.oms.domain.entity.Order;
 import com.cyl.manager.oms.domain.query.OrderQuery;
-import com.cyl.manager.oms.domain.form.DeliverProductRequest;
-import com.cyl.manager.oms.domain.form.ManagerOrderQueryRequest;
+import com.cyl.manager.oms.domain.form.DeliverProductForm;
+import com.cyl.manager.oms.domain.form.ManagerOrderQueryForm;
 import com.cyl.manager.oms.domain.vo.ManagerOrderDetailVO;
 import com.cyl.manager.oms.domain.vo.ManagerOrderVO;
 import com.cyl.manager.oms.domain.vo.OrderOperateHistoryVO;
@@ -46,7 +46,7 @@ public class OrderController extends BaseController {
     @ApiOperation("查询订单表列表")
     @PreAuthorize("@ss.hasPermi('oms:order:list')")
     @PostMapping("/list")
-    public ResponseEntity<Page<ManagerOrderVO>> list(@RequestBody ManagerOrderQueryRequest query, Pageable page) {
+    public ResponseEntity<Page<ManagerOrderVO>> list(@RequestBody ManagerOrderQueryForm query, Pageable page) {
         return ResponseEntity.ok(service.selectList(query, page));
     }
 
@@ -103,7 +103,7 @@ public class OrderController extends BaseController {
     @ApiOperation("管理后台订单发货")
     @PreAuthorize("@ss.hasPermi('oms:order:delivery')")
     @PostMapping("/deliverProduct")
-    public ResponseEntity<String> delivery(@RequestBody DeliverProductRequest request){
+    public ResponseEntity<String> delivery(@RequestBody DeliverProductForm request){
         Long userId = SecurityUtils.getUserId();
         String redisKey = "oms_order_deliverProduct" + request.getOrderId();
         String redisValue = request.getOrderId() + "_" + System.currentTimeMillis();

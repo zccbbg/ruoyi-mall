@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 
  @Data
  @ApiModel(value = "商城售后订单处理操作请求体")
- public class DealWithAftersaleRequest {
+ public class DealWithAftersaleForm {
      @ApiModelProperty(name = "orderId",value = "订单id",required = true,dataType = "Long")
      @NotBlank(message = "订单id不能为空")
      private Long orderId;

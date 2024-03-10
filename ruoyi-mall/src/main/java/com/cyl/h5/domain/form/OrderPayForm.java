@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @ApiModel("订单支付请求体")
-public class OrderPayRequest {
+public class OrderPayForm {
     @ApiModelProperty(value = "支付id", required = true)
     private Long payId;
 

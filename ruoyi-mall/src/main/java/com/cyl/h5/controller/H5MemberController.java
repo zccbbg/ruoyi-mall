@@ -2,7 +2,7 @@ package com.cyl.h5.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.cyl.h5.domain.vo.H5LoginVO;
-import com.cyl.h5.domain.form.RegisterRequest;
+import com.cyl.h5.domain.form.RegisterForm;
 import com.cyl.h5.domain.vo.RegisterResponse;
 import com.cyl.h5.domain.vo.ValidatePhoneResponse;
 import com.cyl.h5.domain.vo.H5LoginResponse;
@@ -31,7 +31,7 @@ public class H5MemberController {
 
     @ApiOperation("会员注册")
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request){
+    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterForm request){
         return ResponseEntity.ok(service.register(request));
     }
 

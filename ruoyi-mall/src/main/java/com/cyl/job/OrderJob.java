@@ -2,7 +2,7 @@ package com.cyl.job;
 
 import cn.hutool.core.date.LocalDateTimeUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.cyl.h5.domain.form.CancelOrderRequest;
+import com.cyl.h5.domain.form.CancelOrderForm;
 import com.cyl.h5.service.H5OrderService;
 import com.cyl.manager.oms.domain.entity.Order;
 import com.cyl.manager.oms.mapper.OrderMapper;
@@ -40,7 +40,7 @@ public class OrderJob {
                 .filter(order -> LocalDateTimeUtil.between(order.getCreateTime(), LocalDateTime.now()).toMinutes() >= 15)
                 .map(Order::getId)
                 .collect(Collectors.toList());
-        CancelOrderRequest request = new CancelOrderRequest();
+        CancelOrderForm request = new CancelOrderForm();
         request.setIdList(idList);
         h5OrderService.orderBatchCancel(request, null);
         log.info("【取消订单任务结束】");

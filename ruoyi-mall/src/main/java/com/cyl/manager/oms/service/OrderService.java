@@ -17,8 +17,8 @@ import com.cyl.manager.oms.mapper.OrderDeliveryHistoryMapper;
 import com.cyl.manager.oms.mapper.OrderItemMapper;
 import com.cyl.manager.oms.mapper.OrderMapper;
 import com.cyl.manager.oms.mapper.OrderOperateHistoryMapper;
-import com.cyl.manager.oms.domain.form.DeliverProductRequest;
-import com.cyl.manager.oms.domain.form.ManagerOrderQueryRequest;
+import com.cyl.manager.oms.domain.form.DeliverProductForm;
+import com.cyl.manager.oms.domain.form.ManagerOrderQueryForm;
 import com.cyl.manager.oms.domain.vo.*;
 import com.cyl.manager.pms.convert.SkuConvert;
 import com.cyl.manager.pms.mapper.ProductMapper;
@@ -147,7 +147,7 @@ public class OrderService {
      * @param page 分页条件
      * @return 订单表
      */
-    public PageImpl<ManagerOrderVO> selectList(ManagerOrderQueryRequest query, Pageable page) {
+    public PageImpl<ManagerOrderVO> selectList(ManagerOrderQueryForm query, Pageable page) {
         if (page != null) {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
@@ -281,7 +281,7 @@ public class OrderService {
      * @return 结果
      */
     @Transactional
-    public String deliverProduct(DeliverProductRequest request, Long userId) {
+    public String deliverProduct(DeliverProductForm request, Long userId) {
         //查询订单
         Order order = orderMapper.selectById(request.getOrderId());
         QueryWrapper<OrderItem> qw = new QueryWrapper<>();
@@ -320,7 +320,7 @@ public class OrderService {
      * @param userId 操作人
      * @param optDate 操作时间
      */
-    private void createDeliveryHistory(DeliverProductRequest request, Long userId, LocalDateTime optDate){
+    private void createDeliveryHistory(DeliverProductForm request, Long userId, LocalDateTime optDate){
         OrderDeliveryHistory orderDeliveryHistory = new OrderDeliveryHistory();
         orderDeliveryHistory.setOrderId(request.getOrderId());
         orderDeliveryHistory.setDeliveryCompany(request.getExpressName());

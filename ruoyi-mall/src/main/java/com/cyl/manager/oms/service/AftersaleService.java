@@ -16,8 +16,8 @@ import com.cyl.manager.oms.domain.entity.OrderOperateHistory;
 import com.cyl.manager.oms.mapper.OrderItemMapper;
 import com.cyl.manager.oms.mapper.OrderMapper;
 import com.cyl.manager.oms.mapper.OrderOperateHistoryMapper;
-import com.cyl.manager.oms.domain.form.DealWithAftersaleRequest;
-import com.cyl.manager.oms.domain.form.ManagerAftersaleOrderRequest;
+import com.cyl.manager.oms.domain.form.DealWithAftersaleForm;
+import com.cyl.manager.oms.domain.form.ManagerAftersaleOrderForm;
 import com.cyl.manager.oms.domain.vo.*;
 import com.cyl.manager.pms.mapper.SkuMapper;
 import com.cyl.manager.ums.domain.entity.Member;
@@ -143,7 +143,7 @@ public class AftersaleService {
      * @param page 分页条件
      * @return 订单售后
      */
-    public List<ManagerRefundOrderVO> selectList(ManagerAftersaleOrderRequest query, Pageable page) {
+    public List<ManagerRefundOrderVO> selectList(ManagerAftersaleOrderForm query, Pageable page) {
         if (page != null) {
             PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
         }
@@ -221,7 +221,7 @@ public class AftersaleService {
      * @return
      */
     @Transactional
-    public String dealWith(DealWithAftersaleRequest request, LoginUser user) {
+    public String dealWith(DealWithAftersaleForm request, LoginUser user) {
         Order order = orderMapper.selectById(request.getOrderId());
         if (order == null){
             throw new RuntimeException("无该订单");

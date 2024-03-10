@@ -6,7 +6,7 @@ import lombok.Data;
 
 @ApiModel("绑定openId请求对象")
 @Data
-public class BindOpenIdRequest {
+public class BindOpenIDForm {
     @ApiModelProperty("wx提供的code")
     private String code;
 }

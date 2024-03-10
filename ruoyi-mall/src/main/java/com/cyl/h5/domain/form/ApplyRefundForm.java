@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 
 @Data
 @ApiModel("申请售后对象")
-public class ApplyRefundDTO {
+public class ApplyRefundForm {
 
     @ApiModelProperty(value = "订单id", required = true)
     private Long orderId;

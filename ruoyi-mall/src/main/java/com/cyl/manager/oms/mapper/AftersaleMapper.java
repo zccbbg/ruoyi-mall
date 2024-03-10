@@ -3,7 +3,7 @@ package com.cyl.manager.oms.mapper;
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyl.manager.oms.domain.entity.Aftersale;
-import com.cyl.manager.oms.domain.form.ManagerAftersaleOrderRequest;
+import com.cyl.manager.oms.domain.form.ManagerAftersaleOrderForm;
 import com.cyl.manager.oms.domain.vo.ManagerRefundOrderVO;
 import com.cyl.manager.statistics.domain.vo.OrderAndAftersaleStatisticsVO;
 
@@ -21,7 +21,7 @@ public interface AftersaleMapper extends BaseMapper<Aftersale> {
      */
     List<Aftersale> selectByEntity(Aftersale aftersale);
 
-    List<ManagerRefundOrderVO> selectManagerRefundOrder(ManagerAftersaleOrderRequest managerAftersaleOrderPageRequest);
+    List<ManagerRefundOrderVO> selectManagerRefundOrder(ManagerAftersaleOrderForm managerAftersaleOrderPageRequest);
 
     int countByMemberId(Long memberId);
 

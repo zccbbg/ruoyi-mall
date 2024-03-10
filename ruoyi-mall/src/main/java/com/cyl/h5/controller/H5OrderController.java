@@ -1,10 +1,10 @@
 package com.cyl.h5.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cyl.h5.domain.form.ApplyRefundDTO;
+import com.cyl.h5.domain.form.ApplyRefundForm;
 import com.cyl.h5.domain.form.OrderCreateForm;
-import com.cyl.h5.domain.form.CancelOrderRequest;
-import com.cyl.h5.domain.form.OrderPayRequest;
+import com.cyl.h5.domain.form.CancelOrderForm;
+import com.cyl.h5.domain.form.OrderPayForm;
 import com.cyl.h5.domain.vo.OrderPayResponse;
 import com.cyl.h5.domain.vo.AftersaleRefundInfoVO;
 import com.cyl.h5.domain.vo.CountOrderVO;
@@ -108,7 +108,7 @@ public class H5OrderController {
 
     @ApiOperation("取消订单")
     @PostMapping("/orderCancel")
-    public ResponseEntity<String> orderCancel(@RequestBody CancelOrderRequest request){
+    public ResponseEntity<String> orderCancel(@RequestBody CancelOrderForm request){
         Member member = (Member) LocalDataUtil.getVar(Constants.MEMBER_INFO);
         String redisKey = "h5_oms_order_cancel_"+ request.getIdList().get(0);
         String redisValue = request.getIdList().get(0)+"_"+System.currentTimeMillis();
@@ -129,7 +129,7 @@ public class H5OrderController {
 
     @ApiOperation("订单支付")
     @PostMapping("/orderPay")
-    public ResponseEntity<OrderPayResponse> orderPay(@RequestBody OrderPayRequest req){
+    public ResponseEntity<OrderPayResponse> orderPay(@RequestBody OrderPayForm req){
         log.info("订单支付","提交的数据："+JSONObject.toJSONString(req));
         String redisKey = "h5_oms_order_pay_"+req.getPayId();
         String redisValue = req.getPayId()+"_"+System.currentTimeMillis();
@@ -153,12 +153,12 @@ public class H5OrderController {
 
     @ApiOperation("申请售后")
     @PostMapping("/applyRefund")
-    public ResponseEntity<String> applyRefund(@RequestBody ApplyRefundDTO applyRefundDTO){
-        String redisKey = "h5_oms_order_applyRefund_" + applyRefundDTO.getOrderId();
-        String redisValue = applyRefundDTO.getOrderId() + "_" + System.currentTimeMillis();
+    public ResponseEntity<String> applyRefund(@RequestBody ApplyRefundForm applyRefundForm){
+        String redisKey = "h5_oms_order_applyRefund_" + applyRefundForm.getOrderId();
+        String redisValue = applyRefundForm.getOrderId() + "_" + System.currentTimeMillis();
         try{
             redisService.lock(redisKey, redisValue, 60);
-            return ResponseEntity.ok(service.applyRefund(applyRefundDTO));
+            return ResponseEntity.ok(service.applyRefund(applyRefundForm));
         }catch (Exception e){
             log.error("申请售后发生异常",e);
             throw new RuntimeException(e.getMessage());
