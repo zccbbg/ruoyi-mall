@@ -10,16 +10,17 @@ import com.cyl.h5.domain.form.BindOpenIDForm;
 import com.cyl.h5.domain.form.H5AccountLoginForm;
 import com.cyl.h5.domain.form.H5SmsLoginForm;
 import com.cyl.h5.domain.form.RegisterForm;
+import com.cyl.h5.domain.vo.H5LoginVO;
 import com.cyl.h5.domain.vo.RegisterVO;
 import com.cyl.h5.domain.vo.ValidatePhoneVO;
-import com.cyl.h5.domain.vo.H5LoginResponse;
+import com.cyl.h5.domain.vo.WechatLoginVO;
 import com.cyl.manager.ums.domain.entity.Member;
 import com.cyl.manager.ums.domain.entity.MemberLogininfor;
 import com.cyl.manager.ums.domain.entity.MemberWechat;
+import com.cyl.manager.ums.domain.vo.MemberVO;
 import com.cyl.manager.ums.mapper.MemberLogininforMapper;
 import com.cyl.manager.ums.mapper.MemberMapper;
 import com.cyl.manager.ums.mapper.MemberWechatMapper;
-import com.cyl.manager.ums.domain.vo.MemberVO;
 import com.cyl.manager.ums.service.MemberLogininforService;
 import com.cyl.wechat.WechatAuthService;
 import com.cyl.wechat.response.WechatUserAuth;
@@ -114,7 +115,7 @@ public class H5MemberService {
             throw new RuntimeException("注册失败，请重试");
         }
         //注册成功直接返回token了
-        H5LoginResponse loginResponse = getLoginResponse(member.getId());
+        H5LoginVO loginResponse = getLoginResponse(member.getId());
         response.setToken(loginResponse.getToken());
         return response;
     }
@@ -139,7 +140,7 @@ public class H5MemberService {
      * @param data
      * @return
      */
-    public H5LoginResponse accountLogin(String data) {
+    public H5LoginVO accountLogin(String data) {
         if (StringUtils.isEmpty(data)){
             throw new RuntimeException(Constants.LOGIN_INFO.WRONG);
         }
@@ -160,7 +161,7 @@ public class H5MemberService {
         return getLoginResponse(member.getId());
     }
 
-    public H5LoginResponse smsLogin(String data){
+    public H5LoginVO smsLogin(String data){
         LocalDateTime optDate = LocalDateTime.now();
         if (StringUtils.isEmpty(data)){
             throw new RuntimeException(Constants.LOGIN_INFO.WRONG);
@@ -264,13 +265,13 @@ public class H5MemberService {
      * @param memberId 登录会员id
      * @return 结果
      */
-    public H5LoginResponse getLoginResponse(Long memberId){
+    public H5LoginVO getLoginResponse(Long memberId){
         LoginMember loginMember = new LoginMember();
         loginMember.setMemberId(memberId);
         String token = tokenService.createMemberToken(loginMember);
         //record登录
         this.insert(memberId);
-        H5LoginResponse response = new H5LoginResponse();
+        H5LoginVO response = new H5LoginVO();
         response.setToken(token);
         return response;
     }
@@ -340,7 +341,7 @@ public class H5MemberService {
         memberLogininforMapper.insert(memberLogininfor);
     }
 
-    public H5LoginResponse wechatLogin(H5LoginVO params) throws Exception {
+    public H5LoginVO wechatLogin(WechatLoginVO params) throws Exception {
         String openId = params.getOpenId();
         String sessionKey = params.getSessionKey();
         //解密手机号

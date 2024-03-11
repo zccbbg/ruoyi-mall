@@ -2,9 +2,10 @@ package com.cyl.h5.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.cyl.h5.domain.form.RegisterForm;
+import com.cyl.h5.domain.vo.H5LoginVO;
 import com.cyl.h5.domain.vo.RegisterVO;
 import com.cyl.h5.domain.vo.ValidatePhoneVO;
-import com.cyl.h5.domain.vo.H5LoginResponse;
+import com.cyl.h5.domain.vo.WechatLoginVO;
 import com.cyl.h5.service.H5MemberService;
 import com.cyl.manager.ums.domain.vo.MemberVO;
 import com.ruoyi.common.core.domain.model.LoginMember;
@@ -42,22 +43,22 @@ public class H5MemberController {
 
     @ApiOperation("手机号密码登录")
     @PostMapping("/account/login")
-    public ResponseEntity<H5LoginResponse> accountLogin(@RequestBody String data){
+    public ResponseEntity<H5LoginVO> accountLogin(@RequestBody String data){
         return ResponseEntity.ok(service.accountLogin(data));
     }
 
     @PostMapping("/wechat/login")
-    public ResponseEntity<H5LoginResponse> wechatLogin(String data) throws Exception {
+    public ResponseEntity<H5LoginVO> wechatLogin(String data) throws Exception {
         if (StringUtils.isEmpty(data)) {
             return ResponseEntity.ok(null);
         }
-        H5LoginVO params = JSON.parseObject(new String(Base64Utils.decodeFromString(data)), H5LoginVO.class);
+        WechatLoginVO params = JSON.parseObject(new String(Base64Utils.decodeFromString(data)), WechatLoginVO.class);
         return ResponseEntity.ok(service.wechatLogin(params));
     }
 
     @ApiOperation("sms登录")
     @PostMapping("/sms/login")
-    public ResponseEntity<H5LoginResponse> smsLogin(@RequestBody String data){
+    public ResponseEntity<H5LoginVO> smsLogin(@RequestBody String data){
         return ResponseEntity.ok(service.smsLogin(data));
     }
 
