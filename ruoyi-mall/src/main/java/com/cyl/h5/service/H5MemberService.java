@@ -6,13 +6,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cyl.config.AESForWeixinGetPhoneNumber;
-import com.cyl.h5.domain.vo.H5LoginVO;
 import com.cyl.h5.domain.form.BindOpenIDForm;
 import com.cyl.h5.domain.form.H5AccountLoginForm;
 import com.cyl.h5.domain.form.H5SmsLoginForm;
 import com.cyl.h5.domain.form.RegisterForm;
-import com.cyl.h5.domain.vo.RegisterResponse;
-import com.cyl.h5.domain.vo.ValidatePhoneResponse;
+import com.cyl.h5.domain.vo.RegisterVO;
+import com.cyl.h5.domain.vo.ValidatePhoneVO;
 import com.cyl.h5.domain.vo.H5LoginResponse;
 import com.cyl.manager.ums.domain.entity.Member;
 import com.cyl.manager.ums.domain.entity.MemberLogininfor;
@@ -79,9 +78,9 @@ public class H5MemberService {
      * @return 结果
      */
     @Transactional
-    public RegisterResponse register(RegisterForm request){
+    public RegisterVO register(RegisterForm request){
         LocalDateTime optDate = LocalDateTime.now();
-        RegisterResponse response = new RegisterResponse();
+        RegisterVO response = new RegisterVO();
         //校验验证码
         this.validateVerifyCode(request.getUuid(), request.getMobile(), request.getCode());
         //创建会员
@@ -120,8 +119,8 @@ public class H5MemberService {
         return response;
     }
 
-    public ValidatePhoneResponse validate(String phone) {
-        ValidatePhoneResponse response = new ValidatePhoneResponse();
+    public ValidatePhoneVO validate(String phone) {
+        ValidatePhoneVO response = new ValidatePhoneVO();
         byte[] decodedBytes = Base64.getDecoder().decode(phone);
         phone = new String(decodedBytes);
         QueryWrapper<Member> qw = new QueryWrapper<>();

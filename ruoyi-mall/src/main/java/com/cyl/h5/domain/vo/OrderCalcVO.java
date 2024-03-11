@@ -11,7 +11,7 @@ import java.util.List;
 @ApiModel("下单前校验返回数据")
 public class OrderCalcVO {
     @ApiModelProperty("sku数据")
-    private List<SkuViewDTO> skuList;
+    private List<SkuViewVO> skuList;
     @ApiModelProperty("商品总金额")
     private BigDecimal productTotalAmount;
     @ApiModelProperty("订单总金额")

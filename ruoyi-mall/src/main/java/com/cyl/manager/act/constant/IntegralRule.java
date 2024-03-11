@@ -1,4 +1,4 @@
-package com.cyl.manager.act.domain.vo;
+package com.cyl.manager.act.constant;
 
 import lombok.Data;
 

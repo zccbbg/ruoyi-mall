@@ -1,10 +1,9 @@
 package com.cyl.h5.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.cyl.h5.domain.vo.H5LoginVO;
 import com.cyl.h5.domain.form.RegisterForm;
-import com.cyl.h5.domain.vo.RegisterResponse;
-import com.cyl.h5.domain.vo.ValidatePhoneResponse;
+import com.cyl.h5.domain.vo.RegisterVO;
+import com.cyl.h5.domain.vo.ValidatePhoneVO;
 import com.cyl.h5.domain.vo.H5LoginResponse;
 import com.cyl.h5.service.H5MemberService;
 import com.cyl.manager.ums.domain.vo.MemberVO;
@@ -31,13 +30,13 @@ public class H5MemberController {
 
     @ApiOperation("会员注册")
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterForm request){
+    public ResponseEntity<RegisterVO> register(@RequestBody RegisterForm request){
         return ResponseEntity.ok(service.register(request));
     }
 
     @ApiOperation("注册登录验证码校验手机号")
     @GetMapping("/validate/{phone}")
-    public ResponseEntity<ValidatePhoneResponse> validate(@PathVariable String phone){
+    public ResponseEntity<ValidatePhoneVO> validate(@PathVariable String phone){
         return ResponseEntity.ok(service.validate(phone));
     }
 

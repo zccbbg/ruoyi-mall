@@ -8,7 +8,7 @@ import java.util.List;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyl.h5.config.SecurityUtil;
-import com.cyl.manager.act.domain.vo.IntegralRule;
+import com.cyl.manager.act.constant.IntegralRule;
 import com.cyl.manager.act.domain.vo.IntegralStatVO;
 import com.cyl.manager.ums.domain.entity.MemberAccount;
 import com.cyl.manager.ums.mapper.MemberAccountMapper;

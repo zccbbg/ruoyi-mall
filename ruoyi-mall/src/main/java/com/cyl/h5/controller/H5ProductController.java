@@ -1,7 +1,7 @@
 package com.cyl.h5.controller;
 
 import com.cyl.h5.domain.vo.H5ProductVO;
-import com.cyl.h5.domain.vo.ProductDetail;
+import com.cyl.h5.domain.vo.ProductDetailVO;
 import com.cyl.manager.pms.convert.ProductConvert;
 import com.cyl.manager.pms.domain.entity.Product;
 import com.cyl.manager.pms.domain.query.ProductQuery;
@@ -29,8 +29,8 @@ public class H5ProductController {
         return ResponseEntity.ok(new PageImpl<>(productConvert.dos2dtos(pageRes), page, ((com.github.pagehelper.Page) pageRes).getTotal()));
     }
     @GetMapping("/detail/{id}")
-    public ResponseEntity<ProductDetail> queryDetail(@PathVariable Long id) {
-        ProductDetail detail = productService.queryDetail(id);
+    public ResponseEntity<ProductDetailVO> queryDetail(@PathVariable Long id) {
+        ProductDetailVO detail = productService.queryDetail(id);
         return ResponseEntity.ok(detail);
     }
 }

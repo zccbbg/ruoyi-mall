@@ -5,7 +5,7 @@ import com.cyl.h5.domain.form.ApplyRefundForm;
 import com.cyl.h5.domain.form.OrderCreateForm;
 import com.cyl.h5.domain.form.CancelOrderForm;
 import com.cyl.h5.domain.form.OrderPayForm;
-import com.cyl.h5.domain.vo.OrderPayResponse;
+import com.cyl.h5.domain.vo.OrderPayVO;
 import com.cyl.h5.domain.vo.AftersaleRefundInfoVO;
 import com.cyl.h5.domain.vo.CountOrderVO;
 import com.cyl.h5.domain.vo.H5OrderVO;
@@ -129,7 +129,7 @@ public class H5OrderController {
 
     @ApiOperation("订单支付")
     @PostMapping("/orderPay")
-    public ResponseEntity<OrderPayResponse> orderPay(@RequestBody OrderPayForm req){
+    public ResponseEntity<OrderPayVO> orderPay(@RequestBody OrderPayForm req){
         log.info("订单支付","提交的数据："+JSONObject.toJSONString(req));
         String redisKey = "h5_oms_order_pay_"+req.getPayId();
         String redisValue = req.getPayId()+"_"+System.currentTimeMillis();

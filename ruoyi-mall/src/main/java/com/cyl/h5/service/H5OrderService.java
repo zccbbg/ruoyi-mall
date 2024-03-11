@@ -14,7 +14,7 @@ import com.cyl.h5.domain.dto.OrderProductListDTO;
 import com.cyl.h5.domain.dto.PayNotifyMessageDTO;
 import com.cyl.h5.domain.form.CancelOrderForm;
 import com.cyl.h5.domain.form.OrderPayForm;
-import com.cyl.h5.domain.vo.OrderPayResponse;
+import com.cyl.h5.domain.vo.OrderPayVO;
 import com.cyl.h5.domain.vo.*;
 import com.cyl.h5.domain.form.OrderSubmitForm;
 import com.cyl.manager.act.service.IntegralHistoryService;
@@ -246,7 +246,7 @@ public class H5OrderService {
 
     public OrderCalcVO addOrderCheck(OrderCreateForm orderCreateForm) {
         OrderCalcVO res = new OrderCalcVO();
-        List<SkuViewDTO> skuList = new ArrayList<>();
+        List<SkuViewVO> skuList = new ArrayList<>();
         List<OrderProductListDTO> list = orderCreateForm.getSkuList();
         if (CollectionUtil.isEmpty(list)){
             throw new RuntimeException("商品SKU信息不能为空");
@@ -281,15 +281,15 @@ public class H5OrderService {
             productTotalAmount = productTotalAmount.add(addAmount);
             orderTotalAmount = orderTotalAmount.add(addAmount);
             //封装sku信息
-            SkuViewDTO skuViewDTO = new SkuViewDTO();
-            skuViewDTO.setPic(product.getPic());
-            skuViewDTO.setPrice(sku.getPrice());
-            skuViewDTO.setProductId(product.getId());
-            skuViewDTO.setProductName(product.getName());
-            skuViewDTO.setQuantity(quantityMap.get(sku.getId()));
-            skuViewDTO.setSkuId(sku.getId());
-            skuViewDTO.setSpData(sku.getSpData());
-            skuList.add(skuViewDTO);
+            SkuViewVO skuViewVO = new SkuViewVO();
+            skuViewVO.setPic(product.getPic());
+            skuViewVO.setPrice(sku.getPrice());
+            skuViewVO.setProductId(product.getId());
+            skuViewVO.setProductName(product.getName());
+            skuViewVO.setQuantity(quantityMap.get(sku.getId()));
+            skuViewVO.setSkuId(sku.getId());
+            skuViewVO.setSpData(sku.getSpData());
+            skuList.add(skuViewVO);
         }
         res.setSkuList(skuList);
         res.setOrderTotalAmount(orderTotalAmount);
@@ -498,7 +498,7 @@ public class H5OrderService {
      * @param req 支付请求
      * @return
      */
-    public OrderPayResponse orderPay(OrderPayForm req) {
+    public OrderPayVO orderPay(OrderPayForm req) {
         QueryWrapper<Order> qw = new QueryWrapper<>();
         qw.eq("pay_id", req.getPayId());
         qw.eq("status", 0);
@@ -557,7 +557,7 @@ public class H5OrderService {
                 req.getMemberId(),
                 appId
         );
-        OrderPayResponse response = new OrderPayResponse();
+        OrderPayVO response = new OrderPayVO();
         response.setPayType(2);
         String nonceStr = WechatPayUtil.generateNonceStr();
         long timeStamp = WechatPayUtil.getCurrentTimestamp();

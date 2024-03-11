@@ -14,7 +14,7 @@ import java.math.BigDecimal;
  */
 @Data
 @ApiModel(value = "sku渲染详情")
-public class SkuViewDTO {
+public class SkuViewVO {
     private Long productId;
     private Long skuId;
     @ApiModelProperty(value = "商品名称")

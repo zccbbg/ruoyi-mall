@@ -8,7 +8,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.cyl.h5.domain.vo.ProductDetail;
+import com.cyl.h5.domain.vo.ProductDetailVO;
 import com.cyl.manager.pms.convert.ProductConvert;
 import com.cyl.manager.pms.domain.entity.Sku;
 import com.cyl.manager.pms.mapper.BrandMapper;
@@ -189,8 +189,8 @@ public class ProductService {
         return productMapper.deleteById(id);
     }
 
-    public ProductDetail queryDetail(Long id) {
-        ProductDetail res = new ProductDetail();
+    public ProductDetailVO queryDetail(Long id) {
+        ProductDetailVO res = new ProductDetailVO();
         Product d = productMapper.selectById(id);
         res.setProduct(d);
         LambdaQueryWrapper<Sku> qw = new LambdaQueryWrapper<>();

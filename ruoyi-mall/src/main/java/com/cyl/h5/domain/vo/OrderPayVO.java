@@ -9,7 +9,7 @@ import lombok.Data;
  */
 @Data
 @ApiModel("支付响应")
-public class OrderPayResponse {
+public class OrderPayVO {
     @ApiModelProperty(value = "支付方式：1-支付宝，2-微信（默认）", dataType = "Integer")
     private Integer payType;
 
@@ -22,6 +22,9 @@ public class OrderPayResponse {
     @ApiModelProperty("signType")
     private String signType;
 
+    /**
+     * TODO 变量名命名不规范
+     */
     @ApiModelProperty("package")
     private String package_;
 
