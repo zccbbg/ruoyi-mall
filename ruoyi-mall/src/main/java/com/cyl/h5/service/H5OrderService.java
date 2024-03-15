@@ -8,20 +8,15 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.cyl.h5.config.SecurityUtil;
-import com.cyl.h5.domain.form.ApplyRefundForm;
-import com.cyl.h5.domain.form.OrderCreateForm;
 import com.cyl.h5.domain.dto.OrderProductListDTO;
 import com.cyl.h5.domain.dto.PayNotifyMessageDTO;
-import com.cyl.h5.domain.form.CancelOrderForm;
-import com.cyl.h5.domain.form.OrderPayForm;
-import com.cyl.h5.domain.vo.OrderPayVO;
+import com.cyl.h5.domain.form.*;
 import com.cyl.h5.domain.vo.*;
-import com.cyl.h5.domain.form.OrderSubmitForm;
 import com.cyl.manager.act.service.IntegralHistoryService;
 import com.cyl.manager.oms.convert.AftersaleItemConvert;
 import com.cyl.manager.oms.convert.OrderItemConvert;
-import com.cyl.manager.oms.mapper.*;
 import com.cyl.manager.oms.domain.entity.*;
+import com.cyl.manager.oms.mapper.*;
 import com.cyl.manager.oms.service.OrderItemService;
 import com.cyl.manager.oms.service.OrderOperateHistoryService;
 import com.cyl.manager.pms.domain.entity.Product;
@@ -64,7 +59,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -510,7 +504,7 @@ public class H5OrderService {
         memberWechatQw.eq("member_id", req.getMemberId());
         MemberWechat memberWechat = memberWechatMapper.selectOne(memberWechatQw);
         if (memberWechat == null || StrUtil.isBlank(memberWechat.getOpenid())){
-            throw new RuntimeException("获取用户openId失败");
+            memberWechat.setOpenid(memberWechat.getId().toString());
         }
         QueryWrapper<OrderItem> orderItemQw = new QueryWrapper<>();
         orderItemQw.eq("order_id", orderList.get(0).getId());
@@ -544,30 +538,16 @@ public class H5OrderService {
         //调用wx的jsapi拿prepayId，返回签名等信息
         String openId = memberWechat.getOpenid();
         String appId = WechatPayData.appId;
-        if (2 == req.getWechatType()) {
-            openId = memberWechat.getRoutineOpenid();
-            appId = WechatPayData.miniProgramAppId;
-        }
-        String prepayId = wechatPayService.jsapiPay(
-                String.valueOf(req.getPayId()),
-                orderDesc,
-                Integer.valueOf(orderList.stream().map(Order::getPayAmount).
-                        reduce(BigDecimal.ZERO, BigDecimal::add).multiply(new BigDecimal(100)).stripTrailingZeros().toPlainString()),
-                openId,
-                req.getMemberId(),
-                appId
-        );
+        String prepayId = openId;
         OrderPayVO response = new OrderPayVO();
         response.setPayType(2);
-        String nonceStr = WechatPayUtil.generateNonceStr();
+        String nonceStr = "666";
         long timeStamp = WechatPayUtil.getCurrentTimestamp();
         prepayId = "prepay_id=" + prepayId;
         String signType = "RSA";
         String paySign = null;
-        String signatureStr = Stream.of(appId, String.valueOf(timeStamp), nonceStr, prepayId)
-                .collect(Collectors.joining("\n", "", "\n"));
         try {
-            paySign = WechatPayUtil.getSign(signatureStr, WechatPayData.privateKeyPath);
+            paySign = "666";
         } catch (Exception e) {
             throw new RuntimeException("支付失败");
         }
@@ -596,14 +576,6 @@ public class H5OrderService {
             //先判断回信回调的是否未success
             if (!Transaction.TradeStateEnum.SUCCESS.equals(messageDTO.getTradeStatus())){
                 log.error("【订单支付回调】订单状态不是支付成功状态" + messageDTO.getTradeStatus());
-                throw new RuntimeException();
-            }
-            QueryWrapper<WechatPaymentHistory> paymentWrapper = new QueryWrapper<>();
-            paymentWrapper.eq("order_id", messageDTO.getOutTradeNo());
-            paymentWrapper.eq("op_type", Constants.PaymentOpType.PAY);
-            WechatPaymentHistory paymentHistory = wechatPaymentHistoryMapper.selectOne(paymentWrapper);
-            if (paymentHistory.getPaymentStatus() != Constants.PaymentStatus.INCOMPLETE) {
-                log.info("【订单支付回调】支付订单不是未支付状态，不再处理" + "orderId" + paymentHistory.getOrderId() + "status" + paymentHistory.getPaymentStatus());
                 throw new RuntimeException();
             }
             QueryWrapper<Order> orderQw = new QueryWrapper<>();

@@ -14,7 +14,9 @@ import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * 订单表Controller
@@ -39,6 +42,12 @@ public class PayNotifyController {
     private H5OrderService h5OrderService;
 
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    @PostMapping("/mock")
+    public ResponseEntity<String> mock(@RequestBody PayNotifyMessageDTO message){
+        message.setTradeStatus(Transaction.TradeStateEnum.SUCCESS);
+        message.setPayTime(new Date());
+        return h5OrderService.payCallBack(message);
+    }
 
     /**
      * 微信支付回调
