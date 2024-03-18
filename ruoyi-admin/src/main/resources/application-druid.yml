@@ -54,7 +54,7 @@ wechat:
     miniProgramAppId: 小程序apppid
     miniProgramSecret:
 sms:
-  enabled: true
+  enabled: false
   # 阿里云 dysmsapi.aliyuncs.com
   endpoint: dysmsapi.aliyuncs.com
   accessKeyId: 你的accessKeyId #阿里云短信服务控制台查看
