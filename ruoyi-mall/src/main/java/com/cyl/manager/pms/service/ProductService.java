@@ -95,6 +95,9 @@ public class ProductService {
         if (StringUtils.isNoneEmpty(search)){
             qw.like("name", "%".concat(query.getSearch().trim()).concat("%"));
         }
+        if (CollectionUtil.isNotEmpty(query.getExcludeProductIds())) {
+            qw.notIn("id",query.getExcludeProductIds());
+        }
         return productMapper.selectList(qw);
     }
 

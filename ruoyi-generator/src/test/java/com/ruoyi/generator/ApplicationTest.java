@@ -39,7 +39,8 @@ public class ApplicationTest {
 //                "oms_order_operate_history",
 //                "oms_aftersale",
 //                "oms_aftersale_item"
-                "act_integral_history"
+                "act_coupon_activity",
+                "act_member_coupon"
         );
         // 查询表信息
         List<GenTable> tableList = genTableService.selectGenTableByName(tableNames);

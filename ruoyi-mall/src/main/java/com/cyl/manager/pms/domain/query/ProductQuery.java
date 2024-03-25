@@ -1,6 +1,7 @@
 package com.cyl.manager.pms.domain.query;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import lombok.Data;
 import io.swagger.annotations.ApiModel;
@@ -70,5 +71,8 @@ public class ProductQuery {
 
     @ApiModelProperty("搜索关键字")
     private String search;
+
+    //排查的id
+    private List<Long> excludeProductIds;
 
 }

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.manager.act.mapper.CouponActivityMapper">
+    
+    <resultMap type="CouponActivity" id="CouponActivityResult">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="useScope" column="use_scope"/>
+        <result property="productIds" column="product_ids"/>
+        <result property="totalCount" column="total_count"/>
+        <result property="leftCount" column="left_count"/>
+        <result property="userLimit" column="user_limit"/>
+        <result property="couponAmount" column="coupon_amount"/>
+        <result property="minAmount" column="min_amount"/>
+        <result property="useIntegral" column="use_integral"/>
+        <result property="couponType" column="coupon_type"/>
+        <result property="beginTime" column="begin_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <sql id="selectCouponActivityVo">
+        select id, title, use_scope, product_ids, total_count, left_count, user_limit, coupon_amount, min_amount, use_integral, coupon_type, begin_time, end_time, create_time  from act_coupon_activity
+    </sql>
+
+    <select id="selectByEntity" parameterType="CouponActivity" resultMap="CouponActivityResult">
+        <include refid="selectCouponActivityVo"/>
+        <where>  
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="useScope != null "> and use_scope = #{useScope}</if>
+            <if test="productIds != null  and productIds != ''"> and product_ids = #{productIds}</if>
+            <if test="totalCount != null "> and total_count = #{totalCount}</if>
+            <if test="leftCount != null "> and left_count = #{leftCount}</if>
+            <if test="userLimit != null "> and user_limit = #{userLimit}</if>
+            <if test="couponAmount != null "> and coupon_amount = #{couponAmount}</if>
+            <if test="minAmount != null "> and min_amount = #{minAmount}</if>
+            <if test="useIntegral != null "> and use_integral = #{useIntegral}</if>
+            <if test="couponType != null "> and coupon_type = #{couponType}</if>
+            <if test="beginTime != null "> and begin_time = #{beginTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+        </where>
+    </select>
+</mapper>

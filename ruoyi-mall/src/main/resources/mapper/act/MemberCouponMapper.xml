@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.manager.act.mapper.MemberCouponMapper">
+    
+    <resultMap type="MemberCoupon" id="MemberCouponResult">
+        <result property="id" column="id"/>
+        <result property="couponActivityId" column="coupon_activity_id"/>
+        <result property="memberId" column="member_id"/>
+        <result property="title" column="title"/>
+        <result property="useScope" column="use_scope"/>
+        <result property="productIds" column="product_ids"/>
+        <result property="couponAmount" column="coupon_amount"/>
+        <result property="minAmount" column="min_amount"/>
+        <result property="useIntegral" column="use_integral"/>
+        <result property="couponType" column="coupon_type"/>
+        <result property="beginTime" column="begin_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="useStatus" column="use_status"/>
+        <result property="orderId" column="order_id"/>
+        <result property="useTime" column="use_time"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <sql id="selectMemberCouponVo">
+        select id, coupon_activity_id, member_id, title, use_scope, product_ids, coupon_amount, min_amount, use_integral, coupon_type, begin_time, end_time, use_status, order_id, use_time, create_time  from act_member_coupon
+    </sql>
+
+    <select id="selectByEntity" parameterType="MemberCoupon" resultMap="MemberCouponResult">
+        <include refid="selectMemberCouponVo"/>
+        <where>  
+            <if test="couponActivityId != null "> and coupon_activity_id = #{couponActivityId}</if>
+            <if test="memberId != null "> and member_id = #{memberId}</if>
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="useScope != null "> and use_scope = #{useScope}</if>
+            <if test="productIds != null  and productIds != ''"> and product_ids = #{productIds}</if>
+            <if test="couponAmount != null "> and coupon_amount = #{couponAmount}</if>
+            <if test="minAmount != null "> and min_amount = #{minAmount}</if>
+            <if test="useIntegral != null "> and use_integral = #{useIntegral}</if>
+            <if test="couponType != null "> and coupon_type = #{couponType}</if>
+            <if test="beginTime != null "> and begin_time = #{beginTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="useStatus != null "> and use_status = #{useStatus}</if>
+            <if test="orderId != null "> and order_id = #{orderId}</if>
+            <if test="useTime != null "> and use_time = #{useTime}</if>
+        </where>
+    </select>
+    <select id="countUseCoupon" resultType="com.cyl.manager.act.domain.vo.CouponActivityVO">
+        select coupon_activity_id as id,count(1) as useCount
+        from act_member_coupon
+        where coupon_activity_id in 
+        <foreach collection="couponIds" close=")" index="index" item="item" open="(" separator=",">
+            #{item}
+        </foreach>
+        and use_status = 1
+        group by coupon_activity_id
+    </select>
+</mapper>
