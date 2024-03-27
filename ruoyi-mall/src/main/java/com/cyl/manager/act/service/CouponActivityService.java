@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cyl.h5.config.SecurityUtil;
 import com.cyl.manager.act.domain.entity.MemberCoupon;
 import com.cyl.manager.act.domain.vo.CouponActivityVO;
 import com.cyl.manager.act.mapper.MemberCouponMapper;
@@ -87,14 +88,14 @@ public class CouponActivityService {
         //查找商品列表
         Map<Long, Product> productMap = new HashMap<>();
         if (productIds.size() > 0) {
-            productMap = productMapper.selectBatchIds(productIds).stream().collect(Collectors.toMap(it->it.getId(),it->it));
+            productMap = productMapper.selectBatchIds(productIds).stream().collect(Collectors.toMap(it -> it.getId(), it -> it));
         }
         for (CouponActivity couponActivity : list) {
             CouponActivityVO vo = new CouponActivityVO();
-            BeanUtils.copyProperties(couponActivity,vo);
+            BeanUtils.copyProperties(couponActivity, vo);
             Integer integer = useCountMap.get(couponActivity.getId());
             vo.setUseCount(integer == null ? 0 : integer);
-            if (Arrays.asList(2, 3).contains(couponActivity.getUseScope()) && StringUtils.isNotEmpty(couponActivity.getProductIds())){
+            if (Arrays.asList(2, 3).contains(couponActivity.getUseScope()) && StringUtils.isNotEmpty(couponActivity.getProductIds())) {
                 List<Product> products = new ArrayList<>();
                 for (String s : couponActivity.getProductIds().split(",")) {
                     Product product = productMap.get(Long.parseLong(s));
@@ -107,6 +108,21 @@ public class CouponActivityService {
             resList.add(vo);
         }
         return new PageImpl<>(resList, page, total);
+    }
+
+
+    public CouponActivity getDetail(Long id) {
+       return couponActivityMapper.selectById(id);
+//        if (couponActivity == null) {
+//            return null;
+//        }
+//        CouponActivityVO res = new CouponActivityVO();
+//        BeanUtils.copyProperties(couponActivity,res);
+//        if (Arrays.asList(2, 3).contains(couponActivity.getUseScope()) && StringUtils.isNotEmpty(couponActivity.getProductIds())) {
+//            List<Product> products = productMapper.selectBatchIds(Arrays.stream(couponActivity.getProductIds().split(",")).map(item -> Long.parseLong(item)).collect(Collectors.toSet()));
+//            res.setProductList(products);
+//        }
+//        return res;
     }
 
     /**
@@ -129,7 +145,7 @@ public class CouponActivityService {
      */
     public int update(CouponActivity couponActivity) {
         CouponActivity dbActivity = couponActivityMapper.selectById(couponActivity.getId());
-        if (dbActivity==null) {
+        if (dbActivity == null) {
             return 0;
         }
         couponActivity.setLeftCount(dbActivity.getLeftCount());
@@ -145,5 +161,37 @@ public class CouponActivityService {
      */
     public int deleteById(Long id) {
         return couponActivityMapper.deleteById(id);
+    }
+
+    public Page<CouponActivityVO> selectListByH5(Pageable page) {
+        PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
+        QueryWrapper<CouponActivity> qw = new QueryWrapper<>();
+        LocalDateTime now = LocalDateTime.now();
+        qw.lt("begin_time", now)
+                .gt("end_time", now);
+        List<CouponActivity> list = couponActivityMapper.selectList(qw);
+        if (CollectionUtil.isEmpty(list)) {
+            return new PageImpl<>(Collections.emptyList(), page, 0);
+        }
+        long total = ((com.github.pagehelper.Page) list).getTotal();
+        //看用户已领取的张数
+        Set<Long> ids = list.stream().map(it -> it.getId()).collect(Collectors.toSet());
+        Map<Long, Integer> countMap = memberCouponMapper.countGetCoupon(ids, SecurityUtil.getLocalMember().getId()).stream().collect(Collectors.toMap(it -> it.getId(), it -> it.getGetCount()));
+        List<CouponActivityVO> resList = new ArrayList<>();
+        for (CouponActivity it : list) {
+            CouponActivityVO vo = new CouponActivityVO();
+            BeanUtils.copyProperties(it, vo);
+            Integer integer = countMap.get(it.getId());
+            if (integer == null || integer < it.getUserLimit()) {
+                vo.setGetCount(integer == null ? 0 : integer);
+                vo.setCanGet(true);
+            } else {
+                vo.setGetCount(integer);
+                vo.setCanGet(false);
+            }
+            resList.add(vo);
+        }
+
+        return new PageImpl<>(resList, page, total);
     }
 }

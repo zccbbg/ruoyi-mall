@@ -75,4 +75,6 @@ public class ProductQuery {
     //排查的id
     private List<Long> excludeProductIds;
 
+    private List<Long> ids;
+
 }

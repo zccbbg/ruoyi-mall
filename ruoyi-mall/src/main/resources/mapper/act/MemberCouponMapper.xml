@@ -56,4 +56,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         and use_status = 1
         group by coupon_activity_id
     </select>
+    <select id="countGetCoupon" resultType="com.cyl.manager.act.domain.vo.CouponActivityVO">
+        select coupon_activity_id as id,count(1) as getCount
+        from act_member_coupon
+        where coupon_activity_id in
+        <foreach collection="couponIds" close=")" index="index" item="item" open="(" separator=",">
+            #{item}
+        </foreach>
+        and member_id = #{memberId}
+        group by coupon_activity_id
+    </select>
 </mapper>
