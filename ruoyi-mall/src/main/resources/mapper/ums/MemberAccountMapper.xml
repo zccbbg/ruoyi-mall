@@ -19,6 +19,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update ums_member_account set integral_balance = integral_balance + #{amount},total_integral_balance = total_integral_balance + #{amount},update_time = now()
         where member_id = #{memberId}
     </update>
+    <update id="updateIntegral">
+        update ums_member_account set integral_balance = integral_balance - #{useIntegral},update_time = now()
+        where member_id = #{memberId}
+    </update>
 
     <select id="selectByEntity" parameterType="MemberAccount" resultMap="MemberAccountResult">
         <include refid="selectMemberAccountVo"/>

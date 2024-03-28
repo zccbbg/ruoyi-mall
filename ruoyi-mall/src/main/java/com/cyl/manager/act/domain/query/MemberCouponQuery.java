@@ -23,5 +23,8 @@ public class MemberCouponQuery {
     @ApiModelProperty("0未使用  1已使用 精确匹配")
     private Integer useStatus;
 
+    //1已领取 2已使用 3已过期
+    private Integer type;
+
 
 }

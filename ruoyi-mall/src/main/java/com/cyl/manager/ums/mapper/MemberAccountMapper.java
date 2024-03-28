@@ -21,4 +21,6 @@ public interface MemberAccountMapper extends BaseMapper<MemberAccount> {
     List<MemberAccount> selectByEntity(MemberAccount memberAccount);
 
     int updateIntegralBalance(@Param("amount") BigDecimal amount, @Param("memberId") Long memberId);
+
+    int updateIntegral(@Param("useIntegral") BigDecimal useIntegral, @Param("memberId") Long memberId);
 }

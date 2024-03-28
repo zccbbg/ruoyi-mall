@@ -7,13 +7,19 @@ import java.util.stream.Collectors;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cyl.h5.config.SecurityUtil;
+import com.cyl.manager.act.domain.entity.IntegralHistory;
 import com.cyl.manager.act.domain.entity.MemberCoupon;
 import com.cyl.manager.act.domain.vo.CouponActivityVO;
+import com.cyl.manager.act.mapper.IntegralHistoryMapper;
 import com.cyl.manager.act.mapper.MemberCouponMapper;
 import com.cyl.manager.pms.domain.entity.Product;
 import com.cyl.manager.pms.mapper.ProductMapper;
+import com.cyl.manager.ums.domain.entity.MemberAccount;
+import com.cyl.manager.ums.mapper.MemberAccountMapper;
 import com.github.pagehelper.PageHelper;
+import com.ruoyi.framework.web.domain.server.Mem;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,6 +30,7 @@ import org.springframework.stereotype.Service;
 import com.cyl.manager.act.mapper.CouponActivityMapper;
 import com.cyl.manager.act.domain.entity.CouponActivity;
 import com.cyl.manager.act.domain.query.CouponActivityQuery;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 优惠券活动表Service业务层处理
@@ -38,6 +45,10 @@ public class CouponActivityService {
     private MemberCouponMapper memberCouponMapper;
     @Autowired
     private ProductMapper productMapper;
+    @Autowired
+    private MemberAccountMapper memberAccountMapper;
+    @Autowired
+    private IntegralHistoryMapper integralHistoryMapper;
 
     /**
      * 查询优惠券活动表
@@ -111,18 +122,21 @@ public class CouponActivityService {
     }
 
 
-    public CouponActivity getDetail(Long id) {
-       return couponActivityMapper.selectById(id);
-//        if (couponActivity == null) {
-//            return null;
-//        }
-//        CouponActivityVO res = new CouponActivityVO();
-//        BeanUtils.copyProperties(couponActivity,res);
-//        if (Arrays.asList(2, 3).contains(couponActivity.getUseScope()) && StringUtils.isNotEmpty(couponActivity.getProductIds())) {
-//            List<Product> products = productMapper.selectBatchIds(Arrays.stream(couponActivity.getProductIds().split(",")).map(item -> Long.parseLong(item)).collect(Collectors.toSet()));
-//            res.setProductList(products);
-//        }
-//        return res;
+    public CouponActivityVO getDetail(Long id) {
+        CouponActivity couponActivity = couponActivityMapper.selectById(id);
+        CouponActivityVO res = new CouponActivityVO();
+        BeanUtils.copyProperties(couponActivity,res);
+        //判断领的有没有超
+        QueryWrapper<MemberCoupon> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("member_id", SecurityUtil.getLocalMember().getId())
+                .eq("coupon_activity_id", id);
+        Integer count = memberCouponMapper.selectCount(queryWrapper);
+        if (count != null && count >= couponActivity.getUserLimit()) {
+            res.setCanGet(false);
+        } else {
+            res.setCanGet(true);
+        }
+        return res;
     }
 
     /**
@@ -193,5 +207,78 @@ public class CouponActivityService {
         }
 
         return new PageImpl<>(resList, page, total);
+    }
+
+    @Transactional
+    public Boolean receiveCoupon(Long id) {
+        CouponActivity couponActivity = couponActivityMapper.selectById(id);
+        if (couponActivity == null) {
+            throw new RuntimeException("未找到活动");
+        }
+        //判断有没有余量
+        if (couponActivity.getLeftCount() < 1) {
+            throw new RuntimeException("活动已没有余额");
+        }
+        //判断时间有没有超
+        LocalDateTime now = LocalDateTime.now();
+        if (couponActivity.getBeginTime().isAfter(now) || couponActivity.getEndTime().isBefore(now)) {
+            throw new RuntimeException("活动已过期");
+        }
+        Long memberId = SecurityUtil.getLocalMember().getId();
+        //判断领的有没有超
+        QueryWrapper<MemberCoupon> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("member_id", memberId)
+                .eq("coupon_activity_id", id);
+        Integer count = memberCouponMapper.selectCount(queryWrapper);
+        if (count != null && count >= couponActivity.getUserLimit()) {
+            throw new RuntimeException("您已达到领取额度");
+        }
+        //如果是积分兑换
+        if (Objects.equals(2, couponActivity.getCouponType())) {
+            //判断积分是否够
+            MemberAccount memberAccount = memberAccountMapper.selectById(memberId);
+            if (memberAccount.getIntegralBalance().compareTo(couponActivity.getUseIntegral()) < 0) {
+                throw new RuntimeException("您的积分不足");
+            }
+
+            //扣除积分
+            memberAccountMapper.updateIntegral(couponActivity.getUseIntegral(), memberId);
+            //记录日志
+            insertIntegralHistory(couponActivity.getUseIntegral(), couponActivity.getCouponAmount(), memberId);
+        }
+
+        //兑换券
+        couponActivityMapper.receiveCoupon(id);
+        int saveCount = saveMemberCoupon(couponActivity, memberId);
+
+        return saveCount > 0;
+    }
+
+    private int saveMemberCoupon(CouponActivity activity, Long memberId) {
+        MemberCoupon memberCoupon = new MemberCoupon();
+        memberCoupon.setCouponActivityId(activity.getId());
+        memberCoupon.setTitle(activity.getTitle());
+        memberCoupon.setUseScope(activity.getUseScope());
+        memberCoupon.setProductIds(activity.getProductIds());
+        memberCoupon.setCouponAmount(activity.getCouponAmount());
+        memberCoupon.setMinAmount(activity.getMinAmount());
+        memberCoupon.setUseIntegral(activity.getUseIntegral());
+        memberCoupon.setCouponType(activity.getCouponType());
+        memberCoupon.setBeginTime(LocalDateTime.now());
+        memberCoupon.setEndTime(activity.getEndTime());
+        memberCoupon.setCreateTime(LocalDateTime.now());
+        memberCoupon.setMemberId(memberId);
+        return memberCouponMapper.insert(memberCoupon);
+    }
+
+    private void insertIntegralHistory(BigDecimal amount, BigDecimal couponAmount, Long memberId) {
+        IntegralHistory history = new IntegralHistory();
+        history.setOpType(2);
+        history.setSubOpType(22);
+        history.setAmount(amount);
+        history.setOrderAmount(couponAmount);
+        history.setMemberId(memberId);
+        history.setCreateTime(LocalDateTime.now());
+        integralHistoryMapper.insert(history);
     }
 }
