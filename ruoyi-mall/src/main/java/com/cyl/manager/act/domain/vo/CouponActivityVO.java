@@ -93,5 +93,11 @@ public class CouponActivityVO {
 
     private List<Product> productList;
 
+    //使用的张数
     private Integer useCount;
+
+    private Boolean canGet;
+
+    //获取的张数
+    private Integer getCount;
 }

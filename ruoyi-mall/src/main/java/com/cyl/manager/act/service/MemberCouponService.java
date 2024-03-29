@@ -5,11 +5,16 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cyl.h5.config.SecurityUtil;
 import com.cyl.manager.act.domain.vo.MemberCouponVO;
 import com.cyl.manager.ums.domain.entity.Member;
 import com.cyl.manager.ums.mapper.MemberMapper;
 import com.github.pagehelper.PageHelper;
+import com.google.gson.JsonObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,7 +28,6 @@ import com.cyl.manager.act.domain.query.MemberCouponQuery;
 
 /**
  * 用户领券记录Service业务层处理
- *
  *
  * @author zcc
  */
@@ -48,7 +52,7 @@ public class MemberCouponService {
      * 查询用户领券记录列表
      *
      * @param query 查询条件
-     * @param page 分页条件
+     * @param page  分页条件
      * @return 用户领券记录
      */
     public Page<MemberCouponVO> selectList(MemberCouponQuery query, Pageable page) {
@@ -122,4 +126,35 @@ public class MemberCouponService {
     public int deleteById(Long id) {
         return memberCouponMapper.deleteById(id);
     }
+
+    public Page<MemberCoupon> selectListByH5(MemberCouponQuery query, Pageable page) {
+        PageHelper.startPage(page.getPageNumber() + 1, page.getPageSize());
+        QueryWrapper<MemberCoupon> qw = new QueryWrapper<>();
+        qw.eq("member_id", SecurityUtil.getLocalMember().getId());
+        LocalDateTime now = LocalDateTime.now();
+        if (query.getType() != null) {
+            switch (query.getType()) {
+                case 1:
+                    //已领取
+                    qw.eq("use_status", 0)
+                            .ge("end_time", now)
+                            .le("begin_time", now);
+                    break;
+                case 2:
+                    //已使用
+                    qw.eq("use_status", 1);
+                    break;
+                case 3:
+                    //已过期
+                    qw.eq("use_status", 0);
+                    qw.and(it -> it.le("end_time", now).or().ge("begin_time", now));
+                    break;
+                default:
+                    break;
+            }
+        }
+        List<MemberCoupon> list = memberCouponMapper.selectList(qw);
+        return new PageImpl<>(list, page, ((com.github.pagehelper.Page) list).getTotal());
+    }
+
 }

@@ -98,6 +98,9 @@ public class ProductService {
         if (CollectionUtil.isNotEmpty(query.getExcludeProductIds())) {
             qw.notIn("id",query.getExcludeProductIds());
         }
+        if (CollectionUtil.isNotEmpty(query.getIds())) {
+            qw.in("id",query.getIds());
+        }
         return productMapper.selectList(qw);
     }
 

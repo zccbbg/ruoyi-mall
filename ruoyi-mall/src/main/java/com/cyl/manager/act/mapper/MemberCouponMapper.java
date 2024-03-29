@@ -2,6 +2,7 @@ package com.cyl.manager.act.mapper;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -24,4 +25,6 @@ public interface MemberCouponMapper extends BaseMapper<MemberCoupon> {
     List<MemberCoupon> selectByEntity(MemberCoupon memberCoupon);
 
     List<CouponActivityVO> countUseCoupon(@Param("couponIds") Collection<Long> couponIds);
+
+    List<CouponActivityVO> countGetCoupon(@Param("couponIds") Set<Long> ids, @Param("memberId") Long memberId);
 }

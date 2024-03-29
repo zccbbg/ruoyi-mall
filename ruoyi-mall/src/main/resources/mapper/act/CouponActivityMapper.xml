@@ -24,6 +24,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <sql id="selectCouponActivityVo">
         select id, title, use_scope, product_ids, total_count, left_count, user_limit, coupon_amount, min_amount, use_integral, coupon_type, begin_time, end_time, create_time  from act_coupon_activity
     </sql>
+    <update id="receiveCoupon">
+        update act_coupon_activity set left_count = left_count -1,update_time = now() where id = #{id}
+    </update>
 
     <select id="selectByEntity" parameterType="CouponActivity" resultMap="CouponActivityResult">
         <include refid="selectCouponActivityVo"/>

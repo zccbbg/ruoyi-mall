@@ -2,6 +2,8 @@ package com.cyl.manager.act.domain.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.annotation.Excel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -59,9 +61,11 @@ public class MemberCoupon {
 
     @ApiModelProperty("券开始时间")
     @Excel(name = "券开始时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime beginTime;
 
     @ApiModelProperty("券结束时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Excel(name = "券结束时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 
