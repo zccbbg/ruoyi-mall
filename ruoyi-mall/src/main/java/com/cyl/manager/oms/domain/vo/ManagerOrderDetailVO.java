@@ -43,4 +43,5 @@ public class ManagerOrderDetailVO {
     private BigDecimal payAmount;
     @ApiModelProperty("订单金额")
     private BigDecimal totalAmount;
+    private BigDecimal couponAmount;
 }

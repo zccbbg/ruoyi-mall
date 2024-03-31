@@ -95,6 +95,7 @@ public class OrderService {
         ManagerOrderDetailVO managerOrderDetailVO = new ManagerOrderDetailVO();
         //封装订单信息
         managerOrderDetailVO.setOrderId(id);
+        managerOrderDetailVO.setCouponAmount(order.getCouponAmount());
         managerOrderDetailVO.setOrderSn(order.getOrderSn());
         managerOrderDetailVO.setOrderStatus(order.getStatus());
         managerOrderDetailVO.setCreateTime(order.getCreateTime());

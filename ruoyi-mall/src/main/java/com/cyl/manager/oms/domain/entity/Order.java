@@ -153,4 +153,10 @@ public class Order extends BaseAudit {
     @Excel(name = "确认收货时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime receiveTime;
 
+    @ApiModelProperty("优惠券ID")
+    private Long memberCouponId;
+
+    @ApiModelProperty("优惠券金额")
+    private BigDecimal couponAmount;
+
 }

@@ -17,7 +17,10 @@ import com.cyl.h5.domain.form.OrderPayForm;
 import com.cyl.h5.domain.vo.OrderPayVO;
 import com.cyl.h5.domain.vo.*;
 import com.cyl.h5.domain.form.OrderSubmitForm;
+import com.cyl.manager.act.domain.entity.MemberCoupon;
+import com.cyl.manager.act.mapper.MemberCouponMapper;
 import com.cyl.manager.act.service.IntegralHistoryService;
+import com.cyl.manager.act.service.MemberCouponService;
 import com.cyl.manager.oms.convert.AftersaleItemConvert;
 import com.cyl.manager.oms.convert.OrderItemConvert;
 import com.cyl.manager.oms.mapper.*;
@@ -54,8 +57,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -124,21 +129,24 @@ public class H5OrderService {
     @Autowired
     private IntegralHistoryService integralHistoryService;
 
+    @Autowired
+    private MemberCouponService memberCouponService;
+
     @Transactional
     public Long submit(OrderSubmitForm form) {
         Member member = (Member) LocalDataUtil.getVar(Constants.MEMBER_INFO);
         //只支持快递
         Long addressId = form.getAddressId();
-        if (addressId == null){
+        if (addressId == null) {
             throw new RuntimeException("收获地址不能为空");
         }
         MemberAddress memberAddress = memberAddressMapper.selectById(addressId);
-        if (memberAddress == null){
+        if (memberAddress == null) {
             throw new RuntimeException("收货地址不能为空");
         }
         //sku不能为空
         List<OrderProductListDTO> skuList = form.getSkuList();
-        if (CollectionUtil.isEmpty(skuList)){
+        if (CollectionUtil.isEmpty(skuList)) {
             throw new RuntimeException("商品SKU信息不能为空");
         }
         //将sku信息转换为 key：skuId ，value：购买数量
@@ -147,19 +155,48 @@ public class H5OrderService {
         Map<Long, Sku> querySkuMap = skuMapper
                 .selectBatchIds(skuList.stream().map(OrderProductListDTO::getSkuId).collect(Collectors.toList()))
                 .stream().collect(Collectors.toMap(Sku::getId, it -> it));
+        //校验优惠券
+        BigDecimal couponAmount = BigDecimal.ZERO;
+        if (form.getMemberCouponId() != null) {
+            MemberCoupon coupon = memberCouponService.selectValidCoupon(form.getMemberCouponId());
+            if (coupon == null) {
+                throw new RuntimeException("优惠券未找到");
+            }
+            //将sku转换成products
+            Map<Long, Product> products = new HashMap<>();
+            querySkuMap.forEach((k, v) -> {
+                Integer count = skuQuantityMap.get(k);
+                Long productId = v.getProductId();
+                Product product;
+                BigDecimal amount = v.getPrice().multiply(BigDecimal.valueOf(count));
+                if (products.containsKey(k)) {
+                    product = products.get(k);
+                    product.setPrice(amount.add(product.getPrice()));
+                } else {
+                    product = new Product();
+                    product.setId(productId);
+                    product.setPrice(amount);
+                }
+                products.put(k, product);
+            });
+            if (!memberCouponService.judgeCouponCanUse(coupon, products.values())) {
+                throw new RuntimeException("优惠券未达到使用条件");
+            }
+            couponAmount = coupon.getCouponAmount();
+        }
         //计算商品总额、订单总额（订单总金额=商品总金额，因为暂时没有运费等概念）
         BigDecimal productTotalAmount = BigDecimal.ZERO;
         BigDecimal orderTotalAmount = BigDecimal.ZERO;
-        for (OrderProductListDTO dto : skuList){
-            if (!querySkuMap.containsKey(dto.getSkuId())){
+        for (OrderProductListDTO dto : skuList) {
+            if (!querySkuMap.containsKey(dto.getSkuId())) {
                 throw new RuntimeException("商品SKU不存在");
             }
             Sku sku = querySkuMap.get(dto.getSkuId());
             Product product = productMapper.selectById(sku.getProductId());
-            if (product == null){
+            if (product == null) {
                 throw new RuntimeException("商品不存在");
             }
-            if (Constants.PublishStatus.UNDERCARRIAGE.equals(product.getPublishStatus())){
+            if (Constants.PublishStatus.UNDERCARRIAGE.equals(product.getPublishStatus())) {
                 throw new RuntimeException("商品" + product.getName() + "已下架");
             }
             if (sku.getStock() < skuQuantityMap.get(sku.getId())) {
@@ -184,11 +221,18 @@ public class H5OrderService {
         order.setMemberId(member.getId());
         order.setMemberUsername(member.getNickname());
         order.setPayType(Constants.PayType.WECHAT);
+        order.setCouponAmount(couponAmount);
+        order.setMemberCouponId(form.getMemberCouponId());
         order.setTotalAmount(orderTotalAmount);
         order.setPurchasePrice(BigDecimal.ZERO);
         order.setFreightAmount(BigDecimal.ZERO);
-        order.setPayAmount(orderTotalAmount);
-        order.setStatus(Constants.OrderStatus.NOTPAID);
+        BigDecimal subtract = orderTotalAmount.subtract(couponAmount);
+        order.setPayAmount(subtract.compareTo(BigDecimal.ZERO) > 0 ? subtract : BigDecimal.ZERO);
+        if (order.getPayAmount().compareTo(BigDecimal.ZERO) == 0) {
+            order.setStatus(Constants.OrderStatus.SEND);
+        } else {
+            order.setStatus(Constants.OrderStatus.NOTPAID);
+        }
         order.setAftersaleStatus(1);
         order.setReceiverName(memberAddress.getName());
         order.setReceiverPhone(memberAddress.getPhoneHidden());
@@ -208,14 +252,14 @@ public class H5OrderService {
         order.setCreateTime(optTime);
         order.setCreateBy(member.getId());
         int rows = orderMapper.insert(order);
-        if (rows < 1){
+        if (rows < 1) {
             throw new RuntimeException("订单新增失败");
         }
         // 保存orderItem
         orderItemService.saveOrderItem(member, optTime, orderId, skuList);
         skuList.forEach(item -> {
             //减少sku的库存
-            skuMapper.updateStockById(item.getSkuId(),LocalDateTime.now(),item.getQuantity());
+            skuMapper.updateStockById(item.getSkuId(), LocalDateTime.now(), item.getQuantity());
         });
         // 保存订单操作记录
         OrderOperateHistory orderOperateHistory = new OrderOperateHistory();
@@ -226,21 +270,25 @@ public class H5OrderService {
         orderOperateHistory.setCreateTime(optTime);
         orderOperateHistory.setCreateBy(member.getId());
         rows = orderOperateHistoryMapper.insert(orderOperateHistory);
-        if (rows < 1){
+        if (rows < 1) {
             throw new RuntimeException("保存订单操作记录失败");
         }
         //若来源为购物车，删除购物车
-        if (Constants.OrderFrom.CART.equals(form.getFrom())){
+        if (Constants.OrderFrom.CART.equals(form.getFrom())) {
             List<Long> skuIdList = skuList.stream().map(OrderProductListDTO::getSkuId).collect(Collectors.toList());
             LambdaUpdateWrapper<MemberCart> wrapper = Wrappers.lambdaUpdate();
             wrapper.eq(MemberCart::getMemberId, member.getId());
             wrapper.in(MemberCart::getSkuId, skuIdList);
             rows = memberCartMapper.delete(wrapper);
-            if (rows < 1){
+            if (rows < 1) {
                 throw new RuntimeException("删除购物车失败");
             }
         }
         //当前订单id，接入支付后可返回payId
+        //如果是使用了优惠券，更新优惠券状态
+        if (form.getMemberCouponId() != null) {
+            memberCouponService.updateCouponStatus(form.getMemberCouponId(), orderId);
+        }
         return payId;
     }
 
@@ -248,7 +296,7 @@ public class H5OrderService {
         OrderCalcVO res = new OrderCalcVO();
         List<SkuViewVO> skuList = new ArrayList<>();
         List<OrderProductListDTO> list = orderCreateForm.getSkuList();
-        if (CollectionUtil.isEmpty(list)){
+        if (CollectionUtil.isEmpty(list)) {
             throw new RuntimeException("商品SKU信息不能为空");
         }
         //将购买的sku信息转化为key：skuId value：数量
@@ -260,17 +308,17 @@ public class H5OrderService {
         //计算商品总金额、订单总金额
         BigDecimal productTotalAmount = BigDecimal.ZERO;
         BigDecimal orderTotalAmount = BigDecimal.ZERO;
-        for (OrderProductListDTO dto : list){
-            if (!querySkuMap.containsKey(dto.getSkuId())){
+        for (OrderProductListDTO dto : list) {
+            if (!querySkuMap.containsKey(dto.getSkuId())) {
                 throw new RuntimeException("商品SKU不存在");
             }
             Sku sku = querySkuMap.get(dto.getSkuId());
             //查product
             Product product = productMapper.selectById(sku.getProductId());
-            if (product == null){
+            if (product == null) {
                 throw new RuntimeException("商品不存在");
             }
-            if (Constants.PublishStatus.UNDERCARRIAGE.equals(product.getPublishStatus())){
+            if (Constants.PublishStatus.UNDERCARRIAGE.equals(product.getPublishStatus())) {
                 throw new RuntimeException("商品" + product.getName() + "已下架");
             }
             if (sku.getStock() < quantityMap.get(sku.getId())) {
@@ -294,18 +342,37 @@ public class H5OrderService {
         res.setSkuList(skuList);
         res.setOrderTotalAmount(orderTotalAmount);
         res.setProductTotalAmount(productTotalAmount);
+        //获取能使用的优惠券列表
+        Map<Long, Product> products = new HashMap<>();
+        querySkuMap.forEach((k, v) -> {
+            Integer count = quantityMap.get(k);
+            Long productId = v.getProductId();
+            Product product;
+            BigDecimal amount = v.getPrice().multiply(BigDecimal.valueOf(count));
+            if (products.containsKey(k)) {
+                product = products.get(k);
+                product.setPrice(amount.add(product.getPrice()));
+            } else {
+                product = new Product();
+                product.setId(productId);
+                product.setPrice(amount);
+            }
+            products.put(k, product);
+        });
+        res.setCouponList(memberCouponService.getCanUseList(products.values()));
         return res;
     }
 
 
-    private String getOrderIdPrefix(){
+    private String getOrderIdPrefix() {
         LocalDateTime time = LocalDateTime.now();
         return time.format(DateTimeFormatter.ofPattern("yyMMdd")) + "-";
     }
 
     /**
      * h5订单分页查询
-     * @param status 订单状态 -1->全部；0->待付款；1->待发货；2->待收货；-2->售后单
+     *
+     * @param status   订单状态 -1->全部；0->待付款；1->待发货；2->待收货；-2->售后单
      * @param memberId 会员id
      * @param pageable 分页
      * @return 结果
@@ -313,25 +380,25 @@ public class H5OrderService {
     public PageImpl<H5OrderVO> orderPage(Integer status, Long memberId, Pageable pageable) {
         // 如果全部且页数为1，看看有无待付款单
         List<H5OrderVO> unpaidOrderList = new ArrayList<>();
-        if (Constants.H5OrderStatus.ALL.equals(status) && pageable.getPageNumber() == 0){
+        if (Constants.H5OrderStatus.ALL.equals(status) && pageable.getPageNumber() == 0) {
             unpaidOrderList = orderMapper.orderPage(Constants.H5OrderStatus.UN_PAY, memberId);
         }
-        if (pageable != null){
+        if (pageable != null) {
             PageHelper.startPage(pageable.getPageNumber() + 1, pageable.getPageSize());
         }
         List<H5OrderVO> orderList = orderMapper.orderPage(status, memberId);
         long total = ((com.github.pagehelper.Page) orderList).getTotal();
         // 两个list都没数据那肯定返回空了
-        if (CollectionUtil.isEmpty(unpaidOrderList) && CollectionUtil.isEmpty(orderList)){
+        if (CollectionUtil.isEmpty(unpaidOrderList) && CollectionUtil.isEmpty(orderList)) {
             return new PageImpl<>(Collections.EMPTY_LIST, pageable, total);
         }
         // 开始组装item了
         // 拿出所有orderId，查item，然后分组 by orderId
         List<Long> idList = new ArrayList<>();
-        if (CollectionUtil.isNotEmpty(unpaidOrderList)){
+        if (CollectionUtil.isNotEmpty(unpaidOrderList)) {
             idList.addAll(unpaidOrderList.stream().map(H5OrderVO::getOrderId).collect(Collectors.toList()));
         }
-        if (CollectionUtil.isNotEmpty(orderList)){
+        if (CollectionUtil.isNotEmpty(orderList)) {
             idList.addAll(orderList.stream().map(H5OrderVO::getOrderId).collect(Collectors.toList()));
         }
         QueryWrapper<OrderItem> orderItemQw = new QueryWrapper<>();
@@ -347,7 +414,7 @@ public class H5OrderService {
 
     public H5OrderVO orderDetail(Long orderId) {
         H5OrderVO order = orderMapper.selectOrderDetail(orderId);
-        if (order == null){
+        if (order == null) {
             throw new RuntimeException("未查询到该订单");
         }
         // 组装item
@@ -356,7 +423,7 @@ public class H5OrderService {
         List<OrderItem> orderItemList = orderItemMapper.selectList(orderItemQw);
         order.setOrderItemList(orderItemList);
         // 如果未付款，计算倒计时
-        if (Constants.OrderStatus.NOTPAID.equals(order.getStatus())){
+        if (Constants.OrderStatus.NOTPAID.equals(order.getStatus())) {
             // 订单超时时间900s，后面可以配置到字典等
             Integer time = 900;
             Date addDate = Date.from(order.getCreateTime().plusSeconds(time).atZone(ZoneId.systemDefault()).toInstant());
@@ -369,7 +436,7 @@ public class H5OrderService {
 
     @Transactional
     public void orderCompleteByJob(List<Order> idList) {
-        idList.forEach(order-> {
+        idList.forEach(order -> {
             LocalDateTime optDate = LocalDateTime.now();
             OrderItem queryOrderItem = new OrderItem();
             queryOrderItem.setOrderId(order.getId());
@@ -384,13 +451,14 @@ public class H5OrderService {
             OrderOperateHistory optHistory = new OrderOperateHistory();
             optHistory.setOrderId(order.getId());
             optHistory.setOrderSn(order.getOrderSn());
-            optHistory.setOperateMan("后台管理员" );
+            optHistory.setOperateMan("后台管理员");
             optHistory.setOrderStatus(Constants.H5OrderStatus.COMPLETED);
             optHistory.setCreateTime(optDate);
             optHistory.setUpdateTime(optDate);
             orderOperateHistoryMapper.insert(optHistory);
         });
     }
+
     @Transactional
     public String orderComplete(Long orderId) {
         LocalDateTime optDate = LocalDateTime.now();
@@ -398,11 +466,11 @@ public class H5OrderService {
         OrderItem queryOrderItem = new OrderItem();
         queryOrderItem.setOrderId(orderId);
         List<OrderItem> orderItemList = orderItemMapper.selectByEntity(queryOrderItem);
-        if(order == null || CollectionUtil.isEmpty(orderItemList)){
+        if (order == null || CollectionUtil.isEmpty(orderItemList)) {
             throw new RuntimeException("未查询到订单信息");
         }
         // 只有【待收货】状态才能确认
-        if(!order.getStatus().equals(Constants.H5OrderStatus.DELIVERED)){
+        if (!order.getStatus().equals(Constants.H5OrderStatus.DELIVERED)) {
             throw new RuntimeException("订单状态已改变，请刷新");
         }
         order.setStatus(Constants.H5OrderStatus.COMPLETED);
@@ -427,23 +495,24 @@ public class H5OrderService {
 
     /**
      * 统计待付款、待发货、待收货和售后订单数量
+     *
      * @param memberId
      * @return
      */
     public CountOrderVO orderNumCount(Long memberId) {
-        return  orderMapper.countByStatusAndMemberId(memberId);
+        return orderMapper.countByStatusAndMemberId(memberId);
     }
 
     @Transactional
     public String orderBatchCancel(CancelOrderForm request, Long userId) {
         LocalDateTime optDate = LocalDateTime.now();
-        if (CollectionUtil.isEmpty(request.getIdList())){
+        if (CollectionUtil.isEmpty(request.getIdList())) {
             throw new RuntimeException("未指定需要取消的订单号");
         }
         QueryWrapper<Order> orderQw = new QueryWrapper<>();
         orderQw.in("id", request.getIdList());
         List<Order> orderList = orderMapper.selectList(orderQw);
-        if (orderList.size() < request.getIdList().size()){
+        if (orderList.size() < request.getIdList().size()) {
             throw new RuntimeException("未查询到订单信息");
         }
         //查orderItem
@@ -454,7 +523,7 @@ public class H5OrderService {
             throw new RuntimeException("未查询到订单信息");
         }
         long count = orderList.stream().filter(it -> !Constants.H5OrderStatus.UN_PAY.equals(it.getStatus())).count();
-        if (count > 0){
+        if (count > 0) {
             throw new RuntimeException("订单状态已更新，请刷新页面");
         }
         List<OrderOperateHistory> addHistoryList = new ArrayList<>();
@@ -476,25 +545,31 @@ public class H5OrderService {
         });
         //取消订单
         int rows = orderMapper.cancelBatch(orderList);
-        if (rows < 1){
+        if (rows < 1) {
             throw new RuntimeException("更改订单状态失败");
         }
-        orderItem.stream().collect(Collectors.groupingBy(it->it.getSkuId())).forEach((k,v)->{
+        orderItem.stream().collect(Collectors.groupingBy(it -> it.getSkuId())).forEach((k, v) -> {
             AtomicReference<Integer> totalCount = new AtomicReference<>(0);
-            v.forEach(it-> totalCount.updateAndGet(v1 -> v1 + it.getQuantity()));
+            v.forEach(it -> totalCount.updateAndGet(v1 -> v1 + it.getQuantity()));
             skuMapper.updateStockById(k, optDate, -1 * totalCount.get());
         });
 
         //创建订单操作记录
         boolean flag = orderOperateHistoryService.saveBatch(addHistoryList);
-        if (!flag){
+        if (!flag) {
             throw new RuntimeException("创建订单操作记录失败");
+        }
+        //判断是否使用优惠券，有的话，把优惠券还回去
+        List<Long> couponIdList = orderList.stream().filter(it -> it.getMemberCouponId() != null).map(Order::getMemberCouponId).collect(Collectors.toList());
+        if (!CollectionUtils.isEmpty(couponIdList)) {
+            memberCouponService.backCoupon(couponIdList);
         }
         return "取消订单成功";
     }
 
     /**
      * 订单支付
+     *
      * @param req 支付请求
      * @return
      */
@@ -503,13 +578,13 @@ public class H5OrderService {
         qw.eq("pay_id", req.getPayId());
         qw.eq("status", 0);
         List<Order> orderList = orderMapper.selectList(qw);
-        if (CollectionUtil.isEmpty(orderList)){
+        if (CollectionUtil.isEmpty(orderList)) {
             throw new RuntimeException("没有待支付的订单");
         }
         QueryWrapper<MemberWechat> memberWechatQw = new QueryWrapper<>();
         memberWechatQw.eq("member_id", req.getMemberId());
         MemberWechat memberWechat = memberWechatMapper.selectOne(memberWechatQw);
-        if (memberWechat == null || StrUtil.isBlank(memberWechat.getOpenid())){
+        if (memberWechat == null || StrUtil.isBlank(memberWechat.getOpenid())) {
             throw new RuntimeException("获取用户openId失败");
         }
         QueryWrapper<OrderItem> orderItemQw = new QueryWrapper<>();
@@ -522,7 +597,7 @@ public class H5OrderService {
         wxPaymentQw.eq("order_id", orderList.get(0).getPayId());
         wxPaymentQw.eq("op_type", Constants.PaymentOpType.PAY);
         WechatPaymentHistory wechatPaymentHistory = wechatPaymentHistoryMapper.selectOne(wxPaymentQw);
-        if (wechatPaymentHistory == null){
+        if (wechatPaymentHistory == null) {
             wechatPaymentHistory = new WechatPaymentHistory();
             wechatPaymentHistory.setOrderId(orderList.get(0).getPayId());
             wechatPaymentHistory.setMemberId(req.getMemberId());
@@ -536,7 +611,7 @@ public class H5OrderService {
             wechatPaymentHistory.setUpdateBy(req.getMemberId());
             wechatPaymentHistory.setUpdateTime(optDate);
             wechatPaymentHistoryMapper.insert(wechatPaymentHistory);
-        }else {
+        } else {
             wechatPaymentHistory.setMoney(orderList.get(0).getPayAmount());
             wechatPaymentHistoryMapper.updateById(wechatPaymentHistory);
         }
@@ -582,19 +657,20 @@ public class H5OrderService {
 
     /**
      * 支付回调方法
+     *
      * @param messageDTO
      * @return
      */
     @Transactional
-    public ResponseEntity<String> payCallBack(PayNotifyMessageDTO messageDTO){
+    public ResponseEntity<String> payCallBack(PayNotifyMessageDTO messageDTO) {
         log.info("【订单支付回调】" + JSONObject.toJSON(messageDTO));
         String redisKey = "h5_oms_order_pay_notify_" + messageDTO.getOutTradeNo();
         String redisValue = messageDTO.getOutTradeNo() + "_" + System.currentTimeMillis();
         LocalDateTime optDate = LocalDateTime.now();
-        try{
+        try {
             redisService.lock(redisKey, redisValue, 60);
             //先判断回信回调的是否未success
-            if (!Transaction.TradeStateEnum.SUCCESS.equals(messageDTO.getTradeStatus())){
+            if (!Transaction.TradeStateEnum.SUCCESS.equals(messageDTO.getTradeStatus())) {
                 log.error("【订单支付回调】订单状态不是支付成功状态" + messageDTO.getTradeStatus());
                 throw new RuntimeException();
             }
@@ -627,19 +703,19 @@ public class H5OrderService {
                 orderOperateHistoryMapper.insert(optHistory);
 
                 //处理积分
-                integralHistoryService.handleIntegral(order.getId(),order.getPayAmount(),order.getMemberId());
+                integralHistoryService.handleIntegral(order.getId(), order.getPayAmount(), order.getMemberId());
             });
             UpdateWrapper<WechatPaymentHistory> paymentHistoryUpdateWrapper = new UpdateWrapper<>();
             paymentHistoryUpdateWrapper.eq("order_id", messageDTO.getOutTradeNo()).set("payment_id", messageDTO.getTradeNo())
                     .set("payment_status", Constants.PaymentStatus.COMPLETE).set("update_time", optDate);
             wechatPaymentHistoryMapper.update(null, paymentHistoryUpdateWrapper);
-        }catch (Exception e){
-            log.error("订单支付回调异常",e);
+        } catch (Exception e) {
+            log.error("订单支付回调异常", e);
             throw new RuntimeException("订单支付回调异常");
-        }finally {
-            try{
+        } finally {
+            try {
                 redisService.unLock(redisKey, redisValue);
-            }catch (Exception e){
+            } catch (Exception e) {
                 log.error("", e);
             }
         }
@@ -648,6 +724,7 @@ public class H5OrderService {
 
     /**
      * 申请售后
+     *
      * @param applyRefundForm
      * @return
      */
@@ -699,7 +776,7 @@ public class H5OrderService {
             addAftersaleItemList.add(aftersaleItem);
         });
         rows = aftersaleItemMapper.insertBatch(addAftersaleItemList);
-        if (rows < 1){
+        if (rows < 1) {
             throw new RuntimeException("创建售后订单item失败");
         }
         //更新订单
@@ -708,7 +785,7 @@ public class H5OrderService {
                 .set("update_time", optDate)
                 .set("update_by", memberId);
         rows = orderMapper.update(null, updateWrapper);
-        if (rows < 1){
+        if (rows < 1) {
             throw new RuntimeException("修改订单状态失败");
         }
         //创建订单操作记录
@@ -722,7 +799,7 @@ public class H5OrderService {
         optHistory.setUpdateBy(memberId);
         optHistory.setUpdateTime(optDate);
         rows = orderOperateHistoryMapper.insert(optHistory);
-        if (rows < 1){
+        if (rows < 1) {
             throw new RuntimeException("创建订单操作记录失败");
         }
         return "售后申请成功";
@@ -730,37 +807,39 @@ public class H5OrderService {
 
     /**
      * check是否能售后 可售后的状态为：待发货、待收货、已完成
+     *
      * @param order 订单
      */
-    private void checkIfCanApplyRefund(Order order){
-        if (order == null){
+    private void checkIfCanApplyRefund(Order order) {
+        if (order == null) {
             throw new RuntimeException("为查询到订单信息");
         }
         Integer status = order.getStatus();
         boolean flag = OrderStatus.NOT_DELIVERED.getType().equals(status) || OrderStatus.DELIVERED.getType().equals(status)
                 || OrderStatus.COMPLETE.getType().equals(status);
-        if (!flag){
+        if (!flag) {
             throw new RuntimeException("该订单无法申请售后");
         }
         if (OrderStatus.COMPLETE.getType().equals(order.getStatus()) &&
-                DateUtils.betweenDay(LocalDateTime.now(), order.getReceiveTime()) > 7){
+                DateUtils.betweenDay(LocalDateTime.now(), order.getReceiveTime()) > 7) {
             throw new RuntimeException("订单确认收货时间已超过7天，无法申请售后");
         }
-        if(OrderRefundStatus.APPLY.getType().equals(order.getAftersaleStatus())
-                || OrderRefundStatus.WAIT.getType().equals(order.getAftersaleStatus())){
+        if (OrderRefundStatus.APPLY.getType().equals(order.getAftersaleStatus())
+                || OrderRefundStatus.WAIT.getType().equals(order.getAftersaleStatus())) {
             throw new RuntimeException("售后正在处理中");
         }
     }
 
     /**
      * 取消售后
+     *
      * @param orderId 订单id
      * @return
      */
     @Transactional
     public String cancelRefund(Long orderId) {
         Order order = orderMapper.selectById(orderId);
-        if (order == null){
+        if (order == null) {
             throw new RuntimeException("未查询到该订单");
         }
         //查询是否有（待处理和退货中）售后单
@@ -768,10 +847,10 @@ public class H5OrderService {
         aftersaleQw.eq("order_id", orderId);
         aftersaleQw.in("status", Arrays.asList(AftersaleStatus.APPLY.getType(), AftersaleStatus.WAIT.getType()));
         Aftersale aftersale = aftersaleMapper.selectOne(aftersaleQw);
-        if (aftersale == null){
+        if (aftersale == null) {
             throw new RuntimeException("无售后单");
         }
-        if (OrderRefundStatus.SUCCESS.getType().equals(order.getAftersaleStatus())){
+        if (OrderRefundStatus.SUCCESS.getType().equals(order.getAftersaleStatus())) {
             throw new RuntimeException("已退款成功");
         }
         Member member = (Member) LocalDataUtil.getVar(Constants.MEMBER_INFO);
@@ -783,7 +862,7 @@ public class H5OrderService {
         aftersaleUpdateWrapper.set("update_time", optDate);
         aftersaleUpdateWrapper.set("update_by", member.getId());
         int rows = aftersaleMapper.update(null, aftersaleUpdateWrapper);
-        if (rows < 1){
+        if (rows < 1) {
             throw new RuntimeException("更新售后单失败");
         }
         //更新订单售后状态
@@ -801,6 +880,7 @@ public class H5OrderService {
 
     /**
      * 售后订单详情
+     *
      * @param orderId 订单id
      * @return
      */
@@ -810,7 +890,7 @@ public class H5OrderService {
         aftersaleQw.orderByDesc("create_time");
         aftersaleQw.last("limit 1");
         Aftersale aftersale = aftersaleMapper.selectOne(aftersaleQw);
-        if (aftersale == null){
+        if (aftersale == null) {
             throw new RuntimeException("未查询到售后订单");
         }
         //查一下售后订单item

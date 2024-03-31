@@ -41,3 +41,8 @@ CREATE TABLE `act_member_coupon`
     `create_time`        datetime(3) DEFAULT NULL COMMENT '创建时间',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户领券记录';
+
+
+ALTER TABLE `oms_order`
+    ADD COLUMN `member_coupon_id` bigint(20) NULL COMMENT '使用的优惠券id' AFTER `receiver_phone_encrypted`,
+ADD COLUMN `coupon_amount` decimal(10, 2) NULL COMMENT '优惠券金额' AFTER `member_coupon_id`;

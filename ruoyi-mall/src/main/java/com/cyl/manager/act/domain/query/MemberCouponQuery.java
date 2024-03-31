@@ -2,6 +2,9 @@ package com.cyl.manager.act.domain.query;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+
+import com.cyl.manager.pms.domain.entity.Product;
 import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -25,6 +28,8 @@ public class MemberCouponQuery {
 
     //1已领取 2已使用 3已过期
     private Integer type;
+
+    private List<Product> products;
 
 
 }

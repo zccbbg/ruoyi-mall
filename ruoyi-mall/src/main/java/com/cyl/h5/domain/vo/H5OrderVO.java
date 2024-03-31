@@ -30,6 +30,8 @@ public class H5OrderVO {
     @ApiModelProperty("应付金额")
     private BigDecimal payAmount;
 
+    private BigDecimal couponAmount;
+
     @ApiModelProperty("订单状态 0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭")
     private Integer status;
 

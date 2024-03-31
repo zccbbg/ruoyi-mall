@@ -16,6 +16,7 @@ public class OrderSubmitForm {
     private Integer payType = 2;
     /** 订单来源，购物车则为cart */
     private String from;
+    private Long memberCouponId;
     @NotEmpty
     private List<OrderProductListDTO> skuList;
     @Data

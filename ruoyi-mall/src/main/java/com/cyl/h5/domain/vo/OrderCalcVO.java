@@ -1,5 +1,6 @@
 package com.cyl.h5.domain.vo;
 
+import com.cyl.manager.act.domain.entity.MemberCoupon;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -16,4 +17,5 @@ public class OrderCalcVO {
     private BigDecimal productTotalAmount;
     @ApiModelProperty("订单总金额")
     private BigDecimal orderTotalAmount;
+    private List<MemberCoupon> couponList;
 }

@@ -99,4 +99,6 @@ public class ManagerOrderVO {
     private String receiverDetailAddress;
 
     private String mark;
+
+    private BigDecimal couponAmount;
 }

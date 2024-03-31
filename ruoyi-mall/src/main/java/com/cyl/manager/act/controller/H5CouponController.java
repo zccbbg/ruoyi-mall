@@ -16,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Api(description = "优惠券接口列表")
 @RestController
 @RequestMapping("/h5/coupon")
@@ -64,7 +66,19 @@ public class H5CouponController {
     @PostMapping("/list")
     public ResponseEntity<Page<MemberCoupon>> list(@RequestBody MemberCouponQuery query, Pageable page) {
         //获取所有未过期且运行中的活动
-        return ResponseEntity.ok(memberCouponService.selectListByH5(query,page));
+        return ResponseEntity.ok(memberCouponService.selectListByH5(query, page));
+    }
+
+
+    /**
+     * 根据购买的商品筛选可用优惠券
+     *
+     * @param query
+     * @return
+     */
+    @PostMapping("/can/use/list")
+    public ResponseEntity<List<MemberCoupon>> getCanUseList(@RequestBody MemberCouponQuery query) {
+        return ResponseEntity.ok(memberCouponService.getCanUseList(query.getProducts()));
     }
 
 }
