@@ -17,7 +17,7 @@ public class ConfigController extends BaseController {
     @Autowired
     private ISysConfigService configService;
 
-    @PreAuthorize("@ss.hasAnyRoles(admin)")
+    @PreAuthorize("@ss.hasAnyRoles('admin,viewer')")
     @GetMapping(value = "/configKey2/{configKey}")
     public AjaxResult getConfigKey2(@PathVariable String configKey) {
         return AjaxResult.success(configService.selectConfigByKey2(configKey));
