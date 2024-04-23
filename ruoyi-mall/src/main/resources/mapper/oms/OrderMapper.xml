@@ -133,14 +133,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <!--<if test="productName != null and productName != ''">-->
             <!--and instr(b.product_name, #{productName}) > 0-->
         <!--</if>-->
-        <if test="receiverProvinceId != null ">
-            and a.receiver_province_id = #{receiverProvinceId}
+        <if test="receiverProvince != null ">
+            and a.receiver_province = #{receiverProvince}
         </if>
-        <if test="receiverCityId != null">
-            and a.receiver_city_id = #{receiverCityId}
+        <if test="receiverCity != null">
+            and a.receiver_city = #{receiverCity}
         </if>
-        <if test="receiverDistrictId != null">
-            and a.receiver_district_id = #{receiverDistrictId}
+        <if test="receiverDistrict != null">
+            and a.receiver_district = #{receiverDistrict}
         </if>
         <if test="userPhone != null and userPhone != ''">
             and c.phone_encrypted=#{userPhone} > 0
