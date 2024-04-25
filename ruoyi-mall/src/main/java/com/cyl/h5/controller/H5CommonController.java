@@ -50,7 +50,10 @@ public class H5CommonController {
   public AjaxResult getAddressList() {
     String addresses = redisService.getAddressList();
     if (StringUtils.isNotEmpty(addresses)) {
-      return AjaxResult.success(JSON.parseArray(addresses, AddressDTO.class));
+      List<AddressDTO> addressDTOList = JSON.parseArray(addresses, AddressDTO.class);
+      if(addressDTOList.size()>0){
+        return AjaxResult.success(addressDTOList);
+      }
     }
     QueryWrapper<Address> addressQueryWrapper = new QueryWrapper<>();
     addressQueryWrapper.in("level", Arrays.asList(0,1,2));
