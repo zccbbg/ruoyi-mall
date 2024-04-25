@@ -50,6 +50,12 @@ public class OrderController extends BaseController {
         return ResponseEntity.ok(service.selectList(query, page));
     }
 
+    @ApiOperation("修改收件人信息")
+    @PostMapping("/receiver/update")
+    public ResponseEntity<Boolean> updateReceiver(@RequestBody Order order) {
+        return ResponseEntity.ok(service.updateReceiver(order));
+    }
+
     @ApiOperation("导出订单表列表")
     @PreAuthorize("@ss.hasPermi('oms:order:export')")
     @Log(title = "订单表", businessType = BusinessType.EXPORT)

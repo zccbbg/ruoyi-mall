@@ -33,14 +33,14 @@ public class ManagerOrderQueryForm {
     @ApiModelProperty(name = "status", value = "订单状态：0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单", required = true, dataType = "String")
     private Integer status;
 
-    @ApiModelProperty("省份/直辖市id 精确匹配")
-    private Long receiverProvinceId;
+    @ApiModelProperty("省份/直辖市 精确匹配")
+    private String receiverProvince;
 
-    @ApiModelProperty("城市id 精确匹配")
-    private Long receiverCityId;
+    @ApiModelProperty("城市 精确匹配")
+    private String receiverCity;
 
-    @ApiModelProperty("区id 精确匹配")
-    private Long receiverDistrictId;
+    @ApiModelProperty("区 精确匹配")
+    private String receiverDistrict;
 
     @ApiModelProperty(name = "startTime", value = "开始时间", required = true, dataType = "Date")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

@@ -30,6 +30,7 @@ import com.cyl.manager.ums.mapper.MemberMapper;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.utils.AesCryptoUtils;
+import com.ruoyi.common.utils.PhoneUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -379,5 +380,24 @@ public class OrderService {
         }else {
             return null;
         }
+    }
+
+    public Boolean updateReceiver(Order order) {
+        Order dbOrder = orderMapper.selectById(order.getId());
+        if (dbOrder == null) {
+            return false;
+        }
+        UpdateWrapper<Order> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.set("receiver_name",order.getReceiverName())
+                        .set("receiver_phone",PhoneUtils.hidePhone(order.getReceiverPhone()))
+                        .set("receiver_city",order.getReceiverCity())
+                        .set("receiver_district",order.getReceiverDistrict())
+                        .set("receiver_province",order.getReceiverProvince())
+                        .set("receiver_detail_address",order.getReceiverDetailAddress())
+                        .set("receiver_phone_encrypted",AesCryptoUtils.encrypt(aesKey, order.getReceiverPhone()))
+                        .set("update_time",LocalDateTime.now());
+        updateWrapper.eq("id",order.getId());
+        int update = orderMapper.update(null, updateWrapper);
+        return update == 1;
     }
 }
