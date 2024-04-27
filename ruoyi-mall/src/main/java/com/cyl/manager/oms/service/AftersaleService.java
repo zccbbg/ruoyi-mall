@@ -348,7 +348,7 @@ public class AftersaleService {
         //开始退款
         Refund wechatResponse = wechatPayService.refundPay(returnApply.getId() + "",
                 order.getPayId() + "",
-                "https://mall.younigou.net/api/no-auth/wechat/weChatRefundNotify",
+                "https://mall.ichengle.top/api/no-auth/wechat/weChatRefundNotify",
                 returnApply.getReturnAmount().multiply(new BigDecimal("100")).longValue(),
                 history.getMoney().multiply(new BigDecimal("100")).longValue(), returnApply.getReason());
         log.info("发起微信退款返回信息,tradeRefund:{}", JSONObject.toJSONString(wechatResponse == null ? "" : wechatResponse));
