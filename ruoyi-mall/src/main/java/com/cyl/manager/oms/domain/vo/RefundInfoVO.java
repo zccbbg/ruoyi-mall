@@ -43,4 +43,8 @@ public class RefundInfoVO {
     private String logistics;
     @ApiModelProperty("所有物流信息 JSON格式")
     private String allLogistics;
+    private String refundWpCode;
+
+    @ApiModelProperty("退货快递号")
+    private String refundWaybillCode;
 }

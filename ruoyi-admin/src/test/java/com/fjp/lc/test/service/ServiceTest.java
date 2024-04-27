@@ -5,10 +5,12 @@ import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.symmetric.AES;
+import com.alibaba.fastjson.JSON;
 import com.cyl.h5.domain.dto.PayNotifyMessageDTO;
 import com.cyl.h5.service.H5OrderService;
 import com.cyl.job.OrderJob;
 import com.cyl.manager.act.service.IntegralHistoryService;
+import com.cyl.manager.oms.service.AftersaleService;
 import com.cyl.manager.ums.service.MemberCartService;
 import com.ruoyi.RuoYiApplication;
 import com.ruoyi.common.config.properties.SmsProperties;
@@ -16,6 +18,7 @@ import com.ruoyi.common.core.sms.AliyunSmsTemplate;
 import com.ruoyi.common.core.sms.SmsTemplate;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.wechat.pay.java.service.partnerpayments.jsapi.model.Transaction;
+import com.wechat.pay.java.service.refund.model.RefundNotification;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +39,9 @@ import java.util.Map;
 @ActiveProfiles("dev")
 @Slf4j
 public class ServiceTest {
+
+    @Autowired
+    private AftersaleService aftersaleService;
 
     @Autowired
     private MemberCartService memberCartService;
@@ -62,6 +68,12 @@ public class ServiceTest {
     }
 
 
+    @Test
+    public void t(){
+        String a = "{\"amount\":{\"currency\":\"CNY\",\"discountRefund\":0,\"from\":[],\"payerRefund\":2,\"payerTotal\":2,\"refund\":2,\"refundFee\":0,\"settlementRefund\":2,\"settlementTotal\":2,\"total\":2},\"channel\":\"ORIGINAL\",\"createTime\":\"2024-04-26T18:17:56+08:00\",\"fundsAccount\":\"UNAVAILABLE\",\"outRefundNo\":\"5773276988819456\",\"outTradeNo\":\"5773274485622785\",\"promotionDetail\":[],\"refundId\":\"50303909472024042683046217485\",\"refundStatus\":\"SUCCESS\",\"transactionId\":\"4200002186202404266125196354\",\"userReceivedAccount\":\"支付用户零钱通\"}";
+        RefundNotification params = JSON.parseObject(a,RefundNotification.class);
+        aftersaleService.refundOrderExc(params);
+    }
     @Test
     public void test1() {
         memberCartService.mineCartNum();

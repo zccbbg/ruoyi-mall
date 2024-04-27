@@ -1,6 +1,7 @@
 package com.cyl.h5.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyl.h5.domain.dto.DeliveryReq;
 import com.cyl.h5.domain.form.ApplyRefundForm;
 import com.cyl.h5.domain.form.OrderCreateForm;
 import com.cyl.h5.domain.form.CancelOrderForm;
@@ -12,9 +13,18 @@ import com.cyl.h5.domain.vo.H5OrderVO;
 import com.cyl.h5.domain.vo.OrderCalcVO;
 import com.cyl.h5.domain.form.OrderSubmitForm;
 import com.cyl.h5.service.H5OrderService;
+import com.cyl.manager.oms.domain.entity.Aftersale;
+import com.cyl.manager.oms.domain.entity.Order;
+import com.cyl.manager.oms.domain.form.DealWithAftersaleForm;
+import com.cyl.manager.oms.service.AftersaleService;
+import com.cyl.manager.oms.service.OrderService;
 import com.cyl.manager.ums.domain.entity.Member;
 import com.ruoyi.common.constant.Constants;
+import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.core.redis.RedisService;
+import com.ruoyi.common.enums.AftersaleStatus;
+import com.ruoyi.common.enums.OrderStatus;
 import com.ruoyi.framework.config.LocalDataUtil;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +34,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/h5/order")
 @Slf4j
@@ -32,6 +44,10 @@ public class H5OrderController {
     private RedisService redisService;
     @Autowired
     private H5OrderService service;
+    @Autowired
+    private AftersaleService aftersaleService;
+    @Autowired
+    private OrderService orderService;
 
     @ApiOperation("下单")
     @PostMapping("/add")
@@ -153,12 +169,20 @@ public class H5OrderController {
 
     @ApiOperation("申请售后")
     @PostMapping("/applyRefund")
-    public ResponseEntity<String> applyRefund(@RequestBody ApplyRefundForm applyRefundForm){
+    public ResponseEntity<Boolean> applyRefund(@RequestBody ApplyRefundForm applyRefundForm){
         String redisKey = "h5_oms_order_applyRefund_" + applyRefundForm.getOrderId();
         String redisValue = applyRefundForm.getOrderId() + "_" + System.currentTimeMillis();
         try{
             redisService.lock(redisKey, redisValue, 60);
-            return ResponseEntity.ok(service.applyRefund(applyRefundForm));
+            Order order = service.applyRefund(applyRefundForm);
+            // 如果是未发货，系统自动退款
+            if (order.getStatus().equals(OrderStatus.NOT_DELIVERED.getType())) {
+                DealWithAftersaleForm req = new DealWithAftersaleForm();
+                req.setOrderId(applyRefundForm.getOrderId());
+                req.setOptType(1);
+                aftersaleService.dealWith(req, order.getMemberId(), "直接发起退款");
+            }
+            return ResponseEntity.ok(true);
         }catch (Exception e){
             log.error("申请售后发生异常",e);
             throw new RuntimeException(e.getMessage());
@@ -197,4 +221,43 @@ public class H5OrderController {
     public ResponseEntity<AftersaleRefundInfoVO> refundOrderDetail(@RequestParam Long orderId){
         return ResponseEntity.ok(service.refundOrderDetail(orderId));
     }
+
+    @ApiOperation("用户提交退货单号")
+    @PostMapping("/aftersale/delivery")
+    public AjaxResult delivery(@RequestBody @Valid DeliveryReq req){
+        log.info("用户提交退货单号","提交的数据："+JSONObject.toJSONString(req));
+        String redisKey = "h5_oms_order_delivery_"+req.getOrderId();
+        String redisValue = req.getOrderId()+"_"+System.currentTimeMillis();
+        try {
+            redisService.lock(redisKey, redisValue, 60);
+            Order order = service.selectById(req.getOrderId());
+            Aftersale aftersale = aftersaleService.queryAfterSale(req.getOrderId());
+            if(order == null || aftersale == null){
+                return AjaxResult.error("未查询到订单信息");
+            }
+            //仅退款不需要退货
+            if(aftersale.getType() == 1){
+                return AjaxResult.error("仅退款不需要退货");
+            }
+            if(aftersale.getStatus() != AftersaleStatus.WAIT.getType()){
+                return AjaxResult.error("当前状态不可退货");
+            }
+            //更新退款单
+            aftersale.setRefundWpCode(req.getDeliveryCompanyCode());
+            aftersale.setRefundWaybillCode(req.getDeliverySn());
+            aftersaleService.update(aftersale);
+
+            return AjaxResult.success();
+        }catch (Exception e){
+            log.error("用户提交退货单号异常", e);
+            return AjaxResult.error("提交发货信息失败");
+        }finally {
+            try{
+                redisService.unLock(redisKey,redisValue);
+            }catch (Exception e){
+                log.error("",e);
+            }
+        }
+    }
+
 }
