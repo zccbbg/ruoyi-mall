@@ -584,8 +584,24 @@ public class H5OrderService {
         QueryWrapper<MemberWechat> memberWechatQw = new QueryWrapper<>();
         memberWechatQw.eq("member_id", req.getMemberId());
         MemberWechat memberWechat = memberWechatMapper.selectOne(memberWechatQw);
-        if (memberWechat == null || StrUtil.isBlank(memberWechat.getOpenid())) {
+        if (memberWechat == null) {
             throw new RuntimeException("获取用户openId失败");
+        }
+        String openId = null;
+        String appId = null;
+        if (req.getWechatType() == 1) {
+            if (StrUtil.isBlank(memberWechat.getOpenid())) {
+                throw new RuntimeException("获取用户openId失败");
+            }
+            openId = memberWechat.getOpenid();
+            appId = WechatPayData.appId;
+        }
+        if (req.getWechatType() == 2) {
+            if (StrUtil.isBlank(memberWechat.getRoutineOpenid())) {
+                throw new RuntimeException("获取用户openId失败");
+            }
+            openId = memberWechat.getRoutineOpenid();
+            appId = WechatPayData.miniProgramAppId;
         }
         QueryWrapper<OrderItem> orderItemQw = new QueryWrapper<>();
         orderItemQw.eq("order_id", orderList.get(0).getId());
@@ -617,12 +633,6 @@ public class H5OrderService {
         }
         //请开启微信支付 wechat.enabled=true
         //调用wx的jsapi拿prepayId，返回签名等信息
-        String openId = memberWechat.getOpenid();
-        String appId = WechatPayData.appId;
-        if (2 == req.getWechatType()) {
-            openId = memberWechat.getRoutineOpenid();
-            appId = WechatPayData.miniProgramAppId;
-        }
         String prepayId = wechatPayService.jsapiPay(
                 String.valueOf(req.getPayId()),
                 orderDesc,
