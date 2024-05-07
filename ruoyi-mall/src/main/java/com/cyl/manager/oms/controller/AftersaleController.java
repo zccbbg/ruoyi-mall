@@ -105,13 +105,14 @@ public class AftersaleController extends BaseController {
 
     @ApiOperation("售后订单操作")
     @PostMapping("/dealWith")
-    public ResponseEntity<String> updateStatus(@RequestBody DealWithAftersaleForm request){
+    public ResponseEntity<Boolean> updateStatus(@RequestBody DealWithAftersaleForm request){
         LoginUser user = SecurityUtils.getLoginUser();
         String redisKey = "manager_oms_order_updateOrderStatus_" + user.getUserId();
         String redisValue = user.getUserId() + "_" + System.currentTimeMillis();
         try {
             redisService.lock(redisKey, redisValue, 60);
-            return ResponseEntity.ok(service.dealWith(request, user));
+            service.dealWith(request, user.getUserId(), user.getUser().getNickName());
+            return ResponseEntity.ok(true);
         } catch (Exception e) {
             log.error("售后订单操作发生异常", e);
             throw new RuntimeException(e.getMessage());

@@ -729,7 +729,7 @@ public class H5OrderService {
      * @return
      */
     @Transactional
-    public String applyRefund(ApplyRefundForm applyRefundForm) {
+    public Order applyRefund(ApplyRefundForm applyRefundForm) {
         Order order = orderMapper.selectById(applyRefundForm.getOrderId());
         //是否符合售后条件
         this.checkIfCanApplyRefund(order);
@@ -802,7 +802,7 @@ public class H5OrderService {
         if (rows < 1) {
             throw new RuntimeException("创建订单操作记录失败");
         }
-        return "售后申请成功";
+        return order;
     }
 
     /**
@@ -907,5 +907,9 @@ public class H5OrderService {
         vo.setAftersaleItemList(aftersaleItemConvert.dos2vos(aftersaleItemList));
         vo.setOrderItemList(orderItemConvert.dos2vos(orderItemList));
         return vo;
+    }
+
+    public Order selectById(Long orderId) {
+        return orderMapper.selectById(orderId);
     }
 }

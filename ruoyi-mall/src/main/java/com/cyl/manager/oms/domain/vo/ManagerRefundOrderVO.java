@@ -1,4 +1,5 @@
  package com.cyl.manager.oms.domain.vo;
+import com.ruoyi.common.annotation.Excel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -77,4 +78,9 @@ import java.util.List;
      private String handleMan;
 
      private String mark;
+
+     private String refundWpCode;
+
+     @ApiModelProperty("退货快递号")
+     private String refundWaybillCode;
  }

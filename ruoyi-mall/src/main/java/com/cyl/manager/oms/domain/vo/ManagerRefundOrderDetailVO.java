@@ -48,4 +48,5 @@ public class ManagerRefundOrderDetailVO {
     private BigDecimal totalAmount;
     @ApiModelProperty("应付金额（实际支付金额）")
     private BigDecimal payAmount;
+
 }

@@ -74,4 +74,12 @@ public class Aftersale extends BaseAudit {
     @Excel(name = "处理人员")
     private String handleMan;
 
+    @ApiModelProperty("退款快递公司")
+    @Excel(name = "退款快递公司")
+    private String refundWpCode;
+
+    @ApiModelProperty("退货快递号")
+    @Excel(name = "退货快递号")
+    private String refundWaybillCode;
+
 }
