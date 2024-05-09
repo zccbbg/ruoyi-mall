@@ -1,5 +1,6 @@
 package com.ruoyi.common.core.redis;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
+@Slf4j
 public class RedisService {
     @Autowired
     private RedisCache redisCache;
@@ -50,7 +52,8 @@ public class RedisService {
     public void lock(String key, String jobInfo, Integer lockSecond) throws Exception {
         String existJobInfo = redisCache.getCacheObject(key);
         if (StringUtils.isNotEmpty(existJobInfo)) {
-            throw new Exception(String.format("获取锁失败: redisKey: %s, existJobInfo: %s", key, existJobInfo));
+            log.info("获取锁失败: redisKey: {}, existJobInfo: {}", key, existJobInfo);
+            throw new Exception("请不要反复提交订单！");
         }
         redisCache.setCacheObject(key, jobInfo, lockSecond, TimeUnit.SECONDS);
     }
