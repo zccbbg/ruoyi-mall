@@ -14,12 +14,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.Timestamp;
 import java.time.Instant;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +31,21 @@ public class CommonTest {
                 .toFile("D:/build/tt1.jpg");
         log.info("end {}", System.currentTimeMillis() - start);
     }*/
+
+    @Test
+    public void testEquals(){
+        Integer num1 = 100;
+        Integer num2 = 100;
+
+        System.out.println(num1 == num2);      // true，因为对于 Integer 类型，-128 到 127 之间的值会被缓存
+        System.out.println(num1.equals(num2)); // true，因为它们的值相同
+
+        Integer num3 = 200;
+        Integer num4 = 200;
+
+        System.out.println(num3 == num4);      // false，因为超出了缓存范围，会创建新的对象实例
+        System.out.println(num3.equals(num4)); // true，因为它们的值相同
+    }
 
     @Test
     public void test4() throws IOException {
