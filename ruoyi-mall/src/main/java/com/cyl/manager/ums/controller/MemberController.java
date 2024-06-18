@@ -7,8 +7,10 @@ import com.cyl.manager.ums.domain.query.MemberQuery;
 import com.cyl.manager.ums.domain.vo.MemberDataStatisticsVO;
 import com.cyl.manager.ums.domain.vo.MemberVO;
 import com.cyl.manager.ums.service.MemberService;
+import com.cyl.wechat.WechatAuthService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import io.swagger.annotations.Api;
@@ -36,6 +38,13 @@ public class MemberController extends BaseController {
     private MemberService service;
     @Autowired
     private MemberConvert convert;
+    @Autowired
+    private WechatAuthService wechatAuthService;
+
+    @GetMapping("/wechat/code")
+    public AjaxResult getWechatCode() {
+        return AjaxResult.successData(wechatAuthService.getQRCode());
+    }
 
     @ApiOperation("查询会员信息列表")
     @PreAuthorize("@ss.hasPermi('ums:member:list')")
