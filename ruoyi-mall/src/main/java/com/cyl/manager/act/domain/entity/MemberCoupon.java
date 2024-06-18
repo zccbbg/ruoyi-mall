@@ -1,14 +1,14 @@
 package com.cyl.manager.act.domain.entity;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.annotation.Excel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import com.baomidou.mybatisplus.annotation.TableName;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 /**
  * 用户领券记录对象 act_member_coupon
  * 
@@ -82,6 +82,7 @@ public class MemberCoupon {
     private LocalDateTime useTime;
 
     @ApiModelProperty("创建时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
 
 }

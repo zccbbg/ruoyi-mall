@@ -10,6 +10,7 @@
 
 ## B站讲解视频
 https://www.bilibili.com/video/BV16N4y1d7MM
+## 若依视频教程
 对若依框架不了解，不知道怎么部署、修改密码等操作的，请参考：https://www.bilibili.com/video/BV1Fi4y1q74p/
 ## 本地运行文档
 https://docs.ichengle.top/mall/run.html
@@ -31,9 +32,6 @@ http://mall.ichengle.top
 <img src="doc/小程序演示.jpg" width="200px">
 <img src="doc/h5演示.png" width="200px">
 
-### 给大家一个便宜寄快递的福利，大件5折，小件6折：
-<img src="doc/express.jpg" width="200px">
-
 ## 若依技术专栏
 - 常见问题：https://blog.csdn.net/qq_27575627/category_12336113.html
 - 后端技术：https://blog.csdn.net/qq_27575627/category_12331868.html
@@ -42,11 +40,25 @@ http://mall.ichengle.top
 
 ## 若依mall功能
 1. 首页：
+![img.png](doc/首页.png)
 2. PMS商品管理：
+   ![img.png](doc/商品.png)
+   ![img.png](doc/商品列表.png)
 3. UMS会员管理：
+会员列表：
+![img.png](doc/会员列表.png)
+购物车：
+![img.png](doc/会员购物车.png)
 4. OMS订单管理：
+订单列表：
+![img.png](doc/订单.png)
+售后列表：
+   ![img.png](doc/售后.png)
 5. SMS营销管理：
+![img.png](doc/优惠券.png)
+   ![img.png](doc/积分.png)
 6. CMS内容管理：
+![img.png](doc/内容管理.png)
 
 ## 交流群/技术支持
 |                    公众号                     |

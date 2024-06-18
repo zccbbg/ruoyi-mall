@@ -44,15 +44,15 @@ aliyun:
         bucketName: 你的bucketName   # bucket 名称
 wechat:
     enabled: false
-    appId: 你的微信服务号信息
-    secret: 你的微信服务号信息
+    appId: 你的微信服务号信息（h5的时候需要，小程序的时候不需要）
+    secret: 你的微信服务号信息（h5的时候需要，小程序的时候不需要）
     merchantId: 微信支付商户号
     privateKeyPath: 微信支付密钥地址相对地址
     merchantSerialNumber: 微信支付密钥对应的序列号
     apiV3key: 微信支付apiV3key
     notifyUrl: 微信支付回调地址
-    miniProgramAppId: 小程序apppid
-    miniProgramSecret:
+    miniProgramAppId: 小程序apppid（h5的时候不需要）
+    miniProgramSecret: 小程序Secret（h5的时候不需要）
 sms:
   enabled: true
   # 阿里云 dysmsapi.aliyuncs.com

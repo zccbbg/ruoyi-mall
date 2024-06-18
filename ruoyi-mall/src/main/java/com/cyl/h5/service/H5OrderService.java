@@ -8,23 +8,17 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.cyl.h5.config.SecurityUtil;
-import com.cyl.h5.domain.form.ApplyRefundForm;
-import com.cyl.h5.domain.form.OrderCreateForm;
 import com.cyl.h5.domain.dto.OrderProductListDTO;
 import com.cyl.h5.domain.dto.PayNotifyMessageDTO;
-import com.cyl.h5.domain.form.CancelOrderForm;
-import com.cyl.h5.domain.form.OrderPayForm;
-import com.cyl.h5.domain.vo.OrderPayVO;
+import com.cyl.h5.domain.form.*;
 import com.cyl.h5.domain.vo.*;
-import com.cyl.h5.domain.form.OrderSubmitForm;
 import com.cyl.manager.act.domain.entity.MemberCoupon;
-import com.cyl.manager.act.mapper.MemberCouponMapper;
 import com.cyl.manager.act.service.IntegralHistoryService;
 import com.cyl.manager.act.service.MemberCouponService;
 import com.cyl.manager.oms.convert.AftersaleItemConvert;
 import com.cyl.manager.oms.convert.OrderItemConvert;
-import com.cyl.manager.oms.mapper.*;
 import com.cyl.manager.oms.domain.entity.*;
+import com.cyl.manager.oms.mapper.*;
 import com.cyl.manager.oms.service.OrderItemService;
 import com.cyl.manager.oms.service.OrderOperateHistoryService;
 import com.cyl.manager.pms.domain.entity.Product;
@@ -57,7 +51,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -584,8 +577,26 @@ public class H5OrderService {
         QueryWrapper<MemberWechat> memberWechatQw = new QueryWrapper<>();
         memberWechatQw.eq("member_id", req.getMemberId());
         MemberWechat memberWechat = memberWechatMapper.selectOne(memberWechatQw);
-        if (memberWechat == null || StrUtil.isBlank(memberWechat.getOpenid())) {
+        if (memberWechat == null) {
             throw new RuntimeException("获取用户openId失败");
+        }
+        String openId = null;
+        String appId = null;
+        //公众号支付流程
+        if (req.getWechatType() == 1) {
+            if (StrUtil.isBlank(memberWechat.getOpenid())) {
+                throw new RuntimeException("获取用户openId失败");
+            }
+            openId = memberWechat.getOpenid();
+            appId = WechatPayData.appId;
+        }
+        //小程序支付流程
+        if (req.getWechatType() == 2) {
+            if (StrUtil.isBlank(memberWechat.getRoutineOpenid())) {
+                throw new RuntimeException("获取用户openId失败");
+            }
+            openId = memberWechat.getRoutineOpenid();
+            appId = WechatPayData.miniProgramAppId;
         }
         QueryWrapper<OrderItem> orderItemQw = new QueryWrapper<>();
         orderItemQw.eq("order_id", orderList.get(0).getId());
@@ -617,12 +628,6 @@ public class H5OrderService {
         }
         //请开启微信支付 wechat.enabled=true
         //调用wx的jsapi拿prepayId，返回签名等信息
-        String openId = memberWechat.getOpenid();
-        String appId = WechatPayData.appId;
-        if (2 == req.getWechatType()) {
-            openId = memberWechat.getRoutineOpenid();
-            appId = WechatPayData.miniProgramAppId;
-        }
         String prepayId = wechatPayService.jsapiPay(
                 String.valueOf(req.getPayId()),
                 orderDesc,
