@@ -32,7 +32,6 @@ import java.util.List;
  */
 @Api(description ="会员信息接口列表")
 @RestController
-@RequestMapping("/ums/member")
 public class MemberController extends BaseController {
     @Autowired
     private MemberService service;
@@ -41,14 +40,14 @@ public class MemberController extends BaseController {
     @Autowired
     private WechatAuthService wechatAuthService;
 
-    @GetMapping("/wechat/code")
-    public AjaxResult getWechatCode() {
-        return AjaxResult.successData(wechatAuthService.getQRCode());
+    @RequestMapping(path ={"/ums/member/wechat/code","/h5/member/wechat/code"},method=RequestMethod.GET)
+    public AjaxResult getWechatCode(@RequestParam(required = false) String scene) {
+        return AjaxResult.successData(wechatAuthService.getQRCode(scene));
     }
 
     @ApiOperation("查询会员信息列表")
     @PreAuthorize("@ss.hasPermi('ums:member:list')")
-    @PostMapping("/list")
+    @PostMapping("/ums/member/list")
     public ResponseEntity<Page<Member>> list(@RequestBody MemberQuery query, Pageable page) {
         List<Member> list = service.selectList(query, page);
         return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
@@ -57,7 +56,7 @@ public class MemberController extends BaseController {
     @ApiOperation("导出会员信息列表")
     @PreAuthorize("@ss.hasPermi('ums:member:export')")
     @Log(title = "会员信息", businessType = BusinessType.EXPORT)
-    @GetMapping("/export")
+    @GetMapping("/ums/member/export")
     public ResponseEntity<String> export(MemberQuery query) {
         List<Member> list = service.selectList(query, null);
         ExcelUtil<MemberVO> util = new ExcelUtil<>(MemberVO.class);
@@ -66,7 +65,7 @@ public class MemberController extends BaseController {
 
     @ApiOperation("获取会员信息详细信息")
     @PreAuthorize("@ss.hasPermi('ums:member:query')")
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/ums/member/{id}")
     public ResponseEntity<Member> getInfo(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.selectById(id));
     }
@@ -74,7 +73,7 @@ public class MemberController extends BaseController {
     @ApiOperation("新增会员信息")
     @PreAuthorize("@ss.hasPermi('ums:member:add')")
     @Log(title = "会员信息", businessType = BusinessType.INSERT)
-    @PostMapping
+    @PostMapping("/ums/member")
     public ResponseEntity<Integer> add(@RequestBody Member member) {
         return ResponseEntity.ok(service.insert(member));
     }
@@ -82,7 +81,7 @@ public class MemberController extends BaseController {
     @ApiOperation("修改会员信息")
     @PreAuthorize("@ss.hasPermi('ums:member:edit')")
     @Log(title = "会员信息", businessType = BusinessType.UPDATE)
-    @PutMapping
+    @PutMapping("/ums/member")
     public ResponseEntity<Integer> edit(@RequestBody Member member) {
         return ResponseEntity.ok(service.update(member));
     }
@@ -90,7 +89,7 @@ public class MemberController extends BaseController {
     @ApiOperation("修改会员备注信息")
     @PreAuthorize("@ss.hasPermi('ums:member:edit')")
     @Log(title = "会员备注信息", businessType = BusinessType.UPDATE)
-    @PostMapping("/mark/update")
+    @PostMapping("/ums/member/mark/update")
     public ResponseEntity<Integer> editMark(@RequestBody Member member) {
         return ResponseEntity.ok(service.updateMark(member));
     }
@@ -98,26 +97,26 @@ public class MemberController extends BaseController {
     @ApiOperation("删除会员信息")
     @PreAuthorize("@ss.hasPermi('ums:member:remove')")
     @Log(title = "会员信息", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/ums/member/{id}")
     public ResponseEntity<Integer> remove(@PathVariable Long id) {
         return ResponseEntity.ok(service.deleteById(id));
     }
 
     @ApiOperation(("修改会员账户状态"))
     @Log(title = "会员信息", businessType = BusinessType.UPDATE)
-    @PostMapping("/status/change")
+    @PostMapping("/ums/member/status/change")
     public ResponseEntity<Integer> changeStatus(@RequestBody ChangeMemberStatusForm form){
         return ResponseEntity.ok(service.changeStatus(form));
     }
 
     @ApiOperation("会员手机号解密")
-    @GetMapping("/phone/decrypt/{phoneEncrypted}")
+    @GetMapping("/ums/member/phone/decrypt/{phoneEncrypted}")
     public ResponseEntity<String> getPhoneDecrypted(@PathVariable String phoneEncrypted){
         return ResponseEntity.ok(service.getPhoneDecrypted(phoneEncrypted));
     }
 
     @ApiOperation("查看会员统计数据")
-    @GetMapping("/view/statistics/{memberId}")
+    @GetMapping("/ums/member/view/statistics/{memberId}")
     public ResponseEntity<MemberDataStatisticsVO> viewStatistics(@PathVariable Long memberId){
         return ResponseEntity.ok(service.viewStatistics(memberId));
     }

@@ -3,7 +3,6 @@ package com.cyl.wechat;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.cyl.h5.config.SecurityUtil;
 import com.cyl.wechat.response.WechatUserAuth;
 import com.ruoyi.common.core.redis.RedisService;
 import com.ruoyi.common.utils.StringUtils;
@@ -61,9 +60,9 @@ public class WechatAuthService {
      *
      * @return 二维码字符串
      */
-    public String getQRCode() {
-        String base64Str = redisService.getQrCode();
-        if (StringUtils.isNotEmpty(base64Str)) {
+    public String getQRCode(String scene) {
+        String base64Str = redisService.getQrCode(scene);
+        if (!StringUtils.isEmpty(base64Str)) {
             return base64Str;
         }
         String accessToken = getAccessToken();
@@ -73,7 +72,7 @@ public class WechatAuthService {
         }
         String postUrl = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=" + accessToken;
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("scene", "1");  //可以用作传参，必填，内容随意
+        jsonObject.put("scene", StringUtils.isEmpty(scene) ? "1" : scene);  //可以用作传参，必填，内容随意
         jsonObject.put("page", "pages/index/index"); //扫码后跳转页面，选填
         jsonObject.put("check_path", false); //是否检查跳转页面存不存在
         jsonObject.put("env_version", "release"); //版本
@@ -85,7 +84,7 @@ public class WechatAuthService {
             log.error("get wechat code error",e);
         }
         base64Str = Base64.getEncoder().encodeToString(string);
-        redisService.setQrCode(base64Str);
+        redisService.setQrCode(base64Str, scene);
         log.info("wechat code:{}",base64Str);
         return base64Str;
     }
@@ -95,7 +94,7 @@ public class WechatAuthService {
         String token = redisService.getWechatToken();
 
         log.info("redis token：{}",token);
-        if (StringUtils.isNotEmpty(token)) {
+        if (!StringUtils.isEmpty(token)) {
             return token;
         }
         Map<String, String> params = new HashMap<>();

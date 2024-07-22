@@ -35,6 +35,20 @@ public class RedisService {
         redisCache.setCacheObject(key,list);
     }
 
+    public void setVerifyCode(String code) {
+        String key = RedisKeys.VERIFY_CODE + code;
+        redisCache.setCacheObject(key, code);
+        redisCache.expire(key, 5, TimeUnit.MINUTES);
+    }
+
+    public void deleteVerifyCode(String code) {
+        redisCache.deleteObject(RedisKeys.VERIFY_CODE + code);
+    }
+
+    public String getVerifyCode(String code) {
+        return redisCache.getCacheObject(RedisKeys.VERIFY_CODE + code);
+    }
+
     public String getWechatToken() {
         return redisCache.getCacheObject(RedisKeys.WECHAT_ACCESS_TOKEN);
     }
@@ -43,12 +57,12 @@ public class RedisService {
         redisCache.setCacheObject(RedisKeys.WECHAT_ACCESS_TOKEN, token, 100, TimeUnit.MINUTES);
     }
 
-    public void setQrCode(String code) {
-        redisCache.setCacheObject(RedisKeys.WECHAT_QR_CODE, code, 30, TimeUnit.DAYS);
+    public void setQrCode(String code, String scene) {
+        redisCache.setCacheObject(RedisKeys.WECHAT_QR_CODE + scene, code, 30, TimeUnit.DAYS);
     }
 
-    public String getQrCode() {
-        return redisCache.getCacheObject(RedisKeys.WECHAT_QR_CODE);
+    public String getQrCode(String scene) {
+        return redisCache.getCacheObject(RedisKeys.WECHAT_QR_CODE + scene);
     }
 
     interface RedisKeys {
@@ -57,6 +71,7 @@ public class RedisService {
 
         String WECHAT_ACCESS_TOKEN = "WECHAT_ACCESS_TOKEN_";
         String WECHAT_QR_CODE = "WECHAT_QR_CODE_";
+        String VERIFY_CODE = "VERIFY_CODE:";
     }
 
     /**
