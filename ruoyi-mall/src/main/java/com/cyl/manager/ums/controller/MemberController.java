@@ -40,7 +40,7 @@ public class MemberController extends BaseController {
     @Autowired
     private WechatAuthService wechatAuthService;
 
-    @RequestMapping(path ={"/ums/member/wechat/code","/h5/member/wechat/code"},method=RequestMethod.GET)
+    @RequestMapping(path ={"/ums/member/wechat/code","/h5/member/wechat/code","/no-auth/wechat/code"},method=RequestMethod.GET)
     public AjaxResult getWechatCode(@RequestParam(required = false) String scene) {
         return AjaxResult.successData(wechatAuthService.getQRCode(scene));
     }
