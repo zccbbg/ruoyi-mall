@@ -2,27 +2,34 @@ package com.cyl.h5.controller;
 
 import com.cyl.h5.domain.vo.HomeConfigVO;
 import com.cyl.manager.pms.service.ProductCategoryService;
+import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.system.service.ISysConfigService;
+import com.ruoyi.system.service.ISysDictTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/no-auth/home")
-public class HomeController {
+@RequestMapping("/no-auth")
+public class NoAuthController {
     @Autowired
     private ISysConfigService sysConfigService;
     @Autowired
     private ProductCategoryService categoryService;
+    @Autowired
+    private ISysDictTypeService dictTypeService;
 
     /**
      * 首页配置
      *
      * @return 首页配置
      */
-    @GetMapping("/home-cfg")
+    @GetMapping("/home/home-cfg")
     public ResponseEntity<HomeConfigVO> getHomeConfig() {
         HomeConfigVO res = new HomeConfigVO();
         res.setBanners(sysConfigService.selectConfigByKey("h5.home.banner"));
@@ -34,11 +41,21 @@ public class HomeController {
      *
      * @return 首页配置
      */
-    @GetMapping("/product-count")
+    @GetMapping("/home/product-count")
     public ResponseEntity<HomeConfigVO> productCount() {
         HomeConfigVO res = new HomeConfigVO();
         res.setBanners(sysConfigService.selectConfigByKey("h5.home.banner"));
         res.setCategoryList(categoryService.queryCategoryWithProductsForH5());
         return ResponseEntity.ok(res);
+    }
+
+    /**
+     * 获取应用账号
+     */
+    @GetMapping("/app/account/{type}")
+    public ResponseEntity<String> wmsAccount(@PathVariable String type) {
+        List<SysDictData> sysAppAccount = dictTypeService.selectDictDataByType("sys_app_account");
+        SysDictData sysDictData = sysAppAccount.stream().filter(it -> it.getDictValue().equals(type)).findFirst().orElseGet(SysDictData::new);
+        return ResponseEntity.ok(sysDictData.getDictLabel());
     }
 }
