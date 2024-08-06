@@ -612,7 +612,7 @@ public class H5OrderService {
             wechatPaymentHistory = new WechatPaymentHistory();
             wechatPaymentHistory.setOrderId(orderList.get(0).getPayId());
             wechatPaymentHistory.setMemberId(req.getMemberId());
-            wechatPaymentHistory.setOpenid(memberWechat.getOpenid());
+            wechatPaymentHistory.setOpenid(openId);
             wechatPaymentHistory.setTitle(orderItemList.get(0).getProductName());
             wechatPaymentHistory.setMoney(orderList.get(0).getPayAmount());
             wechatPaymentHistory.setOpType(Constants.PaymentOpType.PAY);
