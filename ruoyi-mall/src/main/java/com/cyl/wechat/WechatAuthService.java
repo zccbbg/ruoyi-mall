@@ -73,7 +73,7 @@ public class WechatAuthService {
         String postUrl = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=" + accessToken;
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("scene", StringUtils.isEmpty(scene) ? "1" : scene);  //可以用作传参，必填，内容随意
-        jsonObject.put("page", "pages/index/index"); //扫码后跳转页面，选填
+        jsonObject.put("page", "pages/index/verificationCodeIndex"); //扫码后跳转页面，选填
         jsonObject.put("check_path", false); //是否检查跳转页面存不存在
         jsonObject.put("env_version", "release"); //版本
         byte[] string = null;
