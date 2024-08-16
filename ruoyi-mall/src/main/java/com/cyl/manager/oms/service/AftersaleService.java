@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.cyl.manager.act.service.MemberCouponService;
 import com.cyl.manager.oms.convert.OrderOperateHistoryConvert;
 import com.cyl.manager.oms.domain.entity.*;
@@ -344,7 +345,7 @@ public class AftersaleService {
         //查订单item
         QueryWrapper<OrderItem> itemQw = new QueryWrapper<>();
         itemQw.eq("order_id", order.getId());
-        OrderItem orderItem = orderItemMapper.selectOne(itemQw);
+        OrderItem orderItem = orderItemMapper.selectList(itemQw).get(0);
         //开始退款
         Refund wechatResponse = wechatPayService.refundPay(returnApply.getId() + "",
                 order.getPayId() + "",
@@ -361,7 +362,11 @@ public class AftersaleService {
                 WechatPaymentHistory wechatPaymentHistory = new WechatPaymentHistory();
                 wechatPaymentHistory.setPaymentId(wechatResponse.getRefundId());
                 wechatPaymentHistory.setMemberId(order.getMemberId());
-                wechatPaymentHistory.setOpenid(memberWechat.getOpenid());
+                LambdaQueryWrapper<WechatPaymentHistory> queryWrapper = Wrappers.lambdaQuery();
+                queryWrapper.eq(WechatPaymentHistory::getOrderId, order.getPayId());
+                queryWrapper.eq(WechatPaymentHistory::getOpType, Constants.PaymentOpType.PAY);
+                WechatPaymentHistory payHistory = wechatPaymentHistoryMapper.selectOne(queryWrapper);
+                wechatPaymentHistory.setOpenid(payHistory.getOpenid());
                 wechatPaymentHistory.setTitle(orderItem.getProductName());
                 wechatPaymentHistory.setOrderId(order.getId());
                 wechatPaymentHistory.setMoney(returnApply.getReturnAmount().multiply(new BigDecimal("100")));
