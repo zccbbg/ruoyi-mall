@@ -18,6 +18,7 @@ public class OssTest {
     private OssUtils ossUtils;
     @Test
     public void download() throws Throwable {
-        ossUtils.downloadFile("306da8f7f6491046ba86633e4de8240b84微信图片_20220606114231.jpg");
+        ossUtils.downloadFile("2022/12/306da8f7f6491046ba86633e4de8240b84微信图片_20220606114231.jpg", "D:\\oss\\306da8f7f6491046ba86633e4de8240b84微信图片_20220606114231.jpg");
+
     }
 }

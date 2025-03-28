@@ -4,11 +4,13 @@ import cn.hutool.core.date.DateTime;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.model.DownloadFileRequest;
+import com.aliyun.oss.model.GetObjectRequest;
 import com.ruoyi.common.utils.uuid.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,11 +29,11 @@ public class OssUtils {
     @Value("${aliyun.oss.bucketName}")
     private String bucketName;
 
-    public void downloadFile(String fileName) throws Throwable {
+    public void downloadFile(String objectName, String pathName) throws Throwable {
         // 创建OSSClient实例。
+        System.out.println(accessKeyId+":"+secretAccessKey);
         OSS ossClient = new OSSClientBuilder().build(endPoint, accessKeyId, secretAccessKey);
-        DownloadFileRequest downloadFileRequest = new DownloadFileRequest(bucketName, fileName);
-        ossClient.downloadFile(downloadFileRequest);
+        ossClient.getObject(new GetObjectRequest(bucketName, objectName), new File(pathName));
     }
 
     public String uploadOneFile(MultipartFile file) {
