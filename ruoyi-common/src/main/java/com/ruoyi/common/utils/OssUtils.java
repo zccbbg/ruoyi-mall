@@ -29,11 +29,14 @@ public class OssUtils {
     @Value("${aliyun.oss.bucketName}")
     private String bucketName;
 
-    public void downloadFile(String objectName, String pathName) throws Throwable {
+    public void downloadFile(String objectName) throws Throwable {
         // 创建OSSClient实例。
-        System.out.println(accessKeyId+":"+secretAccessKey);
         OSS ossClient = new OSSClientBuilder().build(endPoint, accessKeyId, secretAccessKey);
-        ossClient.getObject(new GetObjectRequest(bucketName, objectName), new File(pathName));
+        //截取objectName的第二个/之后的内容作为pathName
+        String pathName = objectName.substring(objectName.lastIndexOf("/"));
+//        System.out.println("pathName"+pathName);
+        ossClient.getObject(new GetObjectRequest(bucketName, objectName), new File("D:\\oss\\"+pathName));
+
     }
 
     public String uploadOneFile(MultipartFile file) {
