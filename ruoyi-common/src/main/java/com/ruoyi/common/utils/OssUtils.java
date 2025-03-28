@@ -3,6 +3,7 @@ package com.ruoyi.common.utils;
 import cn.hutool.core.date.DateTime;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
+import com.aliyun.oss.model.DownloadFileRequest;
 import com.ruoyi.common.utils.uuid.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,13 @@ public class OssUtils {
 
     @Value("${aliyun.oss.bucketName}")
     private String bucketName;
+
+    public void downloadFile(String fileName) throws Throwable {
+        // 创建OSSClient实例。
+        OSS ossClient = new OSSClientBuilder().build(endPoint, accessKeyId, secretAccessKey);
+        DownloadFileRequest downloadFileRequest = new DownloadFileRequest(bucketName, fileName);
+        ossClient.downloadFile(downloadFileRequest);
+    }
 
     public String uploadOneFile(MultipartFile file) {
 
