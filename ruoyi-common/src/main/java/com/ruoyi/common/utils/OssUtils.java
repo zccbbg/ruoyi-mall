@@ -6,6 +6,7 @@ import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.model.DownloadFileRequest;
 import com.aliyun.oss.model.GetObjectRequest;
 import com.ruoyi.common.utils.uuid.UUID;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +15,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Component
 public class OssUtils {
 
@@ -29,13 +31,17 @@ public class OssUtils {
     @Value("${aliyun.oss.bucketName}")
     private String bucketName;
 
-    public void downloadFile(String objectName) throws Throwable {
+    public void downloadFile(String objectName){
         // 创建OSSClient实例。
         OSS ossClient = new OSSClientBuilder().build(endPoint, accessKeyId, secretAccessKey);
         //截取objectName的第二个/之后的内容作为pathName
         String pathName = objectName.substring(objectName.lastIndexOf("/"));
-//        System.out.println("pathName"+pathName);
-        ossClient.getObject(new GetObjectRequest(bucketName, objectName), new File("D:\\oss\\"+pathName));
+        try{
+            ossClient.getObject(new GetObjectRequest(bucketName, objectName), new File("D:\\oss\\"+pathName));
+        }catch (Exception e){
+            log.error(pathName);
+        }
+
 
     }
 
