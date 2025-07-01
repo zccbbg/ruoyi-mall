@@ -32,9 +32,6 @@ http://mall.ichengle.top
 <img src="doc/小程序演示.jpg" width="200px">
 <img src="doc/h5演示.png" width="200px">
 
-## 大厂本硕博单身群
-![单身群](doc/danshen.jpg)
-
 ## 若依技术专栏
 关注文末公众号回复：星球
 
