@@ -18,7 +18,6 @@
         <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
         <druid.version>1.2.6</druid.version>
         <bitwalker.version>1.21</bitwalker.version>
-        <swagger.version>3.0.0</swagger.version>
 		<kaptcha.version>2.3.2</kaptcha.version>
 		<mybatis-spring-boot.version>2.1.4</mybatis-spring-boot.version>
         <pagehelper.boot.version>1.3.1</pagehelper.boot.version>
@@ -94,23 +93,6 @@
                 <groupId>net.java.dev.jna</groupId>
                 <artifactId>jna-platform</artifactId>
                 <version>${jna.version}</version>
-            </dependency>
-
-            <!-- Swagger3依赖 -->
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-boot-starter</artifactId>
-                <version>${swagger.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>io.swagger</groupId>
-                        <artifactId>swagger-models</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.mapstruct</groupId>
-                        <artifactId>mapstruct</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <!-- io常用工具类 -->

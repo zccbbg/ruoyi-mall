@@ -1,9 +1,6 @@
 package com.cyl.manager.ums.controller;
 
 import java.util.List;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
@@ -30,7 +27,6 @@ import com.cyl.manager.ums.service.FeedbackService;
  * @author zcc
  * @date 2024-02-26
  */
-@Api(description ="意见反馈接口列表")
 @RestController
 @RequestMapping("/ums/feedback")
 public class FeedbackController extends BaseController {
@@ -39,7 +35,6 @@ public class FeedbackController extends BaseController {
     @Autowired
     private FeedbackConvert convert;
 
-    @ApiOperation("查询意见反馈列表")
     @PreAuthorize("@ss.hasPermi('ums:feedback:list')")
     @PostMapping("/list")
     public ResponseEntity<Page<Feedback>> list(@RequestBody FeedbackQuery query, Pageable page) {
@@ -48,14 +43,12 @@ public class FeedbackController extends BaseController {
     }
 
 
-    @ApiOperation("修改意见反馈备注信息")
     @Log(title = "意见反馈", businessType = BusinessType.UPDATE)
     @PostMapping("/mark/update")
     public ResponseEntity<Integer> editMark(@RequestBody Feedback feedback) {
         return ResponseEntity.ok(service.updateMark(feedback));
     }
 
-    @ApiOperation(("修改状态"))
     @Log(title = "意见反馈", businessType = BusinessType.UPDATE)
     @PostMapping("/handle/status/change")
     public ResponseEntity<Integer> changeStatus(@RequestBody Feedback dto){
@@ -63,7 +56,6 @@ public class FeedbackController extends BaseController {
     }
 
 
-    @ApiOperation("删除意见反馈")
     @PreAuthorize("@ss.hasPermi('ums:feedback:remove')")
     @Log(title = "意见反馈", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{id}")

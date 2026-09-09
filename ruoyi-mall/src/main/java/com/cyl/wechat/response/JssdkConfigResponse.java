@@ -1,20 +1,18 @@
 package com.cyl.wechat.response;
-
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
 public class JssdkConfigResponse {
-    @ApiModelProperty("appId")
+    /** appId */
     private String appId;
-    @ApiModelProperty("timeStamp")
+    /** timeStamp */
     private String timeStamp;
-    @ApiModelProperty("nonceStr")
+    /** nonceStr */
     private String nonceStr;
-    @ApiModelProperty("signature")
+    /** signature */
     private String signature;
-    @ApiModelProperty("jsApiList")
+    /** jsApiList */
     private List<String> jsApiList;
 }

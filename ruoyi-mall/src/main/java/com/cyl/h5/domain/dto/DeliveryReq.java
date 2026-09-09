@@ -1,7 +1,4 @@
  package com.cyl.h5.domain.dto;
-
- import io.swagger.annotations.ApiModel;
- import io.swagger.annotations.ApiModelProperty;
  import lombok.Data;
 
  import javax.validation.constraints.NotBlank;
@@ -13,18 +10,17 @@
  * 
  */
  @Data
- @ApiModel(value = "发货记录")
  public class DeliveryReq {
 
-     @ApiModelProperty(value = "订单id", required = true)
+     /** 订单id */
      @NotNull(message = "订单id不能为空")
      private Long orderId;
 
-     @ApiModelProperty(value = "物流单号", required = true)
+     /** 物流单号 */
      @NotBlank(message = "物流单号不能为空")
      private String deliverySn;
 
-     @ApiModelProperty(value = "快递公司Code", required = true)
+     /** 快递公司Code */
      @NotBlank(message = "快递公司Code不能为空")
      private String deliveryCompanyCode;
 }

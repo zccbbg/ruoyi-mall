@@ -1,9 +1,6 @@
 package com.cyl.manager.act.controller;
 
 import java.util.List;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
@@ -33,7 +30,6 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
  * @author zcc
  * @date 2024-03-22
  */
-@Api(description ="用户领券记录接口列表")
 @RestController
 @RequestMapping("/act/memberCoupon")
 public class MemberCouponController extends BaseController {
@@ -42,33 +38,28 @@ public class MemberCouponController extends BaseController {
     @Autowired
     private MemberCouponConvert convert;
 
-    @ApiOperation("查询用户领券记录列表")
     @PostMapping("/list")
     public ResponseEntity<Page<MemberCouponVO>> list(@RequestBody MemberCouponQuery query, Pageable page) {
         return ResponseEntity.ok(service.selectList(query, page));
     }
 
-    @ApiOperation("获取用户领券记录详细信息")
     @GetMapping(value = "/{id}")
     public ResponseEntity<MemberCoupon> getInfo(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.selectById(id));
     }
 
-    @ApiOperation("新增用户领券记录")
     @Log(title = "用户领券记录", businessType = BusinessType.INSERT)
     @PostMapping
     public ResponseEntity<Integer> add(@RequestBody MemberCoupon memberCoupon) {
         return ResponseEntity.ok(service.insert(memberCoupon));
     }
 
-    @ApiOperation("修改用户领券记录")
     @Log(title = "用户领券记录", businessType = BusinessType.UPDATE)
     @PutMapping
     public ResponseEntity<Integer> edit(@RequestBody MemberCoupon memberCoupon) {
         return ResponseEntity.ok(service.update(memberCoupon));
     }
 
-    @ApiOperation("删除用户领券记录")
     @Log(title = "用户领券记录", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{id}")
     public ResponseEntity<Integer> remove(@PathVariable Long id) {

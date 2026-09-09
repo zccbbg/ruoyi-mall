@@ -1,9 +1,6 @@
 package com.cyl.manager.oms.controller;
 
 import java.util.List;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
@@ -33,7 +30,6 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
  * @author zcc
  * @date 2022-12-01
  */
-@Api(description ="订单发货记录接口列表")
 @RestController
 @RequestMapping("/oms/orderDeliveryHistory")
 public class OrderDeliveryHistoryController extends BaseController {
@@ -42,7 +38,6 @@ public class OrderDeliveryHistoryController extends BaseController {
     @Autowired
     private OrderDeliveryHistoryConvert convert;
 
-    @ApiOperation("查询订单发货记录列表")
     @PreAuthorize("@ss.hasPermi('oms:orderDeliveryHistory:list')")
     @PostMapping("/list")
     public ResponseEntity<Page<OrderDeliveryHistory>> list(@RequestBody OrderDeliveryHistoryQuery query, Pageable page) {
@@ -50,7 +45,6 @@ public class OrderDeliveryHistoryController extends BaseController {
         return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
     }
 
-    @ApiOperation("导出订单发货记录列表")
     @PreAuthorize("@ss.hasPermi('oms:orderDeliveryHistory:export')")
     @Log(title = "订单发货记录", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -60,14 +54,12 @@ public class OrderDeliveryHistoryController extends BaseController {
         return ResponseEntity.ok(util.writeExcel(convert.dos2vos(list), "订单发货记录数据"));
     }
 
-    @ApiOperation("获取订单发货记录详细信息")
     @PreAuthorize("@ss.hasPermi('oms:orderDeliveryHistory:query')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<OrderDeliveryHistory> getInfo(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.selectById(id));
     }
 
-    @ApiOperation("新增订单发货记录")
     @PreAuthorize("@ss.hasPermi('oms:orderDeliveryHistory:add')")
     @Log(title = "订单发货记录", businessType = BusinessType.INSERT)
     @PostMapping
@@ -75,7 +67,6 @@ public class OrderDeliveryHistoryController extends BaseController {
         return ResponseEntity.ok(service.insert(orderDeliveryHistory));
     }
 
-    @ApiOperation("修改订单发货记录")
     @PreAuthorize("@ss.hasPermi('oms:orderDeliveryHistory:edit')")
     @Log(title = "订单发货记录", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -83,7 +74,6 @@ public class OrderDeliveryHistoryController extends BaseController {
         return ResponseEntity.ok(service.update(orderDeliveryHistory));
     }
 
-    @ApiOperation("删除订单发货记录")
     @PreAuthorize("@ss.hasPermi('oms:orderDeliveryHistory:remove')")
     @Log(title = "订单发货记录", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{id}")

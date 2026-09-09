@@ -3,8 +3,6 @@ package com.cyl.manager.oms.controller;
 import java.util.List;
 
 import com.cyl.manager.oms.domain.entity.WechatPaymentHistory;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
@@ -33,7 +31,6 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
  * @author zcc
  * @date 2023-07-12
  */
-@Api(description ="微信订单表接口列表")
 @RestController
 @RequestMapping("/pms/omsWechatPaymentHistory")
 public class WechatPaymentHistoryController extends BaseController {
@@ -42,7 +39,6 @@ public class WechatPaymentHistoryController extends BaseController {
     @Autowired
     private WechatPaymentHistoryConvert convert;
 
-    @ApiOperation("查询微信订单表列表")
     @PreAuthorize("@ss.hasPermi('pms:omsWechatPaymentHistory:list')")
     @PostMapping("/list")
     public ResponseEntity<Page<WechatPaymentHistory>> list(@RequestBody WechatPaymentHistoryQuery query, Pageable page) {
@@ -50,7 +46,6 @@ public class WechatPaymentHistoryController extends BaseController {
         return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
     }
 
-    @ApiOperation("导出微信订单表列表")
     @PreAuthorize("@ss.hasPermi('pms:omsWechatPaymentHistory:export')")
     @Log(title = "微信订单表", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -60,14 +55,12 @@ public class WechatPaymentHistoryController extends BaseController {
         return ResponseEntity.ok(util.writeExcel(convert.dos2vos(list), "微信订单表数据"));
     }
 
-    @ApiOperation("获取微信订单表详细信息")
     @PreAuthorize("@ss.hasPermi('pms:omsWechatPaymentHistory:query')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<WechatPaymentHistory> getInfo(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.selectById(id));
     }
 
-    @ApiOperation("新增微信订单表")
     @PreAuthorize("@ss.hasPermi('pms:omsWechatPaymentHistory:add')")
     @Log(title = "微信订单表", businessType = BusinessType.INSERT)
     @PostMapping
@@ -75,7 +68,6 @@ public class WechatPaymentHistoryController extends BaseController {
         return ResponseEntity.ok(service.insert(wechatPaymentHistory));
     }
 
-    @ApiOperation("修改微信订单表")
     @PreAuthorize("@ss.hasPermi('pms:omsWechatPaymentHistory:edit')")
     @Log(title = "微信订单表", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -83,7 +75,6 @@ public class WechatPaymentHistoryController extends BaseController {
         return ResponseEntity.ok(service.update(wechatPaymentHistory));
     }
 
-    @ApiOperation("删除微信订单表")
     @PreAuthorize("@ss.hasPermi('pms:omsWechatPaymentHistory:remove')")
     @Log(title = "微信订单表", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{id}")

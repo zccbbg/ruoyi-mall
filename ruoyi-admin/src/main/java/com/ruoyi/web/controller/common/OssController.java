@@ -2,7 +2,6 @@ package com.ruoyi.web.controller.common;
 
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.OssUtils;
-import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@Api(tags = "OSS对象存储Controller")
 @RequestMapping("/oss")
 public class OssController {
     @Autowired

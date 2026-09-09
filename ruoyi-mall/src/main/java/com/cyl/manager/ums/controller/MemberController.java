@@ -13,8 +13,6 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -30,7 +28,6 @@ import java.util.List;
  * @author zcc
  * @date 2022-11-28
  */
-@Api(description ="会员信息接口列表")
 @RestController
 public class MemberController extends BaseController {
     @Autowired
@@ -45,7 +42,6 @@ public class MemberController extends BaseController {
         return AjaxResult.successData(wechatAuthService.getQRCode(scene));
     }
 
-    @ApiOperation("查询会员信息列表")
     @PreAuthorize("@ss.hasPermi('ums:member:list')")
     @PostMapping("/ums/member/list")
     public ResponseEntity<Page<Member>> list(@RequestBody MemberQuery query, Pageable page) {
@@ -53,7 +49,6 @@ public class MemberController extends BaseController {
         return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
     }
 
-    @ApiOperation("导出会员信息列表")
     @PreAuthorize("@ss.hasPermi('ums:member:export')")
     @Log(title = "会员信息", businessType = BusinessType.EXPORT)
     @GetMapping("/ums/member/export")
@@ -63,14 +58,12 @@ public class MemberController extends BaseController {
         return ResponseEntity.ok(util.writeExcel(convert.dos2vos(list), "会员信息数据"));
     }
 
-    @ApiOperation("获取会员信息详细信息")
     @PreAuthorize("@ss.hasPermi('ums:member:query')")
     @GetMapping(value = "/ums/member/{id}")
     public ResponseEntity<Member> getInfo(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.selectById(id));
     }
 
-    @ApiOperation("新增会员信息")
     @PreAuthorize("@ss.hasPermi('ums:member:add')")
     @Log(title = "会员信息", businessType = BusinessType.INSERT)
     @PostMapping("/ums/member")
@@ -78,7 +71,6 @@ public class MemberController extends BaseController {
         return ResponseEntity.ok(service.insert(member));
     }
 
-    @ApiOperation("修改会员信息")
     @PreAuthorize("@ss.hasPermi('ums:member:edit')")
     @Log(title = "会员信息", businessType = BusinessType.UPDATE)
     @PutMapping("/ums/member")
@@ -86,7 +78,6 @@ public class MemberController extends BaseController {
         return ResponseEntity.ok(service.update(member));
     }
 
-    @ApiOperation("修改会员备注信息")
     @PreAuthorize("@ss.hasPermi('ums:member:edit')")
     @Log(title = "会员备注信息", businessType = BusinessType.UPDATE)
     @PostMapping("/ums/member/mark/update")
@@ -94,7 +85,6 @@ public class MemberController extends BaseController {
         return ResponseEntity.ok(service.updateMark(member));
     }
 
-    @ApiOperation("删除会员信息")
     @PreAuthorize("@ss.hasPermi('ums:member:remove')")
     @Log(title = "会员信息", businessType = BusinessType.DELETE)
 	@DeleteMapping("/ums/member/{id}")
@@ -102,20 +92,17 @@ public class MemberController extends BaseController {
         return ResponseEntity.ok(service.deleteById(id));
     }
 
-    @ApiOperation(("修改会员账户状态"))
     @Log(title = "会员信息", businessType = BusinessType.UPDATE)
     @PostMapping("/ums/member/status/change")
     public ResponseEntity<Integer> changeStatus(@RequestBody ChangeMemberStatusForm form){
         return ResponseEntity.ok(service.changeStatus(form));
     }
 
-    @ApiOperation("会员手机号解密")
     @GetMapping("/ums/member/phone/decrypt/{phoneEncrypted}")
     public ResponseEntity<String> getPhoneDecrypted(@PathVariable String phoneEncrypted){
         return ResponseEntity.ok(service.getPhoneDecrypted(phoneEncrypted));
     }
 
-    @ApiOperation("查看会员统计数据")
     @GetMapping("/ums/member/view/statistics/{memberId}")
     public ResponseEntity<MemberDataStatisticsVO> viewStatistics(@PathVariable Long memberId){
         return ResponseEntity.ok(service.viewStatistics(memberId));

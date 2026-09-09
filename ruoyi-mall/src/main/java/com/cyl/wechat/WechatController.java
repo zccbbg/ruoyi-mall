@@ -3,7 +3,6 @@ package com.cyl.wechat;
 import com.cyl.h5.service.H5MemberService;
 import com.cyl.wechat.response.JssdkConfigResponse;
 import com.cyl.wechat.response.WechatUserAuth;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +39,6 @@ public class WechatController {
         return ResponseEntity.ok(response);
     }
 
-    @ApiOperation("获取微信用户授权信息")
     @PostMapping("/getWechatUserAuth")
     public ResponseEntity<WechatUserAuth> getWechatUserAuth(@RequestBody String data){
         return ResponseEntity.ok(service.getWechatUserAuth(data));

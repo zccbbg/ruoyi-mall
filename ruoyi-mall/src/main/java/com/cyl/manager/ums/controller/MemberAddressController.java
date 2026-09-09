@@ -1,9 +1,6 @@
 package com.cyl.manager.ums.controller;
 
 import java.util.List;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
@@ -33,7 +30,6 @@ import com.cyl.manager.ums.domain.vo.MemberAddressVO;
  * @author zcc
  * @date 2022-11-28
  */
-@Api(description ="会员收货地址接口列表")
 @RestController
 @RequestMapping("/ums/memberAddress")
 public class MemberAddressController extends BaseController {
@@ -42,7 +38,6 @@ public class MemberAddressController extends BaseController {
     @Autowired
     private MemberAddressConvert convert;
 
-    @ApiOperation("查询会员收货地址列表")
     @PreAuthorize("@ss.hasPermi('ums:memberAddress:list')")
     @PostMapping("/list")
     public ResponseEntity<Page<MemberAddressVO>> list(@RequestBody MemberAddressQuery query, Pageable page) {
@@ -51,7 +46,6 @@ public class MemberAddressController extends BaseController {
         return ResponseEntity.ok(new PageImpl<>(resList, page, ((com.github.pagehelper.Page)list).getTotal()));
     }
 
-    @ApiOperation("导出会员收货地址列表")
     @PreAuthorize("@ss.hasPermi('ums:memberAddress:export')")
     @Log(title = "会员收货地址", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -62,14 +56,12 @@ public class MemberAddressController extends BaseController {
         return null;
     }
 
-    @ApiOperation("获取会员收货地址详细信息")
     @PreAuthorize("@ss.hasPermi('ums:memberAddress:query')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<MemberAddress> getInfo(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.selectById(id));
     }
 
-    @ApiOperation("新增会员收货地址")
     @PreAuthorize("@ss.hasPermi('ums:memberAddress:add')")
     @Log(title = "会员收货地址", businessType = BusinessType.INSERT)
     @PostMapping
@@ -77,7 +69,6 @@ public class MemberAddressController extends BaseController {
         return ResponseEntity.ok(service.insert(memberAddress));
     }
 
-    @ApiOperation("修改会员收货地址")
     @PreAuthorize("@ss.hasPermi('ums:memberAddress:edit')")
     @Log(title = "会员收货地址", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -85,7 +76,6 @@ public class MemberAddressController extends BaseController {
         return ResponseEntity.ok(service.update(memberAddress));
     }
 
-    @ApiOperation("删除会员收货地址")
     @PreAuthorize("@ss.hasPermi('ums:memberAddress:remove')")
     @Log(title = "会员收货地址", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{id}")

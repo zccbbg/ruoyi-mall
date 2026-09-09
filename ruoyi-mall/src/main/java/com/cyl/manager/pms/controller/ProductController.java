@@ -1,9 +1,6 @@
 package com.cyl.manager.pms.controller;
 
 import java.util.List;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
@@ -33,7 +30,6 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
  * @author zcc
  * @date 2022-11-28
  */
-@Api(description ="商品信息接口列表")
 @RestController
 @RequestMapping("/pms/product")
 public class ProductController extends BaseController {
@@ -42,7 +38,6 @@ public class ProductController extends BaseController {
     @Autowired
     private ProductConvert convert;
 
-    @ApiOperation("查询商品信息列表")
     @PreAuthorize("@ss.hasPermi('pms:product:list')")
     @PostMapping("/list")
     public ResponseEntity<Page<Product>> list(@RequestBody ProductQuery query, Pageable page) {
@@ -50,7 +45,6 @@ public class ProductController extends BaseController {
         return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
     }
 
-    @ApiOperation("导出商品信息列表")
     @PreAuthorize("@ss.hasPermi('pms:product:export')")
     @Log(title = "商品信息", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -60,14 +54,12 @@ public class ProductController extends BaseController {
         return ResponseEntity.ok(util.writeExcel(convert.dos2vos(list), "商品信息数据"));
     }
 
-    @ApiOperation("获取商品信息详细信息")
     @PreAuthorize("@ss.hasPermi('pms:product:query')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<ProductVO> getInfo(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.selectById(id));
     }
 
-    @ApiOperation("新增商品信息")
     @PreAuthorize("@ss.hasPermi('pms:product:add')")
     @Log(title = "商品信息", businessType = BusinessType.INSERT)
     @PostMapping
@@ -75,7 +67,6 @@ public class ProductController extends BaseController {
         return ResponseEntity.ok(service.insert(product));
     }
 
-    @ApiOperation("修改商品信息")
     @PreAuthorize("@ss.hasPermi('pms:product:edit')")
     @Log(title = "商品信息", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -83,7 +74,6 @@ public class ProductController extends BaseController {
         return ResponseEntity.ok(service.update(product));
     }
 
-    @ApiOperation("删除商品信息")
     @PreAuthorize("@ss.hasPermi('pms:product:remove')")
     @Log(title = "商品信息", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{id}")

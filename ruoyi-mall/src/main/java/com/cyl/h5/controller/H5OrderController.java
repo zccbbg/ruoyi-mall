@@ -17,7 +17,6 @@ import com.ruoyi.common.core.redis.RedisService;
 import com.ruoyi.common.enums.AftersaleStatus;
 import com.ruoyi.common.enums.OrderStatus;
 import com.ruoyi.framework.config.LocalDataUtil;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
@@ -40,7 +39,6 @@ public class H5OrderController {
     @Autowired
     private OrderService orderService;
 
-    @ApiOperation("下单")
     @PostMapping("/add")
     public ResponseEntity<Long> submit(@RequestBody OrderSubmitForm form) {
         Member member = (Member) LocalDataUtil.getVar(Constants.MEMBER_INFO);
@@ -62,20 +60,17 @@ public class H5OrderController {
         }
     }
 
-    @ApiOperation("下单前校验")
     @PostMapping("/addOrderCheck")
     public ResponseEntity<OrderCalcVO> addOrderCheck(@RequestBody OrderCreateForm orderCreateForm){
         return ResponseEntity.ok(service.addOrderCheck(orderCreateForm));
     }
 
-    @ApiOperation("订单列表")
     @GetMapping("/page")
     public ResponseEntity<PageImpl<H5OrderVO>> orderPage(Integer status, Pageable pageable){
         Member member = (Member) LocalDataUtil.getVar(Constants.MEMBER_INFO);
         return ResponseEntity.ok(service.orderPage(status, member.getId(), pageable));
     }
 
-    @ApiOperation("订单详情")
     @GetMapping("/orderDetail")
     public ResponseEntity<H5OrderVO> orderDetail(@RequestParam(required = false) Long orderId){
         if (orderId == null){
@@ -84,7 +79,6 @@ public class H5OrderController {
         return ResponseEntity.ok(service.orderDetail(orderId));
     }
 
-    @ApiOperation("确认收货")
     @GetMapping("/orderComplete")
     public ResponseEntity<String> orderComplete(Long orderId) {
         log.info("确认收货，订单id："+orderId);
@@ -105,7 +99,6 @@ public class H5OrderController {
         }
     }
 
-    @ApiOperation("订单数量统计")
     @GetMapping("/countOrder")
     public ResponseEntity<CountOrderVO> orderNumCount(){
         Member member = (Member) LocalDataUtil.getVar(Constants.MEMBER_INFO);
@@ -113,7 +106,6 @@ public class H5OrderController {
         return ResponseEntity.ok(service.orderNumCount(memberId));
     }
 
-    @ApiOperation("取消订单")
     @PostMapping("/orderCancel")
     public ResponseEntity<String> orderCancel(@RequestBody CancelOrderForm request){
         Member member = (Member) LocalDataUtil.getVar(Constants.MEMBER_INFO);
@@ -134,7 +126,6 @@ public class H5OrderController {
         }
     }
 
-    @ApiOperation("订单支付")
     @PostMapping("/orderPay")
     public ResponseEntity<OrderPayVO> orderPay(@RequestBody OrderPayForm req){
         log.info("订单支付","提交的数据："+JSONObject.toJSONString(req));
@@ -158,7 +149,6 @@ public class H5OrderController {
         }
     }
 
-    @ApiOperation("申请售后")
     @PostMapping("/applyRefund")
     public ResponseEntity<Boolean> applyRefund(@RequestBody ApplyRefundForm applyRefundForm){
         String redisKey = "h5_oms_order_applyRefund_" + applyRefundForm.getOrderId();
@@ -186,7 +176,6 @@ public class H5OrderController {
         }
     }
 
-    @ApiOperation("取消售后")
     @GetMapping("/cancelRefund")
     public ResponseEntity<String> cancelRefund(Long orderId){
         log.info("【取消售后】订单id：" + orderId);
@@ -207,13 +196,11 @@ public class H5OrderController {
         }
     }
 
-    @ApiOperation("售后订单详情")
     @GetMapping("/refundOrderDetail")
     public ResponseEntity<AftersaleRefundInfoVO> refundOrderDetail(@RequestParam Long orderId){
         return ResponseEntity.ok(service.refundOrderDetail(orderId));
     }
 
-    @ApiOperation("用户提交退货单号")
     @PostMapping("/aftersale/delivery")
     public AjaxResult delivery(@RequestBody @Valid DeliveryReq req){
         log.info("用户提交退货单号","提交的数据："+JSONObject.toJSONString(req));

@@ -1,9 +1,6 @@
 package com.cyl.manager.oms.controller;
 
 import java.util.List;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
@@ -33,7 +30,6 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
  * @author zcc
  * @date 2022-12-01
  */
-@Api(description ="订单操作历史记录接口列表")
 @RestController
 @RequestMapping("/oms/orderOperateHistory")
 public class OrderOperateHistoryController extends BaseController {
@@ -42,7 +38,6 @@ public class OrderOperateHistoryController extends BaseController {
     @Autowired
     private OrderOperateHistoryConvert convert;
 
-    @ApiOperation("查询订单操作历史记录列表")
     @PreAuthorize("@ss.hasPermi('oms:orderOperateHistory:list')")
     @PostMapping("/list")
     public ResponseEntity<Page<OrderOperateHistory>> list(@RequestBody OrderOperateHistoryQuery query, Pageable page) {
@@ -50,7 +45,6 @@ public class OrderOperateHistoryController extends BaseController {
         return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
     }
 
-    @ApiOperation("导出订单操作历史记录列表")
     @PreAuthorize("@ss.hasPermi('oms:orderOperateHistory:export')")
     @Log(title = "订单操作历史记录", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -60,14 +54,12 @@ public class OrderOperateHistoryController extends BaseController {
         return ResponseEntity.ok(util.writeExcel(convert.dos2vos(list), "订单操作历史记录数据"));
     }
 
-    @ApiOperation("获取订单操作历史记录详细信息")
     @PreAuthorize("@ss.hasPermi('oms:orderOperateHistory:query')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<OrderOperateHistory> getInfo(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.selectById(id));
     }
 
-    @ApiOperation("新增订单操作历史记录")
     @PreAuthorize("@ss.hasPermi('oms:orderOperateHistory:add')")
     @Log(title = "订单操作历史记录", businessType = BusinessType.INSERT)
     @PostMapping
@@ -75,7 +67,6 @@ public class OrderOperateHistoryController extends BaseController {
         return ResponseEntity.ok(service.insert(orderOperateHistory));
     }
 
-    @ApiOperation("修改订单操作历史记录")
     @PreAuthorize("@ss.hasPermi('oms:orderOperateHistory:edit')")
     @Log(title = "订单操作历史记录", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -83,7 +74,6 @@ public class OrderOperateHistoryController extends BaseController {
         return ResponseEntity.ok(service.update(orderOperateHistory));
     }
 
-    @ApiOperation("删除订单操作历史记录")
     @PreAuthorize("@ss.hasPermi('oms:orderOperateHistory:remove')")
     @Log(title = "订单操作历史记录", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{id}")

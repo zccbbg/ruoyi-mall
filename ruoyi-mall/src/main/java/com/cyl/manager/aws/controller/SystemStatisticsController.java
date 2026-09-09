@@ -1,7 +1,4 @@
 package com.cyl.manager.aws.controller;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +26,6 @@ import com.cyl.manager.aws.service.SystemStatisticsService;
  * @author zcc
  * @date 2023-07-28
  */
-@Api(description ="系统数据统计接口列表")
 @RestController
 @RequestMapping("/aws/systemStatistics")
 public class SystemStatisticsController extends BaseController {
@@ -38,14 +34,12 @@ public class SystemStatisticsController extends BaseController {
     @Autowired
     private SystemStatisticsConvert convert;
 
-    @ApiOperation("查询系统数据统计列表")
     @PreAuthorize("@ss.hasPermi('aws:systemStatistics:list')")
     @PostMapping("/list")
     public ResponseEntity<Page<SystemStatistics>> list(@RequestBody SystemStatisticsQuery query, Pageable page) {
         return ResponseEntity.ok(service.selectList(query, page));
     }
 
-    @ApiOperation("导出系统数据统计列表")
     @PreAuthorize("@ss.hasPermi('aws:systemStatistics:export')")
     @Log(title = "系统数据统计", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -56,14 +50,12 @@ public class SystemStatisticsController extends BaseController {
         return null;
     }
 
-    @ApiOperation("获取系统数据统计详细信息")
     @PreAuthorize("@ss.hasPermi('aws:systemStatistics:query')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<SystemStatistics> getInfo(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.selectById(id));
     }
 
-    @ApiOperation("新增系统数据统计")
     @PreAuthorize("@ss.hasPermi('aws:systemStatistics:add')")
     @Log(title = "系统数据统计", businessType = BusinessType.INSERT)
     @PostMapping
@@ -71,7 +63,6 @@ public class SystemStatisticsController extends BaseController {
         return ResponseEntity.ok(service.insert(systemStatistics));
     }
 
-    @ApiOperation("修改系统数据统计")
     @PreAuthorize("@ss.hasPermi('aws:systemStatistics:edit')")
     @Log(title = "系统数据统计", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -79,7 +70,6 @@ public class SystemStatisticsController extends BaseController {
         return ResponseEntity.ok(service.update(systemStatistics));
     }
 
-    @ApiOperation("删除系统数据统计")
     @PreAuthorize("@ss.hasPermi('aws:systemStatistics:remove')")
     @Log(title = "系统数据统计", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{id}")

@@ -1,9 +1,6 @@
 package com.cyl.manager.pms.controller;
 
 import java.util.List;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
@@ -33,7 +30,6 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
  * @author zcc
  * @date 2022-11-28
  */
-@Api(description ="sku信息接口列表")
 @RestController
 @RequestMapping("/pms/sku")
 public class SkuController extends BaseController {
@@ -42,7 +38,6 @@ public class SkuController extends BaseController {
     @Autowired
     private SkuConvert convert;
 
-    @ApiOperation("查询sku信息列表")
     @PreAuthorize("@ss.hasPermi('pms:sku:list')")
     @PostMapping("/list")
     public ResponseEntity<Page<Sku>> list(@RequestBody SkuQuery query, Pageable page) {
@@ -50,7 +45,6 @@ public class SkuController extends BaseController {
         return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
     }
 
-    @ApiOperation("导出sku信息列表")
     @PreAuthorize("@ss.hasPermi('pms:sku:export')")
     @Log(title = "sku信息", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -60,14 +54,12 @@ public class SkuController extends BaseController {
         return ResponseEntity.ok(util.writeExcel(convert.dos2vos(list), "sku信息数据"));
     }
 
-    @ApiOperation("获取sku信息详细信息")
     @PreAuthorize("@ss.hasPermi('pms:sku:query')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<Sku> getInfo(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.selectById(id));
     }
 
-    @ApiOperation("新增sku信息")
     @PreAuthorize("@ss.hasPermi('pms:sku:add')")
     @Log(title = "sku信息", businessType = BusinessType.INSERT)
     @PostMapping
@@ -75,7 +67,6 @@ public class SkuController extends BaseController {
         return ResponseEntity.ok(service.insert(sku));
     }
 
-    @ApiOperation("修改sku信息")
     @PreAuthorize("@ss.hasPermi('pms:sku:edit')")
     @Log(title = "sku信息", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -83,7 +74,6 @@ public class SkuController extends BaseController {
         return ResponseEntity.ok(service.update(sku));
     }
 
-    @ApiOperation("删除sku信息")
     @PreAuthorize("@ss.hasPermi('pms:sku:remove')")
     @Log(title = "sku信息", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{id}")

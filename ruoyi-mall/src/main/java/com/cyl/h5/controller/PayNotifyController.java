@@ -13,8 +13,6 @@ import com.wechat.pay.java.core.notification.NotificationParser;
 import com.wechat.pay.java.core.notification.RequestParam;
 import com.wechat.pay.java.service.partnerpayments.jsapi.model.Transaction;
 import com.wechat.pay.java.service.refund.model.RefundNotification;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +35,6 @@ import java.util.Map;
  * @author sjm
  * @date 2023-04-05
  */
-@Api(description ="微信回调接口列表")
 @RestController
 @RequestMapping("/no-auth/wechat")
 public class PayNotifyController {
@@ -101,7 +98,6 @@ public class PayNotifyController {
     }
 
 
-    @ApiOperation(value = "微信退款回调")
     @PostMapping("/weChatRefundNotify")
     public void weChatRefundNotify(HttpServletRequest request) throws IOException {
         log.info("收到了微信支付退款回调");

@@ -1,9 +1,6 @@
 package com.cyl.manager.ums.controller;
 
 import java.util.List;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
@@ -33,7 +30,6 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
  * @author zcc
  * @date 2022-11-28
  */
-@Api(description ="用户微信信息接口列表")
 @RestController
 @RequestMapping("/ums/memberWechat")
 public class MemberWechatController extends BaseController {
@@ -42,7 +38,6 @@ public class MemberWechatController extends BaseController {
     @Autowired
     private MemberWechatConvert convert;
 
-    @ApiOperation("查询用户微信信息列表")
     @PreAuthorize("@ss.hasPermi('ums:memberWechat:list')")
     @PostMapping("/list")
     public ResponseEntity<Page<MemberWechat>> list(@RequestBody MemberWechatQuery query, Pageable page) {
@@ -50,7 +45,6 @@ public class MemberWechatController extends BaseController {
         return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
     }
 
-    @ApiOperation("导出用户微信信息列表")
     @PreAuthorize("@ss.hasPermi('ums:memberWechat:export')")
     @Log(title = "用户微信信息", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -60,14 +54,12 @@ public class MemberWechatController extends BaseController {
         return ResponseEntity.ok(util.writeExcel(convert.dos2vos(list), "用户微信信息数据"));
     }
 
-    @ApiOperation("获取用户微信信息详细信息")
     @PreAuthorize("@ss.hasPermi('ums:memberWechat:query')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<MemberWechat> getInfo(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.selectById(id));
     }
 
-    @ApiOperation("新增用户微信信息")
     @PreAuthorize("@ss.hasPermi('ums:memberWechat:add')")
     @Log(title = "用户微信信息", businessType = BusinessType.INSERT)
     @PostMapping
@@ -75,7 +67,6 @@ public class MemberWechatController extends BaseController {
         return ResponseEntity.ok(service.insert(memberWechat));
     }
 
-    @ApiOperation("修改用户微信信息")
     @PreAuthorize("@ss.hasPermi('ums:memberWechat:edit')")
     @Log(title = "用户微信信息", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -83,7 +74,6 @@ public class MemberWechatController extends BaseController {
         return ResponseEntity.ok(service.update(memberWechat));
     }
 
-    @ApiOperation("删除用户微信信息")
     @PreAuthorize("@ss.hasPermi('ums:memberWechat:remove')")
     @Log(title = "用户微信信息", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{id}")

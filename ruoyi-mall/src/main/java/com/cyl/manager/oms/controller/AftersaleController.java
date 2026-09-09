@@ -10,8 +10,6 @@ import com.cyl.manager.oms.domain.vo.OrderOperateHistoryVO;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.core.redis.RedisService;
 import com.ruoyi.common.utils.SecurityUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -41,7 +39,6 @@ import com.cyl.manager.oms.service.AftersaleService;
  * @author zcc
  * @date 2022-12-29
  */
-@Api(description ="订单售后接口列表")
 @RestController
 @RequestMapping("/oms/aftersale")
 @Slf4j
@@ -53,7 +50,6 @@ public class AftersaleController extends BaseController {
     @Autowired
     private RedisService redisService;
 
-    @ApiOperation("查询订单售后列表")
     @PreAuthorize("@ss.hasPermi('oms:aftersale:list')")
     @PostMapping("/list")
     public ResponseEntity<Page<ManagerRefundOrderVO>> list(@RequestBody ManagerAftersaleOrderForm query, Pageable page) {
@@ -61,7 +57,6 @@ public class AftersaleController extends BaseController {
         return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
     }
 
-    @ApiOperation("导出订单售后列表")
     @PreAuthorize("@ss.hasPermi('oms:aftersale:export')")
     @Log(title = "订单售后", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -72,14 +67,12 @@ public class AftersaleController extends BaseController {
         return null;
     }
 
-    @ApiOperation("获取订单售后详细信息")
     @PreAuthorize("@ss.hasPermi('oms:aftersale:query')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<ManagerRefundOrderDetailVO> getInfo(@PathVariable("id") Long orderId) {
         return ResponseEntity.ok(service.selectById(orderId));
     }
 
-    @ApiOperation("新增订单售后")
     @PreAuthorize("@ss.hasPermi('oms:aftersale:add')")
     @Log(title = "订单售后", businessType = BusinessType.INSERT)
     @PostMapping
@@ -87,7 +80,6 @@ public class AftersaleController extends BaseController {
         return ResponseEntity.ok(service.insert(aftersale));
     }
 
-    @ApiOperation("修改订单售后")
     @PreAuthorize("@ss.hasPermi('oms:aftersale:edit')")
     @Log(title = "订单售后", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -95,7 +87,6 @@ public class AftersaleController extends BaseController {
         return ResponseEntity.ok(service.update(aftersale));
     }
 
-    @ApiOperation("删除订单售后")
     @PreAuthorize("@ss.hasPermi('oms:aftersale:remove')")
     @Log(title = "订单售后", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{id}")
@@ -103,7 +94,6 @@ public class AftersaleController extends BaseController {
         return ResponseEntity.ok(service.deleteById(id));
     }
 
-    @ApiOperation("售后订单操作")
     @PostMapping("/dealWith")
     public ResponseEntity<Boolean> updateStatus(@RequestBody DealWithAftersaleForm request){
         LoginUser user = SecurityUtils.getLoginUser();
@@ -125,7 +115,6 @@ public class AftersaleController extends BaseController {
         }
     }
 
-    @ApiOperation("查看日志")
     @GetMapping("/log/{orderId}")
     public ResponseEntity<List<OrderOperateHistoryVO>> log(@PathVariable Long orderId){
         return ResponseEntity.ok(service.log(orderId));

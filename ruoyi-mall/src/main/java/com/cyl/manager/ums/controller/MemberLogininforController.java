@@ -10,8 +10,6 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.web.service.TokenService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -28,7 +26,6 @@ import java.util.List;
  * @author zcc
  * @date 2023-07-26
  */
-@Api(description ="会员登录记录接口列表")
 @RestController
 @RequestMapping("/ums/memberLogininfor")
 public class MemberLogininforController extends BaseController {
@@ -39,7 +36,6 @@ public class MemberLogininforController extends BaseController {
     @Autowired
     private TokenService tokenService;
 
-    @ApiOperation("查询会员登录记录列表")
     @PreAuthorize("@ss.hasPermi('ums:memberLogininfor:list')")
     @PostMapping("/list")
     public ResponseEntity<Page<MemberLogininfor>> list(@RequestBody MemberLogininforQuery query, Pageable page) {
@@ -47,7 +43,6 @@ public class MemberLogininforController extends BaseController {
         return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
     }
 
-    @ApiOperation("导出会员登录记录列表")
     @PreAuthorize("@ss.hasPermi('ums:memberLogininfor:export')")
     @Log(title = "会员登录记录", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -57,14 +52,12 @@ public class MemberLogininforController extends BaseController {
         return ResponseEntity.ok(util.writeExcel(convert.dos2vos(list), "会员登录记录数据"));
     }
 
-    @ApiOperation("获取会员登录记录详细信息")
     @PreAuthorize("@ss.hasPermi('ums:memberLogininfor:query')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<MemberLogininfor> getInfo(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.selectById(id));
     }
 
-    @ApiOperation("修改会员登录记录")
     @PreAuthorize("@ss.hasPermi('ums:memberLogininfor:edit')")
     @Log(title = "会员登录记录", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -72,7 +65,6 @@ public class MemberLogininforController extends BaseController {
         return ResponseEntity.ok(service.update(memberLogininfor));
     }
 
-    @ApiOperation("删除会员登录记录")
     @PreAuthorize("@ss.hasPermi('ums:memberLogininfor:remove')")
     @Log(title = "会员登录记录", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{id}")

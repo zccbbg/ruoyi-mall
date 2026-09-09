@@ -14,8 +14,6 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.redis.RedisService;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.SecurityUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,7 +29,6 @@ import java.util.List;
  * @author zcc
  * @date 2022-12-01
  */
-@Api(description ="订单表接口列表")
 @RestController
 @RequestMapping("/oms/order")
 @Slf4j
@@ -43,20 +40,17 @@ public class OrderController extends BaseController {
     @Autowired
     private RedisService redisService;
 
-    @ApiOperation("查询订单表列表")
     @PreAuthorize("@ss.hasPermi('oms:order:list')")
     @PostMapping("/list")
     public ResponseEntity<Page<ManagerOrderVO>> list(@RequestBody ManagerOrderQueryForm query, Pageable page) {
         return ResponseEntity.ok(service.selectList(query, page));
     }
 
-    @ApiOperation("修改收件人信息")
     @PostMapping("/receiver/update")
     public ResponseEntity<Boolean> updateReceiver(@RequestBody Order order) {
         return ResponseEntity.ok(service.updateReceiver(order));
     }
 
-    @ApiOperation("导出订单表列表")
     @PreAuthorize("@ss.hasPermi('oms:order:export')")
     @Log(title = "订单表", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -67,14 +61,12 @@ public class OrderController extends BaseController {
         return null;
     }
 
-    @ApiOperation("获取订单表详细信息")
     @PreAuthorize("@ss.hasPermi('oms:order:query')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<ManagerOrderDetailVO> getInfo(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.selectById(id));
     }
 
-    @ApiOperation("新增订单表")
     @PreAuthorize("@ss.hasPermi('oms:order:add')")
     @Log(title = "订单表", businessType = BusinessType.INSERT)
     @PostMapping
@@ -82,7 +74,6 @@ public class OrderController extends BaseController {
         return ResponseEntity.ok(service.insert(order));
     }
 
-    @ApiOperation("修改订单表")
     @PreAuthorize("@ss.hasPermi('oms:order:edit')")
     @Log(title = "订单表", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -90,7 +81,6 @@ public class OrderController extends BaseController {
         return ResponseEntity.ok(service.update(order));
     }
 
-    @ApiOperation("删除订单表")
     @PreAuthorize("@ss.hasPermi('oms:order:remove')")
     @Log(title = "订单表", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{id}")
@@ -98,7 +88,6 @@ public class OrderController extends BaseController {
         return ResponseEntity.ok(service.deleteById(id));
     }
 
-    @ApiOperation("添加备注")
     @PreAuthorize("@ss.hasPermi('oms:order:note:add')")
     @Log(title = "订单表", businessType = BusinessType.UPDATE)
     @PostMapping("/merchantNote/add")
@@ -106,7 +95,6 @@ public class OrderController extends BaseController {
         return ResponseEntity.ok(service.saveMerchantNote(order));
     }
 
-    @ApiOperation("管理后台订单发货")
     @PreAuthorize("@ss.hasPermi('oms:order:delivery')")
     @PostMapping("/deliverProduct")
     public ResponseEntity<String> delivery(@RequestBody DeliverProductForm request){
@@ -128,14 +116,12 @@ public class OrderController extends BaseController {
         }
     }
 
-    @ApiOperation("订单日志")
     @GetMapping("/log/{orderId}")
     public ResponseEntity<List<OrderOperateHistoryVO>> log(@PathVariable Long orderId){
         return ResponseEntity.ok(service.log(orderId));
     }
 
     @PreAuthorize("@ss.hasAnyRoles('admin')")
-    @ApiOperation("订单解密")
     @GetMapping("/decryptPhone/{orderId}")
     public ResponseEntity<String> decryptPhone(@PathVariable Long orderId){
         String decryptPhone = service.decryptPhone(orderId);

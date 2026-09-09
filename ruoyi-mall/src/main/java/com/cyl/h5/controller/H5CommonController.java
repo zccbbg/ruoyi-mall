@@ -13,7 +13,6 @@ import com.ruoyi.common.core.redis.RedisService;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.OssUtils;
 import com.ruoyi.system.service.ISysConfigService;
-import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +37,6 @@ public class H5CommonController {
   @Autowired
   private ISysConfigService sysConfigService;
 
-  @ApiOperation("新增意见反馈")
   @Log(title = "意见反馈", businessType = BusinessType.INSERT)
   @PostMapping("/h5/feedback/create")
   public ResponseEntity<Integer> add(@RequestBody Feedback feedback) {

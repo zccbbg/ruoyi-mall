@@ -1,9 +1,6 @@
 package com.cyl.manager.ums.controller;
 
 import java.util.List;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
@@ -33,7 +30,6 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
  * @author zcc
  * @date 2024-03-01
  */
-@Api(description ="会员账户表接口列表")
 @RestController
 @RequestMapping("/ums/memberAccount")
 public class MemberAccountController extends BaseController {
@@ -42,7 +38,6 @@ public class MemberAccountController extends BaseController {
     @Autowired
     private MemberAccountConvert convert;
 
-    @ApiOperation("查询会员账户表列表")
     @PreAuthorize("@ss.hasPermi('ums:memberAccount:list')")
     @PostMapping("/list")
     public ResponseEntity<Page<MemberAccount>> list(@RequestBody MemberAccountQuery query, Pageable page) {
@@ -50,7 +45,6 @@ public class MemberAccountController extends BaseController {
         return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
     }
 
-    @ApiOperation("导出会员账户表列表")
     @PreAuthorize("@ss.hasPermi('ums:memberAccount:export')")
     @Log(title = "会员账户表", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -60,14 +54,12 @@ public class MemberAccountController extends BaseController {
         return ResponseEntity.ok(util.writeExcel(convert.dos2vos(list), "会员账户表数据"));
     }
 
-    @ApiOperation("获取会员账户表详细信息")
     @PreAuthorize("@ss.hasPermi('ums:memberAccount:query')")
     @GetMapping(value = "/{memberId}")
     public ResponseEntity<MemberAccount> getInfo(@PathVariable("memberId") Long memberId) {
         return ResponseEntity.ok(service.selectByMemberId(memberId));
     }
 
-    @ApiOperation("新增会员账户表")
     @PreAuthorize("@ss.hasPermi('ums:memberAccount:add')")
     @Log(title = "会员账户表", businessType = BusinessType.INSERT)
     @PostMapping
@@ -75,7 +67,6 @@ public class MemberAccountController extends BaseController {
         return ResponseEntity.ok(service.insert(memberAccount));
     }
 
-    @ApiOperation("修改会员账户表")
     @PreAuthorize("@ss.hasPermi('ums:memberAccount:edit')")
     @Log(title = "会员账户表", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -83,7 +74,6 @@ public class MemberAccountController extends BaseController {
         return ResponseEntity.ok(service.update(memberAccount));
     }
 
-    @ApiOperation("删除会员账户表")
     @PreAuthorize("@ss.hasPermi('ums:memberAccount:remove')")
     @Log(title = "会员账户表", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{memberId}")

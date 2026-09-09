@@ -1,9 +1,6 @@
 package com.cyl.manager.oms.controller;
 
 import java.util.List;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
@@ -33,7 +30,6 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
  * @author zcc
  * @date 2022-12-29
  */
-@Api(description ="订单售后接口列表")
 @RestController
 @RequestMapping("/oms/aftersaleItem")
 public class AftersaleItemController extends BaseController {
@@ -42,7 +38,6 @@ public class AftersaleItemController extends BaseController {
     @Autowired
     private AftersaleItemConvert convert;
 
-    @ApiOperation("查询订单售后列表")
     @PreAuthorize("@ss.hasPermi('oms:aftersaleItem:list')")
     @PostMapping("/list")
     public ResponseEntity<Page<AftersaleItem>> list(@RequestBody AftersaleItemQuery query, Pageable page) {
@@ -50,7 +45,6 @@ public class AftersaleItemController extends BaseController {
         return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
     }
 
-    @ApiOperation("导出订单售后列表")
     @PreAuthorize("@ss.hasPermi('oms:aftersaleItem:export')")
     @Log(title = "订单售后", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -60,14 +54,12 @@ public class AftersaleItemController extends BaseController {
         return ResponseEntity.ok(util.writeExcel(convert.dos2vos(list), "订单售后数据"));
     }
 
-    @ApiOperation("获取订单售后详细信息")
     @PreAuthorize("@ss.hasPermi('oms:aftersaleItem:query')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<AftersaleItem> getInfo(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.selectById(id));
     }
 
-    @ApiOperation("新增订单售后")
     @PreAuthorize("@ss.hasPermi('oms:aftersaleItem:add')")
     @Log(title = "订单售后", businessType = BusinessType.INSERT)
     @PostMapping
@@ -75,7 +67,6 @@ public class AftersaleItemController extends BaseController {
         return ResponseEntity.ok(service.insert(aftersaleItem));
     }
 
-    @ApiOperation("修改订单售后")
     @PreAuthorize("@ss.hasPermi('oms:aftersaleItem:edit')")
     @Log(title = "订单售后", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -83,7 +74,6 @@ public class AftersaleItemController extends BaseController {
         return ResponseEntity.ok(service.update(aftersaleItem));
     }
 
-    @ApiOperation("删除订单售后")
     @PreAuthorize("@ss.hasPermi('oms:aftersaleItem:remove')")
     @Log(title = "订单售后", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{id}")

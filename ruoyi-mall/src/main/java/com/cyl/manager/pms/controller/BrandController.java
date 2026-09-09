@@ -1,9 +1,6 @@
 package com.cyl.manager.pms.controller;
 
 import java.util.List;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
@@ -33,7 +30,6 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
  * @author zcc
  * @date 2022-11-28
  */
-@Api(description ="品牌管理接口列表")
 @RestController
 @RequestMapping("/pms/brand")
 public class BrandController extends BaseController {
@@ -42,21 +38,18 @@ public class BrandController extends BaseController {
     @Autowired
     private BrandConvert convert;
 
-    @ApiOperation("查询品牌管理列表")
     @PreAuthorize("@ss.hasPermi('pms:brand:list')")
     @PostMapping("/list")
     public ResponseEntity<Page<Brand>> list(@RequestBody BrandQuery query, Pageable page) {
         List<Brand> list = service.selectList(query, page);
         return ResponseEntity.ok(new PageImpl<>(list, page, ((com.github.pagehelper.Page)list).getTotal()));
     }
-    @ApiOperation("所有品牌管理列表")
     @PreAuthorize("@ss.hasPermi('pms:brand:list')")
     @PostMapping("/all")
     public ResponseEntity<List<Brand>> all(@RequestBody BrandQuery query) {
         return ResponseEntity.ok(service.selectList(query, null));
     }
 
-    @ApiOperation("导出品牌管理列表")
     @PreAuthorize("@ss.hasPermi('pms:brand:export')")
     @Log(title = "品牌管理", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
@@ -66,14 +59,12 @@ public class BrandController extends BaseController {
         return ResponseEntity.ok(util.writeExcel(convert.dos2vos(list), "品牌管理数据"));
     }
 
-    @ApiOperation("获取品牌管理详细信息")
     @PreAuthorize("@ss.hasPermi('pms:brand:query')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<Brand> getInfo(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.selectById(id));
     }
 
-    @ApiOperation("新增品牌管理")
     @PreAuthorize("@ss.hasPermi('pms:brand:add')")
     @Log(title = "品牌管理", businessType = BusinessType.INSERT)
     @PostMapping
@@ -81,7 +72,6 @@ public class BrandController extends BaseController {
         return ResponseEntity.ok(service.insert(brand));
     }
 
-    @ApiOperation("修改品牌管理")
     @PreAuthorize("@ss.hasPermi('pms:brand:edit')")
     @Log(title = "品牌管理", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -89,7 +79,6 @@ public class BrandController extends BaseController {
         return ResponseEntity.ok(service.update(brand));
     }
 
-    @ApiOperation("删除品牌管理")
     @PreAuthorize("@ss.hasPermi('pms:brand:remove')")
     @Log(title = "品牌管理", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{id}")
