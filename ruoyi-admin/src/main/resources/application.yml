@@ -82,12 +82,9 @@ spring:
       testOnBorrow: false
       testOnReturn: false
       webStatFilter:
-        enabled: true
+        enabled: false
       statViewServlet:
-        enabled: true
-        # 设置白名单，不填则允许所有访问
-        allow:
-        url-pattern: /druid/*
+        enabled: false
       filter:
         stat:
           enabled: true
