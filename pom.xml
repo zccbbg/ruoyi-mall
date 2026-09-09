@@ -29,7 +29,6 @@
         <commons.fileupload.version>1.4</commons.fileupload.version>
         <commons.collections.version>3.2.2</commons.collections.version>
         <poi.version>4.1.2</poi.version>
-        <velocity.version>1.7</velocity.version>
         <jwt.version>0.9.1</jwt.version>
         <lombok.version>1.16.20</lombok.version>
         <mybatis.plus.version>3.4.0</mybatis.plus.version>
@@ -141,19 +140,6 @@
                 <version>${poi.version}</version>
             </dependency>
 
-            <!-- velocity代码生成使用模板 -->
-            <dependency>
-                <groupId>org.apache.velocity</groupId>
-                <artifactId>velocity</artifactId>
-                <version>${velocity.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-collections</groupId>
-                        <artifactId>commons-collections</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
             <!-- collections工具类 -->
             <dependency>
                 <groupId>commons-collections</groupId>
@@ -186,13 +172,6 @@
             <dependency>
                 <groupId>com.ruoyi</groupId>
                 <artifactId>ruoyi-quartz</artifactId>
-                <version>${ruoyi.version}</version>
-            </dependency>
-
-            <!-- 代码生成-->
-            <dependency>
-                <groupId>com.ruoyi</groupId>
-                <artifactId>ruoyi-generator</artifactId>
                 <version>${ruoyi.version}</version>
             </dependency>
 
@@ -246,7 +225,6 @@
         <module>ruoyi-framework</module>
         <module>ruoyi-system</module>
         <module>ruoyi-quartz</module>
-        <module>ruoyi-generator</module>
         <module>ruoyi-common</module>
         <module>ruoyi-mall</module>
     </modules>
