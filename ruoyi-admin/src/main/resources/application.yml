@@ -45,7 +45,7 @@ spring:
     # 国际化资源文件路径
     basename: i18n/messages
   profiles: 
-    active: druid
+    active: dev
   # 文件上传
   servlet:
      multipart:
@@ -167,6 +167,9 @@ http-pool:
   socket-timeout: 10000
   max-per-route: 200
   max-total: 200
+feishu:
+  error-notification:
+    webhook: ${FEISHU_ERROR_NOTIFICATION_WEBHOOK:}
 gen:
   # 作者
   author: zcc

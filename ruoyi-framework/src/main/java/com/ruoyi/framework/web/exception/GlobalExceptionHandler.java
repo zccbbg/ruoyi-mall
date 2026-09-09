@@ -8,14 +8,21 @@ import com.ruoyi.common.exception.base.BaseException;
 import com.ruoyi.common.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 全局异常处理器
@@ -26,6 +33,12 @@ import javax.servlet.http.HttpServletRequest;
 public class GlobalExceptionHandler
 {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Value("${feishu.error-notification.webhook:}")
+    private String feishuErrorNotificationWebhook;
 
     /**
      * 权限校验异常
@@ -105,6 +118,7 @@ public class GlobalExceptionHandler
     {
         String requestURI = request.getRequestURI();
         log.error("请求地址'{}',发生未知异常.", requestURI, e);
+        sendFeishuErrorNotification(e, request);
         return AjaxResult.error(e.getMessage());
     }
     /**
@@ -115,6 +129,40 @@ public class GlobalExceptionHandler
     {
         String requestURI = request.getRequestURI();
         log.error("请求地址'{}',发生系统异常.", requestURI, e);
+        sendFeishuErrorNotification(e, request);
         return AjaxResult.error(e.getMessage());
+    }
+
+    /**
+     * 向飞书机器人发送未处理异常通知。
+     *
+     * @param e 未处理的异常
+     * @param request 当前请求
+     * @return 无返回值
+     */
+    private void sendFeishuErrorNotification(Exception e, HttpServletRequest request)
+    {
+        if (StringUtils.isBlank(feishuErrorNotificationWebhook))
+        {
+            return;
+        }
+        try
+        {
+            String message = StringUtils.defaultIfBlank(e.getMessage(), e.getClass().getName());
+            Map<String, Object> content = new HashMap<>();
+            content.put("text", String.format("【商城系统异常】\n请求：%s %s\n异常：%s\n信息：%s",
+                    request.getMethod(), request.getRequestURI(), e.getClass().getName(), StringUtils.abbreviate(message, 1000)));
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("msg_type", "text");
+            payload.put("content", content);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            restTemplate.postForObject(feishuErrorNotificationWebhook,
+                    new org.springframework.http.HttpEntity<>(payload, headers), String.class);
+        }
+        catch (Exception notificationException)
+        {
+            log.error("飞书异常通知发送失败", notificationException);
+        }
     }
 }
